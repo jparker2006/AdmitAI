@@ -24,16 +24,13 @@ def register_tool(name: str):
     return decorator
 
 
-# ----- Example stub tool: echo ------------------------------------------------
+# ----- LangChain EchoTool registration ---------------------------------------
 
-@register_tool("echo")
-def echo_tool(message: str = "Hello, Essay Agent!") -> dict:
-    """Simple debugging tool that echoes a message.
+# The full-featured EchoTool lives in ``echo.py``.  We import and register a
+# singleton instance here so existing Planner/Executor logic can discover it
+# via the global ``TOOL_REGISTRY``.
 
-    Args:
-        message: text to echo back
-    Returns:
-        dict: wrapper around the provided message
-    """
+from .echo import EchoTool
 
-    return {"echo": message} 
+# Register instance (callable thanks to BaseTool.__call__)
+TOOL_REGISTRY["echo"] = EchoTool() 

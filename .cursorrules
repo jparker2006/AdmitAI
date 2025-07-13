@@ -1,0 +1,146 @@
+# Essay Agent TODO Implementation Rules
+
+## Project Context
+You are helping implement an essay writing agent (`essay_agent/`) following a detailed TODO list. The user will use `QUICK_PROMPT.md` for systematic implementation.
+
+## Implementation Process
+When user says "I'm implementing Section X from my essay_agent TODO list":
+
+### Step 1: Analysis & Context (Be Thorough)
+1. **Read the specific TODO section** from `essay_agent/todo.md`
+2. **Examine current codebase structure** - look at relevant files and patterns
+3. **Identify dependencies** - what needs to exist first, what will be affected
+4. **Understand the bigger picture** - how this fits into the essay workflow
+5. **Plan integration approach** - follow existing patterns and conventions
+
+### Step 2: Generate Implementation Prompt (Be Precise)
+Create a focused implementation prompt with:
+- **Objective**: Clear goal and success criteria
+- **Files to Create/Modify**: Exact paths and purposes
+- **Implementation Requirements**: 
+  - Code structure (classes, functions, imports)
+  - Core logic (step-by-step algorithm)
+  - Error handling and validation
+  - Testing requirements
+- **Code Examples**: Show usage patterns
+- **Integration Points**: How it connects to existing code
+
+### Step 3: Wait for Review
+Present analysis + implementation prompt. DO NOT implement until approved.
+
+## Code Style & Patterns
+
+### Architecture Patterns
+- **ReAct Pattern**: Reasoning + Acting for agent decisions
+- **Tool Registry**: Use `@register_tool` decorator pattern
+- **Memory Hierarchy**: Working, semantic, episodic memory layers
+- **Pydantic Models**: Strong typing for all data structures
+- **Async/Await**: For concurrent operations
+
+### File Structure Conventions
+```
+essay_agent/
+├── __init__.py          # Package exports
+├── planner.py           # EssayPlanner with Phase enum
+├── executor.py          # EssayExecutor with run_plan()
+├── tools/               # Tool registry and implementations
+├── memory/              # JSON-backed memory system
+├── prompts/             # Prompt templates organized by function
+├── agents/              # Multi-agent implementations
+└── utils/               # Logging, timing, helpers
+```
+
+### Coding Standards
+- **Docstrings**: Always include with clear purpose and examples
+- **Type Hints**: Use throughout for better IDE support
+- **Error Handling**: Graceful degradation with meaningful errors
+- **Testing**: Unit tests for each function, integration tests for workflows
+- **Comments**: Explain WHY, not just what
+
+### Common Patterns in Codebase
+- **Tool Registration**: `@register_tool("tool_name")`
+- **Memory Operations**: `load_user_profile()`, `save_user_profile()`
+- **Pydantic Models**: For data validation and serialization
+- **Async Execution**: For parallel tool calls
+- **Plan Objects**: Structured execution with `Plan` dataclass
+
+## LLM Integration Guidelines
+- **GPT-4 API**: Primary intelligence source
+- **Prompt Engineering**: Focus on clear, specific prompts
+- **Meta-Prompting**: For dynamic prompt generation
+- **Context Management**: Efficient token usage
+- **Error Recovery**: Fallback strategies for API failures
+
+## Testing Requirements
+Every implementation must include:
+- **Unit Tests**: Test individual functions
+- **Integration Tests**: Test component interactions
+- **Error Handling Tests**: Test failure scenarios
+- **Performance Tests**: For critical paths
+- **Mock Tests**: For external dependencies
+
+## Key Implementation Priorities
+1. **Working Code**: Must run without errors
+2. **Clear Structure**: Follow existing patterns
+3. **Comprehensive Tests**: >90% coverage target
+4. **Error Handling**: Graceful failure modes
+5. **Documentation**: Clear docstrings and comments
+
+## Tool Development Guidelines
+- **Single Responsibility**: Each tool does one thing well
+- **Composable**: Tools can be combined for complex workflows
+- **Testable**: Clear inputs/outputs for testing
+- **Validated**: Pydantic schemas for input validation
+- **Async-Ready**: Support concurrent execution
+
+## Memory System Guidelines
+- **JSON Storage**: Simple file-based persistence
+- **Schema Validation**: Pydantic models for all data
+- **Conflict Resolution**: Handle concurrent access
+- **Migration Ready**: Prepare for future DB migration
+- **Privacy Conscious**: Handle user data responsibly
+
+## Prompt Engineering Best Practices
+- **Specific Instructions**: Clear, actionable prompts
+- **Context Injection**: Include relevant user/essay context
+- **Output Formatting**: Structured responses (JSON, markdown)
+- **Error Recovery**: Handle malformed responses
+- **Template Reuse**: Modular prompt templates
+
+## Performance Considerations
+- **Async Operations**: Parallel tool execution
+- **Caching**: Avoid redundant API calls
+- **Token Efficiency**: Optimize prompt lengths
+- **Memory Usage**: Efficient data structures
+- **Rate Limiting**: Respect API limits
+
+## Security & Privacy
+- **Input Validation**: Sanitize all user inputs
+- **Data Encryption**: Protect sensitive information
+- **Access Control**: Proper authentication/authorization
+- **Audit Logging**: Track important operations
+- **Error Disclosure**: Don't leak sensitive info in errors
+
+## Quick Reference Commands
+- **Run Tests**: `pytest essay_agent/tests/`
+- **Check Types**: `mypy essay_agent/`
+- **Format Code**: `black essay_agent/`
+- **Check Coverage**: `pytest --cov=essay_agent`
+- **Run Demo**: `python -m essay_agent.demo`
+
+## Common Gotchas
+- **Import Cycles**: Be careful with circular imports
+- **Memory Leaks**: Properly close files and connections
+- **API Limits**: Handle rate limiting gracefully
+- **State Management**: Keep track of conversation state
+- **Error Propagation**: Don't swallow important errors
+
+## Success Metrics
+Each completed task should have:
+- ✅ Working code with no errors
+- ✅ Comprehensive tests passing
+- ✅ Clear documentation
+- ✅ Proper error handling
+- ✅ Integration with existing codebase
+
+Remember: Be thorough in analysis, precise in implementation prompts, and systematic in execution. The goal is a production-ready essay writing agent built incrementally through focused 45-minute coding sessions. 
