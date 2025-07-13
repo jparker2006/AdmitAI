@@ -238,7 +238,7 @@ Return JSON only.
 ---
 
 ## 🎯 MVP MILESTONE: Working Essay Agent
-**After Phase 2.5**: You have a fully functional essay writing agent that can take a user through the complete workflow from brainstorming to polished essay using GPT-4 prompts and basic memory.
+**After Phase 3.6**: You have a fully functional essay writing agent that can take a user through the complete workflow from brainstorming to polished essay using GPT-4 prompts and basic memory.
 
 **Capabilities**:
 - ✅ User profile management
@@ -253,18 +253,8 @@ Return JSON only.
 
 **Next Steps**: Enhanced tools and production features (Phases 3-10)
 
-### Phase 3 Execution Roadmap (incremental sessions)
 
-| Session | Focus | Deliverables |
-|---------|-------|--------------|
-| 1 | Prompt-Analysis tools | `essay_agent/prompts/prompt_analysis.py`, `essay_agent/tools/prompt_tools.py` with Classify/ExtractRequirements/SuggestStrategy/DetectOverlap. Update planner to call analysis step; unit + integration tests. |
-| 2 | Story-level Brainstorm tools | `.../prompts/brainstorming.py`, `.../tools/brainstorm_tools.py` implementing StorySuggestion / StoryMatching / StoryExpansion / UniquenessValidation; tests and CLI output. |
-| 3 | Structure & Outline tools | `.../prompts/structure.py`, `.../tools/structure_tools.py` (OutlineGenerator, StructureValidator, TransitionSuggestion, LengthOptimizer) plus planner edge. |
-| 4 | Drafting & Writing tools | `.../prompts/writing.py`, `.../tools/writing_tools.py` (OutlineExpansion, ParagraphRewrite, OpeningImprovement, VoiceStrengthening); tests and CLI paragraph output. |
-| 5 | Evaluation & Scoring tools | `.../prompts/evaluation.py`, `.../tools/evaluation_tools.py` (Scoring, WeaknessHighlight, ClichéDetection, AlignmentCheck) with scores printed in CLI. |
-| 6 | Polish & Refinement tools | `.../prompts/polish.py`, `.../tools/polish_tools.py` (GrammarFix, VocabularyEnhancement, ConsistencyCheck, WordCountOptimizer). Replace legacy PolishTool. |
-
-After each session run `ESSAY_AGENT_CACHE=0 python -m essay_agent.demo --agent "<prompt>"` and `pytest -q` to ensure no regressions.
+Relook at what we should really do next. Is the planner working? How does the agent work? Where are we now? What is the architecture? We basically have a bunch of tools but do we have any way of using them?
 
 ---
 
@@ -314,6 +304,11 @@ After each session run `ESSAY_AGENT_CACHE=0 python -m essay_agent.demo --agent "
 **Deliverable**: **CODE LOGIC + PROMPTS**: Implement LangChain's RetrievalQA and ConversationalRetrievalChain for RAG system. Uses VectorStore retrieval with OpenAI generation. Create prompt templates for combining retrieved memories with generation tasks.  
 **Tests**: LangChain retrieval relevance, generation quality, and personalization accuracy tests.
 
+### 7.1 CLI Interface
+**Files**: `essay_agent/cli.py`  
+**Deliverable**: Rich CLI interface with interactive prompts, progress tracking, and real-time feedback. Supports all essay operations from command line.  
+**Tests**: CLI functionality, user interaction, and error handling tests.
+
 ---
 
 ## Phase 6 · Workflow & Orchestration
@@ -341,11 +336,6 @@ After each session run `ESSAY_AGENT_CACHE=0 python -m essay_agent.demo --agent "
 ---
 
 ## Phase 7 · User Interface & Experience
-
-### 7.1 CLI Interface
-**Files**: `essay_agent/cli.py`  
-**Deliverable**: Rich CLI interface with interactive prompts, progress tracking, and real-time feedback. Supports all essay operations from command line.  
-**Tests**: CLI functionality, user interaction, and error handling tests.
 
 ### 7.2 Web API Layer
 **Files**: `essay_agent/api/__init__.py`, `essay_agent/api/routes.py`  
