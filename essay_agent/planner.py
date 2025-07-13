@@ -20,11 +20,22 @@ from essay_agent.prompts import SYSTEM_PROMPT, PLANNER_REACT_PROMPT
 from essay_agent.tools import REGISTRY as TOOL_REGISTRY
 
 # LangChain imports ---------------------------------------------------------
+# Prefer langchain_openai (recommended) then community path, fallback to legacy
 try:
-    from langchain.chat_models import ChatOpenAI
+    from langchain_openai import ChatOpenAI  # type: ignore
+except ImportError:  # pragma: no cover – use community or legacy
+    try:
+        from langchain_community.chat_models import ChatOpenAI  # type: ignore
+    except ImportError:  # pragma: no cover
+        try:
+            from langchain.chat_models import ChatOpenAI  # type: ignore
+        except ImportError:
+            ChatOpenAI = None  # type: ignore
+
+# FakeListLLM remains the same for offline tests
+try:
     from langchain.llms.fake import FakeListLLM  # type: ignore
-except ImportError:  # pragma: no cover
-    ChatOpenAI = None  # type: ignore
+except ImportError:
     FakeListLLM = None  # type: ignore
 
 
@@ -119,7 +130,8 @@ class EssayReActPlanner:
             system=SYSTEM_PROMPT, tools=self._tool_list_str, user=user_input
         )
 
-        raw = self.llm.predict(prompt)  # type: ignore[arg-type]
+        from essay_agent.llm_client import call_llm
+        raw = call_llm(self.llm, prompt)
 
         try:
             json_str = raw.strip().splitlines()[-1]

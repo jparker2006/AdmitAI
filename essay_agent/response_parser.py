@@ -12,12 +12,21 @@ from __future__ import annotations
 from typing import Any, Type, Union, Dict
 
 from pydantic import BaseModel, ValidationError
-from langchain.output_parsers import (
-    PydanticOutputParser,
-    StructuredOutputParser,
-    OutputFixingParser,
-    ResponseSchema,
-)
+# Prefer new community package paths, fallback if not available
+try:
+    from langchain_community.output_parsers import (
+        PydanticOutputParser,
+        StructuredOutputParser,
+        OutputFixingParser,
+        ResponseSchema,
+    )
+except ImportError:  # pragma: no cover – older LangChain fallback
+    from langchain.output_parsers import (
+        PydanticOutputParser,
+        StructuredOutputParser,
+        OutputFixingParser,
+        ResponseSchema,
+    )
 
 # For newer LangChain versions, a common abstract base may not be exported.
 try:
@@ -94,7 +103,22 @@ def safe_parse(parser: OutputParser, text: str, *, retries: int = 2) -> Any:  # 
 
         # Attempt to auto-fix if supported by current LangChain version ------
         if hasattr(OutputFixingParser, "from_llm"):
-            fixing_parser = OutputFixingParser.from_llm(parser, llm=get_chat_llm())
+            # LangChain changed the signature of ``OutputFixingParser.from_llm``
+            # in late 2023.  Older versions expect the *destination parser* as
+            # the first positional argument, whereas newer versions expect the
+            # *llm* first.  We therefore try the old call signature and fall back
+            # to the new one if we receive a ``TypeError`` about duplicated
+            # arguments.  This keeps the Essay Agent compatible across a broad
+            # range of LangChain releases without pinning to a specific minor
+            # version.
+
+            try:
+                # Old style: (destination_parser, llm=...)
+                fixing_parser = OutputFixingParser.from_llm(parser, llm=get_chat_llm())
+            except TypeError:
+                # New style: (llm, destination_parser)
+                fixing_parser = OutputFixingParser.from_llm(get_chat_llm(), parser)  # type: ignore[arg-type]
+
             fixed_text = fixing_parser.parse(text)
             return safe_parse(parser, fixed_text, retries=retries - 1)
 

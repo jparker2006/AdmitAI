@@ -48,6 +48,13 @@ from .templates import (
     META_VARS,
 )
 
+from .brainstorm import BRAINSTORM_PROMPT  # noqa: F401
+
+try:
+    __all__.append("BRAINSTORM_PROMPT")
+except NameError:  # pragma: no cover
+    __all__ = ["BRAINSTORM_PROMPT"]
+
 # ---------------------------------------------------------------------------
 # Public symbols update ------------------------------------------------------
 # ---------------------------------------------------------------------------

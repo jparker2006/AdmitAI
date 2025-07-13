@@ -38,10 +38,12 @@ def load_user_profile(user_id: str) -> Dict[str, Any]:
 def save_user_profile(user_id: str, profile: Dict[str, Any]) -> None:
     """Persist user profile to disk with pretty JSON formatting."""
     path = _profile_path(user_id)
-    path.write_text(json.dumps(profile, indent=2))
+    path.write_text(json.dumps(profile, indent=2, default=str))
 
 __all__ = [
     "load_user_profile",
     "save_user_profile",
     "JSONConversationMemory",
+    "SimpleMemory",
+    "is_story_reused",
 ] 

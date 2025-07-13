@@ -23,25 +23,42 @@ class ValidatedTool(BaseTool, ABC):
     return_direct: bool = True
 
     # Maximum seconds to allow; ``None`` means no limit.
-    timeout: Optional[float] = 5.0
+    import os as _os
+    timeout: Optional[float] = float(_os.getenv("ESSAY_AGENT_TOOL_TIMEOUT", "45"))
+
+    # Maximum attempts for retries (including the initial try)
+    max_attempts: int = 3
 
     # ---------------------------------------------------------------------
     # Public call wrappers
     # ---------------------------------------------------------------------
 
     def __call__(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:  # type: ignore[override]
-        try:
-            if self.timeout is not None:
-                loop = asyncio.new_event_loop()
-                result = loop.run_until_complete(
-                    asyncio.wait_for(self._arun_wrapper(*args, **kwargs), timeout=self.timeout)
-                )
-            else:
-                result = self._run(*args, **kwargs)
+        """Synchronous entry point with exponential-backoff retry on failure."""
 
-            return {"ok": result, "error": None}
-        except Exception as exc:  # noqa: BLE001
-            return {"ok": None, "error": _format_exc(exc)}
+        attempt = 0
+        delay = 1.0  # seconds (doubles each retry)
+        while attempt < self.max_attempts:
+            try:
+                if self.timeout is not None:
+                    loop = asyncio.new_event_loop()
+                    result = loop.run_until_complete(
+                        asyncio.wait_for(self._arun_wrapper(*args, **kwargs), timeout=self.timeout)
+                    )
+                else:
+                    result = self._run(*args, **kwargs)
+
+                return {"ok": result, "error": None}
+            except Exception as exc:  # noqa: BLE001
+                attempt += 1
+                if attempt >= self.max_attempts:
+                    return {"ok": None, "error": _format_exc(exc)}
+
+                # Exponential backoff --------------------------------------------------
+                import time
+
+                time.sleep(delay)
+                delay = min(delay * 2, 8.0)  # cap the wait to 8s to avoid long stalls
 
     async def ainvoke(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:  # type: ignore[override]
         try:

@@ -33,7 +33,11 @@ from langchain.cache import InMemoryCache, SQLiteCache
 from langchain.globals import set_llm_cache
 
 # Callback helper for cost tracking ------------------------------------------------
-from langchain.callbacks import get_openai_callback
+# New import path (LangChain >= 0.1.17)
+try:
+    from langchain_community.callbacks.manager import get_openai_callback  # type: ignore
+except ImportError:  # pragma: no cover – fallback for older versions
+    from langchain.callbacks import get_openai_callback  # type: ignore
 
 # Fake LLM used when no API key is available ---------------------------------------
 from langchain.llms.fake import FakeListLLM
@@ -52,7 +56,7 @@ except ModuleNotFoundError:  # pragma: no cover – legacy fallback
 # Configuration
 # ---------------------------------------------------------------------------
 
-_DEFAULT_MODEL = os.getenv("ESSAY_AGENT_MODEL", "gpt-4o-mini")
+_DEFAULT_MODEL = os.getenv("ESSAY_AGENT_MODEL", "gpt-4o")
 _CACHE_PATH = os.getenv("ESSAY_AGENT_CACHE_PATH", ".essay_agent_cache.sqlite")
 _USE_CACHE = os.getenv("ESSAY_AGENT_CACHE", "1") == "1"
 
@@ -92,12 +96,18 @@ def _chat_llm(**overrides: Any):  # noqa: D401
     api_key = os.getenv("OPENAI_API_KEY")
     if api_key:
         try:
-            return ChatOpenAI(
+            # Pop temperature from overrides if provided to avoid duplicate keys
+            temperature = overrides.pop("temperature", 0.2)
+            llm = ChatOpenAI(
                 model_name=_DEFAULT_MODEL,
-                temperature=0,
+                temperature=temperature,
                 max_retries=0,  # we handle retries at helper-function level
                 **overrides,
             )
+            # Backward-compat alias ------------------------------------
+            if not hasattr(llm, "predict"):
+                llm.predict = lambda prompt, **kw: llm.invoke(prompt, **kw)  # type: ignore[assignment]
+            return llm
         except Exception as exc:  # noqa: BLE001
             raise ValueError(f"Failed to instantiate ChatOpenAI: {exc}") from exc
 
@@ -159,10 +169,30 @@ def chat(prompt: str, **kwargs: Any) -> str:  # noqa: D401
 
     llm = get_chat_llm()
     try:
-        return llm.predict(prompt, **kwargs)  # type: ignore[attr-defined]
+        return call_llm(llm, prompt, **kwargs)
     except Exception as exc:  # noqa: BLE001
-        # Re-raise under RuntimeError for a uniform exception type per spec
         raise RuntimeError(str(exc)) from exc
+
+
+# ---------------------------------------------------------------------------
+# Unified invoke helper ------------------------------------------------------
+# ---------------------------------------------------------------------------
+
+
+def call_llm(llm: Any, prompt: str, **kwargs: Any) -> str:  # noqa: D401, ANN401
+    """Call ``llm.invoke`` and normalise the return value to *str*."""
+
+    if hasattr(llm, "invoke"):
+        result = llm.invoke(prompt, **kwargs)
+    elif hasattr(llm, "predict"):
+        result = llm.predict(prompt, **kwargs)  # type: ignore[attr-defined]
+    else:
+        raise AttributeError("LLM instance has neither invoke nor predict method")
+
+    # ChatOpenAI returns an AIMessage; FakeListLLM returns str
+    if hasattr(result, "content"):
+        return result.content  # type: ignore[attr-defined]
+    return str(result)
 
 
 # Internal re-export for typing convenience ----------------------------------------

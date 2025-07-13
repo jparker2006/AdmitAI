@@ -142,19 +142,19 @@ Return JSON only.
 **Tests**: Prompt variable validation, JSON schema compliance, deterministic offline test with `FakeListLLM`.
 
 #### 2.5.1.2 OutlineTool 🧠
-**Files**: `essay_agent/tools/outline.py`, `essay_agent/prompts/outline.txt`  
+**Files**: `essay_agent/tools/outline.py`, `essay_agent/prompts/outline.py`  
 **Prompt** (excerpt): Provides step-by-step structure: Hook, Context, Conflict, Growth, Reflection, target words = **{word_count}**. Requires JSON output `{ "outline": { ... } }`.
 
 #### 2.5.1.3 DraftTool 🧠
-**Files**: `essay_agent/tools/draft.py`, `essay_agent/prompts/draft.txt`  
+**Files**: `essay_agent/tools/draft.py`, `essay_agent/prompts/draft.py`  
 **Prompt**: Expands outline into full draft, preserves `{voice_profile}`, enforces first-person, vivid detail, smooth transitions. Returns JSON `{ "draft": "..." }`.
 
 #### 2.5.1.4 RevisionTool 🧠
-**Files**: `essay_agent/tools/revision.py`, `essay_agent/prompts/revision.txt`  
+**Files**: `essay_agent/tools/revision.py`, `essay_agent/prompts/revision.py`  
 **Prompt**: Given `{draft}` & `{revision_focus}`, generate improved draft plus change log. Outputs JSON `{ "revised_draft": "...", "changes": ["..."] }`.
 
 #### 2.5.1.5 PolishTool 🧠
-**Files**: `essay_agent/tools/polish.py`, `essay_agent/prompts/polish.txt`  
+**Files**: `essay_agent/tools/polish.py`, `essay_agent/prompts/polish.py`  
 **Prompt**: Performs final grammar & style polish, ensures exactly `{word_count}` words. Outputs JSON `{ "final_draft": "..." }`.
 
 **Shared Acceptance Criteria for 2.5.1.x**  
@@ -252,6 +252,10 @@ Return JSON only.
 - ✅ CLI interface for testing
 
 **Next Steps**: Enhanced tools and production features (Phases 3-10)
+
+
+RETHINK THE NEXT STEPS
+
 
 ---
 

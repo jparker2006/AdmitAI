@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import dotenv
+dotenv.load_dotenv()
+
 """essay_agent.demo
 
 A minimal CLI walkthrough of the complete essay workflow *without* any LLM
@@ -32,7 +35,6 @@ from essay_agent.tools import register_tool
 # ---------------------------------------------------------------------------
 
 
-@register_tool("brainstorm")
 def brainstorm(prompt: EssayPrompt, profile: UserProfile) -> List[str]:
     """Return three canned story ideas based on the prompt text."""
 
@@ -44,7 +46,6 @@ def brainstorm(prompt: EssayPrompt, profile: UserProfile) -> List[str]:
     ]
 
 
-@register_tool("outline")
 def outline(story: str) -> str:
     """Return a one-paragraph outline for the chosen story."""
 
@@ -59,7 +60,6 @@ def outline(story: str) -> str:
     ).strip()
 
 
-@register_tool("draft")
 def draft(outline_text: str) -> str:
     """Expand the outline into a short essay draft."""
 
@@ -72,14 +72,12 @@ def draft(outline_text: str) -> str:
     )
 
 
-@register_tool("revise")
 def revise(draft_text: str) -> str:
     """Return a lightly revised version of the draft."""
 
     return draft_text + " (revised for clarity)"
 
 
-@register_tool("polish")
 def polish(revised_text: str) -> str:
     """Return a polished final essay string."""
 
@@ -106,24 +104,44 @@ def run_demo(*, as_json: bool = False) -> str | Dict[str, str]:
 
     prompt = EssayPrompt(text="Describe a challenge you overcame.")
     # Minimal user profile for demonstration
-    profile = UserProfile.model_validate(
-        {
-            "user_info": {
-                "name": "Demo Student",
-                "grade": 12,
-                "intended_major": "Computer Science",
-                "college_list": ["Generic University"],
-                "platforms": [],
-            },
-            "academic_profile": {
-                "gpa": 3.9,
-                "test_scores": {"SAT": 1550},
-                "courses": [],
-                "activities": [],
-            },
-            "core_values": [],
-        }
-    )
+    try:
+        profile = UserProfile.model_validate(
+            {
+                "user_info": {
+                    "name": "Jake Parker",
+                    "grade": 12,
+                    "intended_major": "Computer Science",
+                    "college_list": ["Stanford"],
+                    "platforms": [],
+                },
+                "academic_profile": {
+                    "gpa": 3.9,
+                    "test_scores": {"SAT": 1550},
+                    "courses": [],
+                    "activities": [],
+                },
+                "core_values": [],
+            }
+        )
+    except Exception:  # pragma: no cover – fallback minimal profile
+        profile = UserProfile.model_validate(
+            {
+                "user_info": {
+                    "name": "Demo User",
+                    "grade": 12,
+                    "intended_major": "Undeclared",
+                    "college_list": [],
+                    "platforms": [],
+                },
+                "academic_profile": {
+                    "gpa": None,
+                    "test_scores": {},
+                    "courses": [],
+                    "activities": [],
+                },
+                "core_values": [],
+            }
+        )
 
     outputs: Dict[str, str] = {}
 
@@ -175,13 +193,89 @@ def run_demo(*, as_json: bool = False) -> str | Dict[str, str]:
 
 def main(argv: List[str] | None = None) -> None:  # noqa: D401
     parser = argparse.ArgumentParser(description="Essay Agent Demo CLI")
-    parser.add_argument(
-        "--json",
-        action="store_true",
-        help="Output results as JSON instead of human-readable text.",
-    )
+    parser.add_argument("prompt", nargs="*", help="Essay prompt to answer. If omitted, uses a default.")
+    parser.add_argument("--json", action="store_true", help="Output results as JSON instead of human-readable text.")
+    parser.add_argument("--agent", action="store_true", help="Run full EssayAgent workflow (requires OPENAI_API_KEY and implemented tools).")
     args = parser.parse_args(argv)
 
+    if args.agent:
+        from essay_agent.agent import EssayAgent
+        from essay_agent.models import EssayPrompt
+        from essay_agent.tools import REGISTRY as TOOL_REGISTRY
+
+        user_prompt = " ".join(args.prompt).strip() or "Describe a challenge you overcame."
+        essay_prompt = EssayPrompt(text=user_prompt, word_limit=650)
+
+        # Remove stub tools registered in this module -----------------------
+        for key in ["brainstorm", "outline", "draft", "revise", "polish"]:
+            tool = TOOL_REGISTRY.get(key)
+            if tool is not None and tool.__module__ == __name__:
+                TOOL_REGISTRY.pop(key, None)
+
+        # Re-import real tool modules to ensure registry populated ---------
+        import importlib
+        for mod_name in [
+            "essay_agent.tools.brainstorm",
+            "essay_agent.tools.outline",
+            "essay_agent.tools.draft",
+            "essay_agent.tools.revision",
+            "essay_agent.tools.polish",
+        ]:
+            importlib.import_module(mod_name)
+
+        agent = EssayAgent(user_id="cli_user")
+        result_dict = agent.generate_essay(essay_prompt)
+
+        if args.json:
+            print(json.dumps(result_dict, indent=2))
+        else:
+            # Define the order of steps to print
+            steps_order = ["brainstorm", "outline", "draft", "revision", "polish"]
+            
+            print("\n=============================================")
+            print("=             AGENT WORKFLOW              =")
+            print("=============================================")
+
+            for step_name in steps_order:
+                if step_name in result_dict:
+                    print(f"\n✅ === STEP: {step_name.upper()} ===\n")
+                    step_output = result_dict[step_name]
+                    
+                    # Custom format for brainstorm stories
+                    if step_name == "brainstorm" and isinstance(step_output, dict) and "stories" in step_output:
+                        for i, story in enumerate(step_output.get("stories", [])):
+                            story_data = story if isinstance(story, dict) else story.dict()
+                            print(f"  IDEA {i+1}: {story_data.get('title')}")
+                            print(f"    Description: {story_data.get('description')}")
+                            print(f"    Prompt Fit: {story_data.get('prompt_fit')}")
+                            print(f"    Insights: {', '.join(story_data.get('insights', []))}\n")
+                    # Custom format for revision
+                    elif step_name == "revision" and isinstance(step_output, dict):
+                         print("Revised Draft Snippet:")
+                         print(textwrap.indent(step_output.get('revised_draft', '')[:200] + "...", "  "))
+                         print("\n  Changes Made:")
+                         for change in step_output.get('changes', []):
+                             print(f"  - {change}")
+                    # General formatted print for others
+                    elif isinstance(step_output, (dict, list)):
+                         print(json.dumps(step_output, indent=2))
+                    else:
+                        print(textwrap.indent(str(step_output), "  "))
+            
+            print("\n\n=============================================")
+            print("=              FINAL ESSAY                =")
+            print("=============================================")
+            print(result_dict.get("final_draft", "Essay not found."))
+        return
+
+    # Fallback to stub demo --------------------------------------------------
+    # Register stub tools for demo mode
+    register_tool("brainstorm")(brainstorm)
+    register_tool("outline")(outline)
+    register_tool("draft")(draft)
+    register_tool("revise")(revise)
+    register_tool("polish")(polish)
+    
     result = run_demo(as_json=args.json)
 
     if args.json:

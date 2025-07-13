@@ -5,12 +5,39 @@ Exposes convenience factories for quickly instantiating the Planner → Executor
 Nothing heavy should happen at import time – keep side-effects minimal.
 """
 
+# ---------------------------------------------------------------------------
+# Suppress noisy LangChain deprecation warnings so CLI output remains clean.
+# Users can re-enable by setting the `ESSAY_AGENT_DEBUG_WARNINGS` env variable.
+# ---------------------------------------------------------------------------
+
+import os
+import warnings
+import importlib
+
+# Silence LangChainDeprecationWarning variants unless explicitly opted-in
+if os.getenv("ESSAY_AGENT_DEBUG_WARNINGS", "0") != "1":
+    for mod_path in [
+        "langchain_core._api.deprecation",
+        "langchain._api.module_import",
+    ]:
+        try:
+            mod = importlib.import_module(mod_path)
+            if hasattr(mod, "LangChainDeprecationWarning"):
+                warnings.filterwarnings("ignore", category=getattr(mod, "LangChainDeprecationWarning"))
+        except ModuleNotFoundError:
+            continue
+    # Fallback: blanket-ignore generic DeprecationWarnings from langchain
+    warnings.filterwarnings("ignore", category=DeprecationWarning, module="langchain")
+
 # Public symbols
+from .agent import EssayAgent  # noqa: E402
+
 __all__ = [
     "EssayPlanner",
     "EssayExecutor",
-    "get_chat_llm",
-    "track_cost",
+    "EssayAgent",
+    "load_user_profile",
+    "save_user_profile",
 ]
 
 # Core imports
