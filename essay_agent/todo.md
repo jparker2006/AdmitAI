@@ -253,9 +253,18 @@ Return JSON only.
 
 **Next Steps**: Enhanced tools and production features (Phases 3-10)
 
+### Phase 3 Execution Roadmap (incremental sessions)
 
-RETHINK THE NEXT STEPS
+| Session | Focus | Deliverables |
+|---------|-------|--------------|
+| 1 | Prompt-Analysis tools | `essay_agent/prompts/prompt_analysis.py`, `essay_agent/tools/prompt_tools.py` with Classify/ExtractRequirements/SuggestStrategy/DetectOverlap. Update planner to call analysis step; unit + integration tests. |
+| 2 | Story-level Brainstorm tools | `.../prompts/brainstorming.py`, `.../tools/brainstorm_tools.py` implementing StorySuggestion / StoryMatching / StoryExpansion / UniquenessValidation; tests and CLI output. |
+| 3 | Structure & Outline tools | `.../prompts/structure.py`, `.../tools/structure_tools.py` (OutlineGenerator, StructureValidator, TransitionSuggestion, LengthOptimizer) plus planner edge. |
+| 4 | Drafting & Writing tools | `.../prompts/writing.py`, `.../tools/writing_tools.py` (OutlineExpansion, ParagraphRewrite, OpeningImprovement, VoiceStrengthening); tests and CLI paragraph output. |
+| 5 | Evaluation & Scoring tools | `.../prompts/evaluation.py`, `.../tools/evaluation_tools.py` (Scoring, WeaknessHighlight, ClichéDetection, AlignmentCheck) with scores printed in CLI. |
+| 6 | Polish & Refinement tools | `.../prompts/polish.py`, `.../tools/polish_tools.py` (GrammarFix, VocabularyEnhancement, ConsistencyCheck, WordCountOptimizer). Replace legacy PolishTool. |
 
+After each session run `ESSAY_AGENT_CACHE=0 python -m essay_agent.demo --agent "<prompt>"` and `pytest -q` to ensure no regressions.
 
 ---
 
