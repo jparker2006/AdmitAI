@@ -1,36 +1,91 @@
+"""Tool registry and dynamic loader for Essay Agent.
 """
-Tool Registry
+from __future__ import annotations
 
-Each tool must expose a callable returning JSON-serializable output.
-Register tools in ``TOOL_REGISTRY`` to allow the Executor to discover them.
+import importlib
+import inspect
+import pkgutil
+import warnings
+from pathlib import Path
+from typing import Any, Dict
 
-Design Note:
-Using a simple dict for now; migrate to entry-point discovery or Pluggy plugin
-manager later for extensibility.
-"""
+from langchain.tools import BaseTool
+from essay_agent.tools.base import ValidatedTool
 
-from typing import Callable, Dict
+# ---------------------------------------------------------------------------
+# Registry implementation
+# ---------------------------------------------------------------------------
 
-TOOL_REGISTRY: Dict[str, Callable] = {}
 
+class ToolRegistry(dict):
+    """Dictionary-like container for LangChain `BaseTool` instances."""
+
+    def register(self, tool: BaseTool, *, overwrite: bool = False) -> None:
+        if tool.name in self and not overwrite:
+            warnings.warn(f"Tool '{tool.name}' already registered; skipping.")
+            return
+        self[tool.name] = tool
+
+    # Synchronous call ------------------------------------------------------
+    def call(self, name: str, **kwargs: Any):  # noqa: D401
+        tool = self.get(name)
+        if tool is None:
+            raise KeyError(f"Tool '{name}' not found")
+        return tool(**kwargs)
+
+    # Async call ------------------------------------------------------------
+    async def acall(self, name: str, **kwargs: Any):  # noqa: D401
+        tool = self.get(name)
+        if tool is None:
+            raise KeyError(f"Tool '{name}' not found")
+        return await tool.ainvoke(**kwargs)
+
+
+REGISTRY = ToolRegistry()
+
+# Backwards compatibility alias
+TOOL_REGISTRY = REGISTRY
+
+# ---------------------------------------------------------------------------
+# Decorator helper (works for subclasses or callables returning BaseTool)
+# ---------------------------------------------------------------------------
 
 def register_tool(name: str):
-    """Decorator to register a tool function in the global registry."""
+    """Decorator to register a tool class or factory under `name`."""
 
-    def decorator(func: Callable):
-        TOOL_REGISTRY[name] = func
-        return func
+    def decorator(obj):
+        if inspect.isclass(obj) and issubclass(obj, BaseTool):
+            instance = obj()
+        elif isinstance(obj, BaseTool):
+            instance = obj
+        elif callable(obj):
+            # Wrap plain callable in a ValidatedTool subclass ----------------
+            func = obj
+            tool_name = name
+
+            class _FuncTool(ValidatedTool):
+                name = tool_name  # type: ignore
+                description = func.__doc__ or "Wrapped function tool"
+
+                def _run(self, *args, **kwargs):  # type: ignore
+                    return func(*args, **kwargs)
+
+            instance = _FuncTool()
+        else:
+            raise TypeError("register_tool requires BaseTool subclass/instance or callable")
+        instance.name = name  # ensure name matches registry key
+        REGISTRY.register(instance, overwrite=True)
+        return obj
 
     return decorator
 
 
-# ----- LangChain EchoTool registration ---------------------------------------
+# ---------------------------------------------------------------------------
+# Dynamic module loading (import all siblings to auto-register tools)
+# ---------------------------------------------------------------------------
 
-# The full-featured EchoTool lives in ``echo.py``.  We import and register a
-# singleton instance here so existing Planner/Executor logic can discover it
-# via the global ``TOOL_REGISTRY``.
-
-from .echo import EchoTool
-
-# Register instance (callable thanks to BaseTool.__call__)
-TOOL_REGISTRY["echo"] = EchoTool() 
+_current_pkg = Path(__file__).parent
+for mod_info in pkgutil.iter_modules([str(_current_pkg)]):
+    if mod_info.name == "__init__":
+        continue
+    importlib.import_module(f"{__name__}.{mod_info.name}") 

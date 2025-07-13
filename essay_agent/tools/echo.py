@@ -11,10 +11,13 @@ from __future__ import annotations
 
 from typing import Any, Dict
 
-from langchain.tools import BaseTool
+# Note: use project ValidatedTool base for unified timeout & error handling
+from essay_agent.tools.base import ValidatedTool
+from essay_agent.tools import register_tool
 
 
-class EchoTool(BaseTool):
+@register_tool("echo")
+class EchoTool(ValidatedTool):
     """Return whatever message is passed in.
 
     This is primarily useful for smoke-testing the tool registry and
