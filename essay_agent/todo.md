@@ -94,6 +94,7 @@
 **Files**: `essay_agent/llm_client.py`  
 **Deliverable**: **CODE LOGIC**: Implement LangChain's ChatOpenAI and OpenAI classes with GPT-4 configuration. Add LangChain callbacks for cost tracking, response caching using LangChain's cache modules, and retry logic with exponential backoff.  
 **Tests**: OpenAI API integration, LangChain callbacks, caching, and error handling tests.
+**Note**: I put my OpenAI key in .env
 
 ### 2.2 LangChain Prompt Template System 🧠
 **Files**: `essay_agent/prompts/__init__.py`, `essay_agent/prompts/templates.py`  
@@ -118,17 +119,49 @@
 
 ## Phase 2.5 · Core Essay Workflow Tools (Priority 2)
 
-### 2.5.1 Essential Writing Tools 🧠
-**Files**: `essay_agent/tools/core_tools.py`, `essay_agent/prompts/core_prompts.py`  
-**Deliverable**: Create the 5 most critical tools for MVP essay workflow:
-- `BrainstormTool` - **PROMPT**: `"Given this essay prompt: {prompt} and user profile: {profile}, suggest 3 compelling personal stories that would make strong essays. For each story, provide: title, brief description, why it fits the prompt, and potential insights to explore."`
-- `OutlineTool` - **PROMPT**: `"Create a detailed outline for this essay story: {story} responding to prompt: {prompt}. Structure: Hook (1 sentence), Context (2-3 sentences), Conflict/Challenge (3-4 sentences), Growth/Resolution (3-4 sentences), Reflection/Insight (2 sentences). Total target: {word_count} words."`
-- `DraftTool` - **PROMPT**: `"Expand this outline into a full essay draft: {outline}. Maintain the user's voice: {voice_profile}. Write in first person, use specific details, show don't tell, and ensure smooth transitions between paragraphs."`
-- `RevisionTool` - **PROMPT**: `"Revise this essay draft: {draft}. Focus on: {revision_focus} (e.g., 'stronger opening', 'more specific details', 'clearer thesis'). Maintain the core story but improve {revision_focus}."`
-- `PolishTool` - **PROMPT**: `"Polish this essay for final submission: {draft}. Fix grammar, improve word choice, ensure consistency, and optimize for exactly {word_count} words. Maintain the authentic voice and meaning."`
-**Prerequisites**: Phase 2.1-2.4 complete  
-**Acceptance Criteria**: Can run complete essay workflow with real GPT-4 prompts  
-**Tests**: End-to-end essay generation, prompt validation, and quality assessment tests
+Split into five focused tasks to enable parallel, high-quality implementation.
+
+#### 2.5.1.1 BrainstormTool 🧠
+**Files**: `essay_agent/tools/brainstorm.py`, `essay_agent/prompts/brainstorm.txt`  
+**Deliverable**: Implement `BrainstormTool` (LangChain `ValidatedTool`) that invokes GPT-4 with the following high-stakes prompt:  
+```
+SYSTEM: You are the Brainstorming Agent for a college-essay advisor. Your goal is to surface authentic, compelling personal stories.
+
+INSTRUCTIONS (follow *all*):
+1. Read the essay prompt (**{prompt}**) and user profile (**{profile}**).
+2. Generate exactly **3** story ideas. For each idea provide:
+   - "title": ≤ 8 words
+   - "description": 2-3 sentences painting a vivid picture
+   - "prompt_fit": 1 sentence explaining *why* the story answers the prompt
+   - "insights": list 1-2 personal values or growth themes to highlight
+3. Output *only* valid JSON `{ "stories": [...] }` with the above keys.
+4. Do **NOT** invent facts outside the profile; reason but do not hallucinate.
+
+Return JSON only.
+```
+**Tests**: Prompt variable validation, JSON schema compliance, deterministic offline test with `FakeListLLM`.
+
+#### 2.5.1.2 OutlineTool 🧠
+**Files**: `essay_agent/tools/outline.py`, `essay_agent/prompts/outline.txt`  
+**Prompt** (excerpt): Provides step-by-step structure: Hook, Context, Conflict, Growth, Reflection, target words = **{word_count}**. Requires JSON output `{ "outline": { ... } }`.
+
+#### 2.5.1.3 DraftTool 🧠
+**Files**: `essay_agent/tools/draft.py`, `essay_agent/prompts/draft.txt`  
+**Prompt**: Expands outline into full draft, preserves `{voice_profile}`, enforces first-person, vivid detail, smooth transitions. Returns JSON `{ "draft": "..." }`.
+
+#### 2.5.1.4 RevisionTool 🧠
+**Files**: `essay_agent/tools/revision.py`, `essay_agent/prompts/revision.txt`  
+**Prompt**: Given `{draft}` & `{revision_focus}`, generate improved draft plus change log. Outputs JSON `{ "revised_draft": "...", "changes": ["..."] }`.
+
+#### 2.5.1.5 PolishTool 🧠
+**Files**: `essay_agent/tools/polish.py`, `essay_agent/prompts/polish.txt`  
+**Prompt**: Performs final grammar & style polish, ensures exactly `{word_count}` words. Outputs JSON `{ "final_draft": "..." }`.
+
+**Shared Acceptance Criteria for 2.5.1.x**  
+• Tools are registered in `essay_agent.tools.REGISTRY`.  
+• Prompts load via new text files and pass variable validation.  
+• Unit tests for each tool; integration test generates essay end-to-end.  
+• Adhere to 100× prompt-engineering guidelines (role definitions, layered instructions, JSON outputs, minimal hallucination).
 
 ### 2.5.2 Basic Memory Integration ⚙️
 **Files**: `essay_agent/memory/simple_memory.py`  

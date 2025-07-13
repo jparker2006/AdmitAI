@@ -9,11 +9,21 @@ Nothing heavy should happen at import time – keep side-effects minimal.
 __all__ = [
     "EssayPlanner",
     "EssayExecutor",
+    "get_chat_llm",
+    "track_cost",
 ]
 
 # Core imports
 from .planner import EssayPlanner  # noqa: F401
 from .executor import EssayExecutor  # noqa: F401
+
+# LLM client convenience exports ---------------------------------------------------
+try:
+    from .llm_client import get_chat_llm, track_cost  # noqa: F401
+except ModuleNotFoundError:  # pragma: no cover
+    # llm_client may have optional heavy deps; degrade gracefully
+    get_chat_llm = None  # type: ignore
+    track_cost = None  # type: ignore
 
 # Optional – state_manager requires heavy deps not yet installed
 try:
