@@ -258,6 +258,76 @@ Relook at what we should really do next. Is the planner working? How does the ag
 
 ---
 
+## Phase 6 · Pre-CLI Agent Readiness
+
+### 6.1 Smart Planner Rework ⚙️ 🧠
+**Files**: `essay_agent/planner.py`, `essay_agent/prompts/smart_planning.py`  
+**Deliverable**: **CODE LOGIC + PROMPTS**: Rewrite `EssayReActPlanner.decide_next_action()` as an intelligent planner that analyzes tool outputs, memory state, and user context to make informed decisions. Add support for plan refinement, looping behavior (revision → polish → retry), and conditional branching based on essay quality metrics.  
+**Prerequisites**: Current planner and memory system  
+**Acceptance Criteria**: 
+- Planner can analyze previous tool outputs and decide whether to continue, retry, or branch
+- Supports revision loops when essay quality is below threshold
+- Uses memory context to avoid story reuse and maintain consistency
+- Provides clear reasoning for each planning decision
+**Tests**: Planning decision logic, revision loop handling, memory integration, and reasoning validation tests
+
+### 6.2 Enhanced Executor with Dynamic Branching ⚙️
+**Files**: `essay_agent/executor.py`  
+**Deliverable**: **CODE LOGIC**: Upgrade `EssayExecutor` to support dynamic plan execution with conditional branching using LangGraph's conditional edges. Add comprehensive fallback/retry mechanisms, state-based tool selection, and better error recovery with exponential backoff.  
+**Prerequisites**: Phase 6.1 complete  
+**Acceptance Criteria**:
+- LangGraph DAG can handle dynamic plans with conditional transitions
+- Automatic retry with exponential backoff for tool failures
+- State-based tool selection based on current essay quality
+- Fallback strategies when primary tools fail
+**Tests**: Dynamic plan execution, conditional branching, retry logic, and error recovery tests
+
+### 6.3 Memory-Integrated Tool Enhancement ⚙️
+**Files**: `essay_agent/tools/brainstorm.py`, `essay_agent/tools/outline.py`, `essay_agent/tools/draft.py`, `essay_agent/tools/revision.py`, `essay_agent/tools/polish.py`  
+**Deliverable**: **CODE LOGIC**: Ensure all core workflow tools read from and update memory appropriately. Add memory context to tool inputs, story reuse prevention, and consistent voice/style maintenance across essay phases.  
+**Prerequisites**: Current tools and memory system  
+**Acceptance Criteria**:
+- All tools access user profile and essay history from memory
+- Story reuse prevention integrated into brainstorm tool
+- Voice consistency maintained across draft and revision tools
+- Memory updated with intermediate results for planner decisions
+**Tests**: Memory read/write integration, story reuse prevention, voice consistency, and data persistence tests
+
+### 6.4 Complete EssayAgent Workflow Implementation ⚙️
+**Files**: `essay_agent/agent.py`  
+**Deliverable**: **CODE LOGIC**: Implement comprehensive `EssayAgent.run(prompt, profile)` method that orchestrates the complete essay pipeline using the enhanced planner and executor. Add debug mode with detailed logging of planner decisions, tool inputs/outputs, and execution flow.  
+**Prerequisites**: Phases 6.1-6.3 complete  
+**Acceptance Criteria**:
+- Single method runs complete essay workflow from prompt to polished draft
+- Debug mode logs all planner decisions and tool executions
+- Proper error handling and graceful degradation
+- Returns structured results with metadata and execution statistics
+**Tests**: End-to-end workflow execution, debug mode functionality, error handling, and result validation tests
+
+### 6.5 Evaluation Harness for End-to-End Testing ⚙️
+**Files**: `essay_agent/eval/__init__.py`, `essay_agent/eval/test_runs.py`, `essay_agent/eval/sample_prompts.py`  
+**Deliverable**: **CODE LOGIC**: Create evaluation harness that runs sample essay prompts through the complete workflow and validates output quality. Include at least 3 diverse essay prompts with different themes and requirements.  
+**Prerequisites**: Phase 6.4 complete  
+**Acceptance Criteria**:
+- Automated test suite runs multiple essay prompts end-to-end
+- Validates essay structure, word count, and prompt adherence
+- Generates performance metrics and quality scores
+- Provides clear pass/fail criteria for workflow validation
+**Tests**: Evaluation harness execution, quality validation, performance metrics, and automated testing integration
+
+---
+
+**Phase 6 Success Criteria**: 
+- ✅ Smart planner makes informed decisions based on context and memory
+- ✅ Executor handles dynamic plans with proper branching and retry logic  
+- ✅ All tools integrate seamlessly with memory system
+- ✅ Complete EssayAgent.run() method works end-to-end with debug mode
+- ✅ Evaluation harness validates workflow with multiple sample prompts
+
+**Phase 6 Milestone**: Essay Agent is fully ready for CLI integration with robust planning, execution, and evaluation capabilities.
+
+---
+
 ## Phase 4 · Multi-Agent Architecture (Post-MVP)
 
 ### 4.1 LangGraph Agent Base Classes
