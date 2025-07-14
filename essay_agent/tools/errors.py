@@ -8,4 +8,15 @@ class ToolError(BaseModel):
 
     type: str
     message: str
-    trace: Optional[str] = None 
+    trace: Optional[str] = None
+    
+    def __str__(self) -> str:
+        """String representation for JSON serialization."""
+        return f"{self.type}: {self.message}"
+    
+    class Config:
+        """Pydantic configuration."""
+        json_encoders = {
+            # Ensure proper JSON serialization
+            str: lambda v: v
+        } 

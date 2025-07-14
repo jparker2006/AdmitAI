@@ -16,6 +16,9 @@ from essay_agent.prompts.outline import OUTLINE_PROMPT
 from essay_agent.prompts.templates import render_template
 from essay_agent.tools.base import ValidatedTool
 from essay_agent.tools import register_tool
+from essay_agent.memory.simple_memory import ensure_essay_record, SimpleMemory
+from essay_agent.memory.user_profile_schema import EssayVersion
+from datetime import datetime
 
 
 # ---------------------------------------------------------------------------
@@ -78,8 +81,27 @@ class OutlineTool(ValidatedTool):
     # ------------------------------------------------------------------
 
     def _run(  # type: ignore[override]
-        self, *, story: str, prompt: str, word_count: int = 650, **_: Any
+        self, *, story: str, prompt: str, word_count: int = 650, user_id: str | None = None, **_: Any
     ) -> Dict[str, Any]:
+        from essay_agent.tools.errors import ToolError
+        
+        # Check if story is a failed tool result
+        if isinstance(story, dict) and "error" in story and story["error"] is not None:
+            raise ValueError(f"Cannot process - upstream brainstorm tool failed: {story['error']}")
+        
+        # Extract actual story from successful tool result
+        if isinstance(story, dict) and "ok" in story:
+            if story["ok"] is None:
+                raise ValueError("Brainstorm tool returned no result")
+            story = story["ok"]
+            # If it's a dict with 'stories' key, extract first story
+            if isinstance(story, dict) and "stories" in story:
+                stories = story["stories"]
+                if isinstance(stories, list) and len(stories) > 0:
+                    story = stories[0].get("title", "Personal Story")
+                else:
+                    story = "Personal Story"
+        
         story = str(story).strip()
         prompt_txt = str(prompt).strip()
         if not story:
@@ -102,28 +124,50 @@ class OutlineTool(ValidatedTool):
 
         # Offline mode returns the literal string "FAKE_RESPONSE" ----------
         if raw == "FAKE_RESPONSE":
-            return _build_stub(story, prompt_txt, word_count)
+            result = _build_stub(story, prompt_txt, word_count)
+        else:
+            # Attempt to parse JSON -------------------------------------------
+            try:
+                parsed: Dict[str, Any] = json.loads(raw)
+                
+                # Basic schema validation -----------------------------------------
+                outline = parsed.get("outline")
+                if not isinstance(outline, dict):
+                    result = _build_stub(story, prompt_txt, word_count)
+                else:
+                    required_keys = {"hook", "context", "conflict", "growth", "reflection"}
+                    if required_keys - set(outline):
+                        result = _build_stub(story, prompt_txt, word_count)
+                    else:
+                        # Ensure estimated_word_count present -----------------------------
+                        if "estimated_word_count" not in parsed:
+                            parsed["estimated_word_count"] = word_count
+                        result = parsed
+                        
+            except json.JSONDecodeError:
+                result = _build_stub(story, prompt_txt, word_count)
 
-        # Attempt to parse JSON -------------------------------------------
-        try:
-            parsed: Dict[str, Any] = json.loads(raw)
-        except json.JSONDecodeError:
-            return _build_stub(story, prompt_txt, word_count)
+        # --------------------- Memory persistence -------------------------
+        if user_id:
+            try:
+                rec = ensure_essay_record(user_id, prompt_txt)
+                rec.status = "outline"
+                rec.final_version = 0
+                # store outline inside first version placeholder
+                ver = EssayVersion(
+                    version=0,
+                    timestamp=datetime.utcnow(),
+                    content=json.dumps(result["outline"], ensure_ascii=False),
+                    word_count=word_count,
+                )
+                rec.versions.append(ver)
+                # Save profile
+                profile = SimpleMemory.load(user_id)
+                SimpleMemory.save(user_id, profile)
+            except Exception:
+                pass
 
-        # Basic schema validation -----------------------------------------
-        outline = parsed.get("outline")
-        if not isinstance(outline, dict):
-            return _build_stub(story, prompt_txt, word_count)
-
-        required_keys = {"hook", "context", "conflict", "growth", "reflection"}
-        if required_keys - set(outline):
-            return _build_stub(story, prompt_txt, word_count)
-
-        # Ensure estimated_word_count present -----------------------------
-        if "estimated_word_count" not in parsed:
-            parsed["estimated_word_count"] = word_count
-
-        return parsed
+        return result
 
     # ------------------------------------------------------------------
     # Convenience call wrapper (mirrors EchoTool pattern)

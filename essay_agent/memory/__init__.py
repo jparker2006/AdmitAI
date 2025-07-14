@@ -47,6 +47,8 @@ def save_user_profile(user_id: str, profile: Dict[str, Any]) -> None:
 # Import modules that depend on helpers AFTER functions are defined to avoid circular imports
 from .hierarchical import HierarchicalMemory  # noqa: E402
 from .semantic_search import SemanticSearchIndex  # noqa: E402
+from .simple_memory import SimpleMemory, is_story_reused  # noqa: E402
+from .rag import RAGConfig, build_rag_chain  # noqa: E402
 
 __all__ = [
     "load_user_profile",

@@ -353,16 +353,6 @@ Relook at what we should really do next. Is the planner working? How does the ag
 - Returns structured results with metadata and execution statistics
 **Tests**: End-to-end workflow execution, debug mode functionality, error handling, and result validation tests
 
-### 6.5 Evaluation Harness for End-to-End Testing ⚙️
-**Files**: `essay_agent/eval/__init__.py`, `essay_agent/eval/test_runs.py`, `essay_agent/eval/sample_prompts.py`  
-**Deliverable**: **CODE LOGIC**: Create evaluation harness that runs sample essay prompts through the complete workflow and validates output quality. Include at least 3 diverse essay prompts with different themes and requirements.  
-**Prerequisites**: Phase 6.4 complete  
-**Acceptance Criteria**:
-- Automated test suite runs multiple essay prompts end-to-end
-- Validates essay structure, word count, and prompt adherence
-- Generates performance metrics and quality scores
-- Provides clear pass/fail criteria for workflow validation
-**Tests**: Evaluation harness execution, quality validation, performance metrics, and automated testing integration
 
 ---
 
@@ -380,6 +370,17 @@ Relook at what we should really do next. Is the planner working? How does the ag
 **Files**: `essay_agent/cli.py`  
 **Deliverable**: Rich CLI interface with interactive prompts, progress tracking, and real-time feedback. Supports all essay operations from command line.  
 **Tests**: CLI functionality, user interaction, and error handling tests.
+
+### 6.5 Evaluation Harness for End-to-End Testing ⚙️
+**Files**: `essay_agent/eval/__init__.py`, `essay_agent/eval/test_runs.py`, `essay_agent/eval/sample_prompts.py`  
+**Deliverable**: **CODE LOGIC**: Create evaluation harness that runs sample essay prompts through the complete workflow and validates output quality. Include at least 3 diverse essay prompts with different themes and requirements.  
+**Prerequisites**: Phase 6.4 complete  
+**Acceptance Criteria**:
+- Automated test suite runs multiple essay prompts end-to-end
+- Validates essay structure, word count, and prompt adherence
+- Generates performance metrics and quality scores
+- Provides clear pass/fail criteria for workflow validation
+**Tests**: Evaluation harness execution, quality validation, performance metrics, and automated testing integration
 
 ---
 

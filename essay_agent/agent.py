@@ -10,148 +10,206 @@ from __future__ import annotations
 import time
 from typing import Any, Dict, List
 
-from essay_agent.llm_client import track_cost
-from essay_agent.memory.simple_memory import SimpleMemory, is_story_reused
-from essay_agent.models import EssayPrompt, EssayDraft  # noqa: F401 – used for typing
-from essay_agent.tools import REGISTRY as TOOL_REGISTRY
-from essay_agent.memory.user_profile_schema import EssayRecord, EssayVersion
-from essay_agent.planner import Phase
+from essay_agent.memory.simple_memory import SimpleMemory
+from essay_agent.models import EssayPrompt
+from essay_agent.memory.user_profile_schema import UserProfile
+from essay_agent.planner import Phase, EssayPlan, EssayPlanner
+from essay_agent.executor import EssayExecutor
+from dataclasses import dataclass, field
+from essay_agent.utils.logging import debug_print
+from datetime import datetime
+
+# ---------------------------------------------------------------------------
+# Result container
+# ---------------------------------------------------------------------------
+
+
+@dataclass
+class EssayResult:
+    final_draft: str
+    stories: list[dict[str, Any]] | None = None
+    outline: dict[str, Any] | None = None
+    versions: list[dict[str, Any]] = field(default_factory=list)
+    errors: list[str] = field(default_factory=list)
+    debug_log: list[dict[str, Any]] = field(default_factory=list)
+    stats: dict[str, Any] = field(default_factory=dict)
 
 
 class EssayAgent:  # pylint: disable=too-few-public-methods
-    """User-facing API wrapping planner, executor & memory helpers."""
+    """High-level orchestrator that drives planner & executor until completion."""
 
-    MAX_BRAINSTORM_RETRY = 2
-
-    def __init__(self, user_id: str):
+    def __init__(self, user_id: str, *, max_steps: int = 10):
         self.user_id = user_id
         self.mem = SimpleMemory()
         self.profile = self.mem.load(user_id)
+        self.max_steps = max_steps
+        self._planner = EssayPlanner()
+        self._executor = EssayExecutor()
 
     # ------------------------------------------------------------------
-    # Public API
+    # Public API – new run method
     # ------------------------------------------------------------------
 
-    def generate_essay(self, prompt: EssayPrompt) -> Dict[str, Any]:  # noqa: D401
-        """Run the end-to-end workflow and return final draft + metadata."""
+    def run(self, prompt: EssayPrompt, profile: "UserProfile", *, debug: bool = False) -> EssayResult:  # noqa: D401
+        """Execute full essay workflow returning structured :class:`EssayResult`."""
 
         if not prompt.text.strip():
-            raise ValueError("Prompt text must not be empty")
+            raise ValueError("prompt.text must not be empty")
+
+        # Merge supplied profile with persisted profile ----------------
+        self.profile = profile  # in MVP simply overwrite
+        SimpleMemory.save(self.user_id, profile)
 
         start_time = time.time()
-        workflow: Dict[str, Any] = {}
 
-        # ------------------------------------------------------------------
-        # Phase 1: Brainstorm
-        # ------------------------------------------------------------------
-        brainstorm_tool = TOOL_REGISTRY["brainstorm"]
-        retry = 0
-        stories: List[Dict[str, Any]] | None = None
-        while retry <= self.MAX_BRAINSTORM_RETRY:
-            out = brainstorm_tool(essay_prompt=prompt.text, profile=self.profile.model_dump_json())
-            workflow["brainstorm"] = out
-            if out.get("error"):
-                raise RuntimeError(out["error"])
-            stories = out["ok"]["stories"]
-            # Choose first story not yet reused for this college
-            chosen = None
-            for s in stories:
-                if not is_story_reused(self.user_id, story_title=s["title"], college=prompt.college or ""):  # type: ignore[arg-type]
-                    chosen = s
-                    break
-            if chosen:
-                story = chosen["title"]
+        final_draft: str = ""
+
+        # Initialise plan ------------------------------------------------
+        plan = EssayPlan(
+            phase=Phase.BRAINSTORMING,
+            data={
+                "user_input": prompt.text,
+                "context": {
+                    "user_id": self.user_id,
+                    "essay_prompt": prompt.text,
+                    "user_profile": profile.model_dump() if hasattr(profile, "model_dump") else {},
+                },
+            },
+        )
+
+        debug_log: list[dict[str, Any]] = []
+        errors: list[str] = []
+
+        for step in range(self.max_steps):
+            step_start = time.time()
+            debug_print(debug, f"Step {step} – phase={plan.phase.name}")
+
+            outputs = {}
+            try:
+                outputs = self._executor.run_plan(plan)
+            except Exception as exc:  # pragma: no cover – executor error
+                errors.append(str(exc))
+                debug_print(debug, f"Executor raised {exc}")
                 break
-            retry += 1
-        else:
-            raise RuntimeError("Brainstorm produced only reused stories")
 
-        # ------------------------------------------------------------------
-        # Phase 2: Outline
-        outline_tool = TOOL_REGISTRY["outline"]
-        outline_out = outline_tool(story=story, prompt=prompt.text, word_count=prompt.word_limit)
-        workflow["outline"] = outline_out
-        if outline_out.get("error"):
-            raise RuntimeError(outline_out["error"])
-        outline = outline_out["outline"] if isinstance(outline_out, dict) else outline_out["ok"]["outline"]
+            # Extract tool outputs & errors
+            tool_outputs = {k: v for k, v in outputs.items() if k != "errors"}
+            step_errors = outputs.get("errors", [])
+            errors.extend(step_errors)
 
-        # ------------------------------------------------------------------
-        # Phase 3: Draft
-        draft_tool = TOOL_REGISTRY["draft"]
-        # Extract voice profile from user profile or use default
-        voice_profile = "authentic, personal, reflective"
-        if self.profile.writing_voice:
-            voice_profile = ", ".join(self.profile.writing_voice.tone_preferences) or voice_profile
-        draft_out = draft_tool(outline=outline, voice_profile=voice_profile, word_count=prompt.word_limit)
-        workflow["draft"] = draft_out
-        if draft_out.get("error"):
-            raise RuntimeError(draft_out["error"])
-        draft_text = draft_out["ok"]["draft"] if "ok" in draft_out else draft_out["draft"]
+            # Update plan for next iteration ---------------------------
+            plan.data.setdefault("tool_outputs", {}).update(tool_outputs)
 
-        # ------------------------------------------------------------------
-        # Phase 4: Revise (simple generic focus)
-        revise_tool = TOOL_REGISTRY["revise"]
-        rev_out = revise_tool(draft=draft_text, revision_focus="improve flow", word_count=prompt.word_limit)
-        workflow["revise"] = rev_out
-        if rev_out.get("error"):
-            raise RuntimeError(rev_out["error"])
-        revised_text = rev_out["ok"]["revised_draft"] if "ok" in rev_out else rev_out["revised_draft"]
+            # Determine next phase from executor logic via returned outputs
+            if "polish" in tool_outputs:
+                final_draft = tool_outputs["polish"].get("final_draft") if isinstance(tool_outputs["polish"], dict) else tool_outputs["polish"]
+                # Mark workflow as completed so we don't incorrectly flag errors later
+                plan.phase = Phase.POLISHING
+                break
 
-        # ------------------------------------------------------------------
-        # Phase 5: Polish
-        polish_tool = TOOL_REGISTRY["polish"]
-        with track_cost() as (llm, cb):
-            pol_out = polish_tool(draft=revised_text, word_count=prompt.word_limit)
-            cost = cb.total_cost
-        workflow["polish"] = pol_out
-        if pol_out.get("error"):
-            raise RuntimeError(pol_out["error"])
-        final_text = pol_out["ok"]["final_draft"] if "ok" in pol_out else pol_out["final_draft"]
+            # Let planner choose next (fallback handled inside executor) --
+            plan = EssayPlan(phase=plan.phase, data=plan.data)
+
+            debug_log.append(
+                {
+                    "step": step,
+                    "phase": plan.phase.name,
+                    "tool_outputs": list(tool_outputs.keys()),
+                    "errors": step_errors,
+                    "duration": round(time.time() - step_start, 3),
+                }
+            )
+
+        # Extract final draft from the last successful tool ---------------
+        final_draft = ""
+        tool_outputs = plan.data.get("tool_outputs", {})
+        
+        # Helper to extract successful result from tool output
+        def extract_result(tool_output):
+            if isinstance(tool_output, dict):
+                if "error" in tool_output and tool_output["error"] is not None:
+                    return None  # Tool failed
+                if "ok" in tool_output:
+                    return tool_output["ok"]
+            return tool_output
+        
+        # Try to get final draft from polish -> revise -> draft in that order
+        for tool_name, content_key in [("polish", "final_draft"), ("revise", "revised_draft"), ("draft", "draft")]:
+            if tool_name in tool_outputs:
+                result = extract_result(tool_outputs[tool_name])
+                if result and isinstance(result, dict) and content_key in result:
+                    final_draft = result[content_key]
+                    break
+                elif result and isinstance(result, str):
+                    final_draft = result
+                    break
+
+        if not final_draft:
+            errors.append("No successful draft generated")
+
+        # Only mark max_steps error if workflow did not produce a final draft
+        if plan.phase != Phase.POLISHING and not final_draft:
+            errors.append("max_steps reached without completion")
 
         duration = time.time() - start_time
 
-        # ------------------------------------------------------------------
-        # Persist essay record ----------------------------------------------------
-        record = EssayRecord(
-            prompt_id="N/A",  # can be extended later
-            prompt_text=prompt.text,
-            platform=prompt.college or "generic",
-            status="complete",
-            versions=[
-                EssayVersion(
-                    version=1,
-                    timestamp=time.strftime("%Y-%m-%dT%H:%M:%S"),
-                    content=final_text,
-                    word_count=prompt.word_limit,
-                    used_stories=[story],
-                )
-            ],
+        # Collate artefacts -------------------------------------------
+        stories = None
+        outline = None
+        versions: list[dict[str, Any]] = []
+        
+        if "brainstorm" in tool_outputs:
+            result = extract_result(tool_outputs["brainstorm"])
+            if result and isinstance(result, dict) and "stories" in result:
+                stories = result["stories"]
+                
+        if "outline" in tool_outputs:
+            result = extract_result(tool_outputs["outline"])
+            if result and isinstance(result, dict) and "outline" in result:
+                outline = result["outline"]
+                
+        for name in ("draft", "revise"):
+            if name in tool_outputs:
+                # Always include the raw tool result for debugging, but mark errors clearly
+                tool_result = tool_outputs[name]
+                if isinstance(tool_result, dict) and "error" in tool_result and tool_result["error"] is not None:
+                    # Include error information for debugging
+                    versions.append(tool_result)
+                else:
+                    versions.append(tool_result)
+
+        steps_executed = len(debug_log) if debug else (step + 1 if 'step' in locals() else 0)
+
+        result = EssayResult(
+            final_draft=final_draft or "",
+            stories=stories,
+            outline=outline,
+            versions=versions,
+            errors=errors,
+            debug_log=debug_log if debug else [],
+            stats={"total_time_sec": round(duration, 2), "steps": steps_executed},
         )
-        SimpleMemory.add_essay_record(self.user_id, record)
 
-        # Flatten the workflow results into the top-level dictionary
-        final_result = {
-            "final_draft": final_text,
-            "cost": cost,
-            "duration_sec": duration,
+        # retain plan for legacy wrapper
+        self._last_plan = plan
+
+        return result
+
+    # ------------------------------------------------------------------
+    # Backward-compatibility shim – older tests expect generate_essay()
+    # ------------------------------------------------------------------
+
+    def generate_essay(self, prompt: EssayPrompt):  # noqa: D401
+        """Legacy wrapper that delegates to ``run`` using persisted profile."""
+        res = self.run(prompt, self.profile, debug=False)
+        # Flatten to the original dict structure expected by old tests -----
+        workflow = plan.data.get("tool_outputs", {}) if (plan := getattr(self, "_last_plan", None)) else {}
+        flat: Dict[str, Any] = {
+            "final_draft": res.final_draft,
+            "stories": res.stories,
+            "outline": res.outline,
+            "versions": res.versions,
+            "errors": res.errors,
+            "workflow": workflow,
         }
-        # Add all intermediate step outputs to the final result
-        for step_name, step_output in workflow.items():
-            # Use the 'ok' sub-dictionary if it exists, otherwise the raw output
-            if isinstance(step_output, dict) and "ok" in step_output:
-                final_result[step_name] = step_output["ok"]
-            else:
-                final_result[step_name] = step_output
-
-        # Backward-compatibility: keep nested workflow key for older tests
-        final_result["workflow"] = workflow
-
-        return final_result
-
-    # ------------------------------------------------------------------
-    # Convenience helpers
-    # ------------------------------------------------------------------
-
-    @staticmethod
-    def is_story_reused(user_id: str, story_title: str, college: str) -> bool:  # noqa: D401
-        return is_story_reused(user_id, story_title=story_title, college=college) 
+        return flat 

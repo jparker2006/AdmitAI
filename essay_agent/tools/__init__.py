@@ -38,7 +38,19 @@ class ToolRegistry(dict):
         tool = self.get(name)
         if tool is None:
             raise KeyError(f"Tool '{name}' not found")
-        return await tool.ainvoke(**kwargs)
+
+        # If the tool exposes LangChain's async interface --------------------
+        if hasattr(tool, "ainvoke") and callable(getattr(tool, "ainvoke")):
+            return await tool.ainvoke(**kwargs)  # type: ignore[arg-type]
+
+        # If the tool itself is an async coroutine function ------------------
+        import asyncio
+
+        if asyncio.iscoroutinefunction(tool):  # type: ignore[arg-type]
+            return await tool(**kwargs)  # type: ignore[misc]
+
+        # Fallback to synchronous execution ----------------------------------
+        return tool(**kwargs)  # type: ignore[call-arg]
 
 
 REGISTRY = ToolRegistry()

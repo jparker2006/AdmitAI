@@ -54,16 +54,40 @@ class RevisionTool(ValidatedTool):
         word_count: int | None = None,
         **_: Any,
     ) -> Dict[str, Any]:
-        draft = str(draft).strip()
-        focus = str(revision_focus).strip()
+        """Revise an essay draft per a specific focus and return change log."""
+        from essay_agent.tools.errors import ToolError
+        
+        # ----------------------- Input validation -----------------------
+        # Check if draft is a failed tool result
+        if isinstance(draft, dict) and "error" in draft and draft["error"] is not None:
+            raise ValueError(f"Cannot process - upstream draft tool failed: {draft['error']}")
+        
+        # Extract actual draft from successful tool result
+        if isinstance(draft, dict):
+            # Handle wrappers like {"ok": {...}} from executor failures/successes
+            if "ok" in draft:
+                if draft["ok"] is None:
+                    raise ValueError("Draft tool returned no result")
+                draft = draft["ok"]
 
-        if not draft:
-            raise ValueError("'draft' must be a non-empty string")
-        if not focus:
-            raise ValueError("'revision_focus' must be a non-empty string")
-        if word_count is not None and (not isinstance(word_count, int) or word_count <= 0):
-            raise ValueError("'word_count' must be a positive integer if provided")
+            # At this point `draft` might still be a mapping returned directly
+            # from the DraftTool or a previous RevisionTool.  Extract the raw
+            # draft string if available.
+            if isinstance(draft, dict):
+                if "draft" in draft:
+                    draft = draft["draft"]
+                elif "revised_draft" in draft:
+                    draft = draft["revised_draft"]
+        
+        if not isinstance(draft, str) or not draft.strip():
+            raise ValueError("draft must be a non-empty string")
+        
+        if not isinstance(revision_focus, str) or not revision_focus.strip():
+            raise ValueError("revision_focus must be a non-empty string")
 
+        focus = revision_focus.strip()
+        
+        # ----------------------- Prompt rendering -----------------------
         prompt_rendered = render_template(
             REVISION_PROMPT,
             draft=draft,

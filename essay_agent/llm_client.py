@@ -25,6 +25,7 @@ import contextlib
 import functools
 import os
 from typing import Any, Generator, Union, cast
+import tiktoken  # Add tiktoken for token counting
 
 from tenacity import retry, stop_after_attempt, wait_exponential
 
@@ -179,6 +180,7 @@ def chat(prompt: str, **kwargs: Any) -> str:  # noqa: D401
 # ---------------------------------------------------------------------------
 
 
+@_retryable
 def call_llm(llm: Any, prompt: str, **kwargs: Any) -> str:  # noqa: D401, ANN401
     """Call ``llm.invoke`` and normalise the return value to *str*."""
 
@@ -198,3 +200,53 @@ def call_llm(llm: Any, prompt: str, **kwargs: Any) -> str:  # noqa: D401, ANN401
 # Internal re-export for typing convenience ----------------------------------------
 ChatLLM_T = Union["ChatOpenAI", FakeListLLM]  # type: ignore[name-defined]
 CompletionLLM_T = Union["OpenAI", FakeListLLM]  # type: ignore[name-defined] 
+
+def count_tokens(text: str, model: str = "gpt-4") -> int:
+    """Count tokens in text using tiktoken."""
+    try:
+        encoding = tiktoken.encoding_for_model(model)
+        return len(encoding.encode(text))
+    except Exception:
+        # Fallback: rough estimate (1 token ≈ 4 characters)
+        return len(text) // 4
+
+def truncate_context(context: str, max_tokens: int = 25000, model: str = "gpt-4") -> str:
+    """Truncate context to fit within token limit, preserving important parts."""
+    current_tokens = count_tokens(context, model)
+    
+    if current_tokens <= max_tokens:
+        return context
+    
+    # If it's JSON, try to truncate essay history first
+    try:
+        import json
+        data = json.loads(context)
+        
+        # If it has essay_history, truncate it
+        if isinstance(data, dict) and "essay_history" in data:
+            essay_history = data["essay_history"]
+            if isinstance(essay_history, list) and len(essay_history) > 3:
+                # Keep only the 3 most recent essays
+                data["essay_history"] = essay_history[-3:]
+                truncated = json.dumps(data, indent=2)
+                
+                if count_tokens(truncated, model) <= max_tokens:
+                    return truncated
+        
+        # If still too long, truncate more aggressively
+        if isinstance(data, dict) and "essay_history" in data:
+            data["essay_history"] = data["essay_history"][-1:] if data["essay_history"] else []
+            truncated = json.dumps(data, indent=2)
+            
+            if count_tokens(truncated, model) <= max_tokens:
+                return truncated
+    
+    except (json.JSONDecodeError, KeyError):
+        pass
+    
+    # Fallback: simple character-based truncation
+    target_chars = int(max_tokens * 3.5)  # Rough estimate
+    if len(context) > target_chars:
+        return context[:target_chars] + "\n... [truncated for length]"
+    
+    return context 

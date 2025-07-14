@@ -13,7 +13,7 @@ from langchain.llms.fake import FakeListLLM
 
 from essay_agent.tools import register_tool
 from essay_agent.tools.base import ValidatedTool
-from essay_agent.llm_client import get_chat_llm
+from essay_agent.llm_client import get_chat_llm, truncate_context
 from essay_agent.prompts.draft import DRAFT_PROMPT
 from essay_agent.prompts.templates import render_template
 from essay_agent.response_parser import safe_parse, schema_parser
@@ -42,7 +42,7 @@ class DraftTool(ValidatedTool):
     )
 
     # Drafting can take longer than quick tools
-    timeout: float = 15.0
+    timeout: float = 30.0
 
     # ------------------------------------------------------------------
     # LangChain sync execution
@@ -55,19 +55,21 @@ class DraftTool(ValidatedTool):
         word_count: int = 650,
         **_: Any,
     ) -> Dict[str, str]:  # type: ignore[override]
-        """Return a JSON dict ``{"draft": "..."}``.
-
-        Args:
-            outline: Structured outline (dict) or plain string.
-            voice_profile: Short description of writing voice.
-            word_count: Target word count (10–1000).
-        Returns:
-            dict: Parsed JSON with key ``draft``.
-        Raises:
-            ValueError: On invalid inputs or LLM output.
-        """
-
+        """Generate a full essay draft from an outline."""
+        from essay_agent.tools.errors import ToolError
+        import json
+        
         # ----------------------- Input validation -----------------------
+        # Check if outline is a failed tool result
+        if isinstance(outline, dict) and "error" in outline and outline["error"] is not None:
+            raise ValueError(f"Cannot process - upstream outline tool failed: {outline['error']}")
+        
+        # Extract actual outline from successful tool result
+        if isinstance(outline, dict) and "ok" in outline:
+            if outline["ok"] is None:
+                raise ValueError("Outline tool returned no result")
+            outline = outline["ok"]
+        
         if not voice_profile or not voice_profile.strip():
             raise ValueError("voice_profile must not be empty.")
 
@@ -75,17 +77,38 @@ class DraftTool(ValidatedTool):
             raise ValueError("word_count must be between 10 and 1000.")
 
         if isinstance(outline, dict):
-            outline_str = json.dumps(outline, ensure_ascii=False, indent=2)
+            outline_str = json.dumps(outline, ensure_ascii=False, indent=2, default=str)
         else:
             outline_str = str(outline).strip()
             if not outline_str:
                 raise ValueError("outline must not be empty.")
 
         # ----------------------- Prompt rendering -----------------------
+        # Truncate voice_profile to prevent token limit issues
+        voice_profile_truncated = truncate_context(voice_profile.strip(), max_tokens=10000)
+        
+        # For very large profiles, extract only essential information
+        try:
+            profile_data = json.loads(voice_profile_truncated)
+            
+            # If still too large, create a summary profile
+            if len(voice_profile_truncated) > 20000:  # Very large profile
+                essential_profile = {
+                    "user_info": profile_data.get("user_info", {}),
+                    "core_values": profile_data.get("core_values", []),
+                    "writing_voice": profile_data.get("writing_voice"),
+                    "recent_essays": profile_data.get("essay_history", [])[-2:] if profile_data.get("essay_history") else []
+                }
+                voice_profile_truncated = json.dumps(essential_profile, indent=2, default=str)
+        except (json.JSONDecodeError, KeyError):
+            # If not JSON, just truncate aggressively
+            if len(voice_profile_truncated) > 20000:
+                voice_profile_truncated = voice_profile_truncated[:20000] + "\n... [truncated for length]"
+        
         prompt = render_template(
             DRAFT_PROMPT,
             outline=outline_str,
-            voice_profile=voice_profile.strip(),
+            voice_profile=voice_profile_truncated,
             word_count=word_count,
         )
 

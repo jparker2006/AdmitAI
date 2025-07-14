@@ -46,7 +46,28 @@ class PolishTool(ValidatedTool):
     # ------------------------------------------------------------------
     def _run(self, *, draft: str, word_count: int = 650, **_: Any) -> Dict[str, str]:  # type: ignore[override]
         # -------------------- Input validation -------------------------
-        draft = str(draft).strip()
+        from essay_agent.tools.errors import ToolError
+        
+        # Check if draft is a failed tool result
+        if isinstance(draft, dict) and "error" in draft and draft["error"] is not None:
+            raise ValueError(f"Cannot process - upstream draft tool failed: {draft['error']}")
+        
+        # Extract actual draft from successful tool result
+        if isinstance(draft, dict) and "ok" in draft:
+            if draft["ok"] is None:
+                raise ValueError("Draft tool returned no result")
+            draft = draft["ok"]
+            # If it's a dict with 'revised_draft' key (from revision), extract that
+            if isinstance(draft, dict) and "revised_draft" in draft:
+                draft = draft["revised_draft"]
+            # If it's a dict with 'draft' key, extract that
+            elif isinstance(draft, dict) and "draft" in draft:
+                draft = draft["draft"]
+        
+        if not isinstance(draft, str):
+            draft = str(draft)
+        
+        draft = draft.strip()
         if not draft:
             raise ValueError("draft must not be empty.")
 
