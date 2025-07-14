@@ -12,6 +12,8 @@ from tenacity import AsyncRetrying, stop_after_attempt, wait_exponential
 
 from essay_agent.tools import REGISTRY as TOOL_REGISTRY
 from .planner import EssayPlanner, EssayPlan, Phase, _phase_from_tool
+from time import time as _time
+from essay_agent.utils.logging import tool_trace
 
 class EssayExecutor:
     """
@@ -69,6 +71,7 @@ class EssayExecutor:
         # The 'context' for the planner is the whole state dict --------------
         context = {
             "user_id": state.data.get("context", {}).get("user_id"),
+            "word_limit": state.data.get("context", {}).get("word_limit", 650),
             "tool_outputs": state.data.get("tool_outputs", {}),
             "conversation_history": state.data.get("context", {}).get("conversation_history", []),
             "user_profile": state.data.get("context", {}).get("user_profile", {}),
@@ -131,6 +134,9 @@ class EssayExecutor:
         
         try:
             # Skip execution if args are empty (indicates upstream failure)
+            start_ts = _time()
+            tool_trace("start", tool_name, args=args)
+
             if not args:
                 print(f"Skipping {tool_name} due to upstream failure")
                 result = {"ok": None, "error": f"Skipped {tool_name} due to upstream failure"}
@@ -162,6 +168,8 @@ class EssayExecutor:
 
                 result = await retryer.__call__(tool_call)
 
+            tool_trace("end", tool_name, elapsed=_time() - start_ts)
+
             # -----------------------------------------------------------------
             # Persist results in two places for backward-compatibility:
             #   1) Flattened at the top-level of ``data`` (legacy tests)
@@ -191,6 +199,7 @@ class EssayExecutor:
             print(f"Tool {tool_name} executed successfully.")
             
         except Exception as e:
+            tool_trace("error", tool_name, error=str(e))
             print(f"Tool {tool_name} failed with error: {e}")
             error_message = f"Error executing tool '{tool_name}' after retries: {e}"
             updated_errors.append(error_message)

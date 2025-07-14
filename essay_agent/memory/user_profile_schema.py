@@ -48,6 +48,18 @@ class DefiningMoment(BaseModel):
     lessons_learned: str
     used_in_essays: List[str] = Field(default_factory=list)
     themes: List[str] = Field(default_factory=list)
+    story_category: str = Field(
+        default="general",
+        description="Category: identity, passion, challenge, achievement, community, general"
+    )
+    story_weight: float = Field(
+        default=1.0,
+        description="Relative weight for story selection (1.0 = equal, >1.0 = higher priority)"
+    )
+    college_usage: Dict[str, List[str]] = Field(
+        default_factory=dict,
+        description="Maps college_id -> [prompt_ids] where story was used"
+    )
 
 
 class WritingVoice(BaseModel):
@@ -83,4 +95,8 @@ class UserProfile(BaseModel):
     core_values: List[CoreValue]
     defining_moments: List[DefiningMoment] = Field(default_factory=list)
     writing_voice: Optional[WritingVoice] = None
-    essay_history: List[EssayRecord] = Field(default_factory=list) 
+    essay_history: List[EssayRecord] = Field(default_factory=list)
+    college_story_usage: Dict[str, Dict[str, List[str]]] = Field(
+        default_factory=dict,
+        description="Maps college_id -> prompt_type -> [story_titles] for tracking story diversification"
+    ) 

@@ -168,7 +168,7 @@ class EssayReActPlanner:
                     story_title = stories[0].get("title", "Personal Story") if stories else "Personal Story"
                 else:
                     story_title = "Personal Story"
-                args = {"story": story_title, "prompt": user_input, "word_count": 650}
+                args = {"story": story_title, "prompt": user_input, "word_count": ctx.get("word_limit", 650)}
             elif tool == "draft":
                 outline_result = extract_result(outputs.get("outline"))
                 brainstorm_result = extract_result(outputs.get("brainstorm"))
@@ -213,7 +213,7 @@ class EssayReActPlanner:
                 args = {
                     "outline": outline_result,
                     "voice_profile": voice_profile_focused,
-                    "word_count": 650,
+                    "word_count": ctx.get("word_limit", 650),
                 }
             elif tool == "revise":
                 draft_result = extract_result(outputs.get("draft"))
@@ -242,11 +242,11 @@ class EssayReActPlanner:
                         raise ValueError("Cannot polish - no draft available")
                     if isinstance(draft_result, dict):
                         draft_result = draft_result.get("revised_draft") or draft_result.get("draft") or ""
-                    args = {"draft": draft_result, "word_count": 650}
+                    args = {"draft": draft_result, "word_count": ctx.get("word_limit", 650)}
                 else:
                     if isinstance(revise_result, dict):
                         revise_result = revise_result.get("revised_draft") or revise_result.get("draft") or ""
-                    args = {"draft": revise_result, "word_count": 650}
+                    args = {"draft": revise_result, "word_count": ctx.get("word_limit", 650)}
             else:
                 args = {}
             

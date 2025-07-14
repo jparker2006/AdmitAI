@@ -4,7 +4,7 @@ Generate three story ideas for a given essay prompt and user profile.
 """
 from __future__ import annotations
 
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Set, Optional
 
 from pydantic import BaseModel, Field
 
@@ -56,7 +56,8 @@ class BrainstormTool(ValidatedTool):
     # ------------------------------------------------------------------
     # Synchronous execution
     # ------------------------------------------------------------------
-    def _run(self, *, essay_prompt: str, profile: str, user_id: str | None = None, **_: Any) -> Dict[str, Any]:  # type: ignore[override]
+    def _run(self, *, essay_prompt: str, profile: str, user_id: str | None = None, 
+             college_id: str | None = None, **_: Any) -> Dict[str, Any]:  # type: ignore[override]
         # -------------------- Input validation -------------------------
         essay_prompt = str(essay_prompt).strip()
         profile = str(profile).strip()
@@ -65,20 +66,15 @@ class BrainstormTool(ValidatedTool):
         if not profile:
             raise ValueError("profile must not be empty.")
 
-        # -------------------- Story-reuse blacklist --------------------
-        blacklist: set[str] = set()
-        if user_id:
-            try:
-                user_profile = SimpleMemory.load(user_id)
-                for rec in user_profile.essay_history:
-                    for ver in rec.versions:
-                        blacklist.update(ver.used_stories)
-            except Exception:  # pragma: no cover – memory errors escalate later
-                pass
-
-        # -------------------- Render high-stakes prompt ----------------
-        rendered_prompt = render_template(
-            BRAINSTORM_PROMPT, essay_prompt=essay_prompt, profile=profile
+        # -------------------- College-scoped story blacklist --------------------
+        college_blacklist = self._get_college_story_blacklist(user_id, college_id)
+        cross_college_suggestions = self._get_cross_college_story_suggestions(user_id, college_id)
+        prompt_type = self._categorize_prompt_type(essay_prompt)
+        
+        # -------------------- Render enhanced prompt with college context --------
+        rendered_prompt = self._render_college_aware_prompt(
+            essay_prompt, profile, college_blacklist, cross_college_suggestions, 
+            prompt_type, college_id
         )
 
         # -------------------- LLM call --------------------------------
@@ -96,26 +92,163 @@ class BrainstormTool(ValidatedTool):
         if len(set(titles)) != 3:
             raise ValueError("Story titles must be unique.")
 
-        # Duplicate prevention -----------------------------------------
-        for t in titles:
-            if t in blacklist:
-                raise ValueError("Story reuse detected – brainstorm must propose novel ideas.")
+        # College-scoped duplicate prevention --------------------------
+        conflicts = self._detect_story_conflicts(titles, college_id, user_id)
+        if conflicts:
+            raise ValueError(f"Story reuse detected for {college_id}: {conflicts}")
 
         # Persist brainstorm results in memory --------------------------
         if user_id:
             try:
-                prof = SimpleMemory.load(user_id)
-                for s in parsed.stories:
-                    prof.defining_moments.append(
-                        DefiningMoment(
-                            title=s.title,
-                            description=s.description,
-                            emotional_impact="",
-                            lessons_learned="",
-                        )
-                    )
-                SimpleMemory.save(user_id, prof)
+                self._update_user_profile_with_stories(user_id, parsed.stories, college_id, prompt_type)
             except Exception:
                 pass
 
-        return parsed.dict() 
+        return parsed.model_dump()
+
+    def _get_college_story_blacklist(self, user_id: str | None, college_id: str | None) -> Set[str]:
+        """Get stories already used for this specific college."""
+        if not user_id:
+            return set()
+        
+        blacklist: Set[str] = set()
+        try:
+            user_profile = SimpleMemory.load(user_id)
+            for rec in user_profile.essay_history:
+                # Only block stories from the same college
+                if college_id and rec.platform == college_id:
+                    for ver in rec.versions:
+                        blacklist.update(ver.used_stories)
+            return blacklist
+        except Exception:
+            return set()
+
+    def _get_cross_college_story_suggestions(self, user_id: str | None, college_id: str | None) -> List[str]:
+        """Get stories from other colleges that could be reused."""
+        if not user_id:
+            return []
+        
+        suggestions: List[str] = []
+        try:
+            user_profile = SimpleMemory.load(user_id)
+            for rec in user_profile.essay_history:
+                # Suggest stories from other colleges
+                if college_id and rec.platform != college_id:
+                    for ver in rec.versions:
+                        suggestions.extend(ver.used_stories)
+            return list(set(suggestions))  # Remove duplicates
+        except Exception:
+            return []
+
+    def _categorize_prompt_type(self, essay_prompt: str) -> str:
+        """Categorize prompt as identity/passion/challenge/achievement/community."""
+        prompt_lower = essay_prompt.lower()
+        
+        # Identity/Background indicators
+        if any(keyword in prompt_lower for keyword in [
+            'identity', 'background', 'heritage', 'culture', 'family', 'who you are', 
+            'describe yourself', 'personal story', 'upbringing', 'community you belong'
+        ]):
+            return 'identity'
+        
+        # Passion/Interest indicators
+        if any(keyword in prompt_lower for keyword in [
+            'passion', 'interest', 'hobby', 'love', 'enjoy', 'fascinated', 'curious',
+            'intellectual', 'academic interest', 'subject you find', 'activity you enjoy'
+        ]):
+            return 'passion'
+        
+        # Challenge/Problem indicators
+        if any(keyword in prompt_lower for keyword in [
+            'challenge', 'problem', 'obstacle', 'difficulty', 'struggle', 'overcome',
+            'failed', 'failure', 'setback', 'conflict', 'disagreement'
+        ]):
+            return 'challenge'
+        
+        # Achievement/Growth indicators
+        if any(keyword in prompt_lower for keyword in [
+            'achievement', 'accomplishment', 'success', 'proud', 'leadership', 'growth',
+            'learned', 'developed', 'improved', 'skill', 'talent', 'award'
+        ]):
+            return 'achievement'
+        
+        # Community/Culture indicators
+        if any(keyword in prompt_lower for keyword in [
+            'community', 'service', 'volunteer', 'help', 'impact', 'contribute',
+            'social', 'cultural', 'tradition', 'diversity', 'inclusion'
+        ]):
+            return 'community'
+        
+        return 'general'
+
+    def _render_college_aware_prompt(self, essay_prompt: str, profile: str, 
+                                   college_blacklist: Set[str], cross_college_suggestions: List[str],
+                                   prompt_type: str, college_id: str | None) -> str:
+        """Render enhanced prompt with college context and diversification guidance."""
+        # Get college name for display
+        college_name = college_id or "this college"
+        
+        # Format blacklist and suggestions for prompt
+        college_story_history = list(college_blacklist) if college_blacklist else []
+        
+        # Enhanced template variables
+        template_vars = {
+            'essay_prompt': essay_prompt,
+            'profile': profile,
+            'college_name': college_name,
+            'college_story_history': college_story_history,
+            'cross_college_suggestions': cross_college_suggestions,
+            'prompt_type': prompt_type,
+            'recommended_categories': self._get_recommended_story_categories(prompt_type)
+        }
+        
+        return render_template(BRAINSTORM_PROMPT, **template_vars)
+
+    def _get_recommended_story_categories(self, prompt_type: str) -> List[str]:
+        """Get recommended story categories for a given prompt type."""
+        category_map = {
+            'identity': ['heritage', 'family', 'cultural', 'personal_defining'],
+            'passion': ['creative', 'academic', 'intellectual', 'hobby'],
+            'challenge': ['obstacle', 'failure', 'conflict', 'problem_solving'],
+            'achievement': ['accomplishment', 'leadership', 'growth', 'skill'],
+            'community': ['service', 'cultural_involvement', 'social_impact', 'tradition'],
+            'general': ['defining_moment', 'growth', 'values', 'experiences']
+        }
+        return category_map.get(prompt_type, category_map['general'])
+
+    def _detect_story_conflicts(self, selected_stories: List[str], college_id: str | None, 
+                               user_id: str | None) -> List[str]:
+        """Detect if selected stories conflict with college usage rules."""
+        if not user_id or not college_id:
+            return []
+        
+        conflicts = []
+        for story_title in selected_stories:
+            if is_story_reused(user_id, story_title=story_title, college=college_id):
+                conflicts.append(story_title)
+        return conflicts
+
+    def _update_user_profile_with_stories(self, user_id: str, stories: List[Story], 
+                                        college_id: str | None, prompt_type: str) -> None:
+        """Update user profile with new story information."""
+        try:
+            prof = SimpleMemory.load(user_id)
+            for story in stories:
+                # Create or update defining moment
+                defining_moment = DefiningMoment(
+                    title=story.title,
+                    description=story.description,
+                    emotional_impact="",
+                    lessons_learned="",
+                    themes=story.insights
+                )
+                
+                # Add to profile if not already present
+                existing_titles = [dm.title for dm in prof.defining_moments]
+                if story.title not in existing_titles:
+                    prof.defining_moments.append(defining_moment)
+            
+            SimpleMemory.save(user_id, prof)
+        except Exception:
+            # Don't fail the tool if memory update fails
+            pass 

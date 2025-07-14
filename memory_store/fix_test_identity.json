@@ -1,0 +1,181 @@
+{
+  "user_info": {
+    "name": "Alex Johnson",
+    "grade": 12,
+    "intended_major": "Computer Science",
+    "college_list": [
+      "Stanford",
+      "MIT",
+      "Harvard",
+      "Yale",
+      "UC Berkeley"
+    ],
+    "platforms": [
+      "Common App",
+      "Coalition"
+    ]
+  },
+  "academic_profile": {
+    "gpa": 3.8,
+    "test_scores": {
+      "SAT": 1450,
+      "ACT": null
+    },
+    "courses": [
+      "AP Computer Science",
+      "AP Calculus BC",
+      "AP Literature"
+    ],
+    "activities": [
+      {
+        "name": "Robotics Club",
+        "role": "Lead Programmer",
+        "duration": "3 years",
+        "description": "Designed autonomous navigation systems for competitive robots",
+        "impact": "Led team to state championship, mentored 15 younger students"
+      },
+      {
+        "name": "Volunteer Tutoring",
+        "role": "Math Tutor",
+        "duration": "2 years",
+        "description": "Tutored underprivileged students in algebra and geometry",
+        "impact": "Improved student grades by average of 1.2 letter grades"
+      },
+      {
+        "name": "Cultural Heritage Club",
+        "role": "President",
+        "duration": "2 years",
+        "description": "Organized cultural awareness events and language preservation workshops",
+        "impact": "Increased school cultural diversity awareness by 40%, preserved family traditions"
+      },
+      {
+        "name": "Creative Writing Club",
+        "role": "Editor",
+        "duration": "1 year",
+        "description": "Edited school literary magazine and mentored aspiring writers",
+        "impact": "Published 50+ student works, increased magazine readership by 60%"
+      },
+      {
+        "name": "Environmental Club",
+        "role": "Volunteer",
+        "duration": "1 year",
+        "description": "Led campus sustainability initiatives and community clean-up events",
+        "impact": "Reduced school waste by 25%, organized 12 community events"
+      }
+    ]
+  },
+  "core_values": [
+    {
+      "value": "Innovation",
+      "description": "Belief in using technology to solve real-world problems",
+      "evidence": [
+        "Created app for local food bank",
+        "Robotics innovations"
+      ],
+      "used_in_essays": []
+    },
+    {
+      "value": "Service",
+      "description": "Commitment to helping others succeed",
+      "evidence": [
+        "Tutoring program",
+        "Mentoring younger students"
+      ],
+      "used_in_essays": []
+    },
+    {
+      "value": "Cultural Pride",
+      "description": "Deep appreciation for heritage and traditions",
+      "evidence": [
+        "Led cultural heritage club",
+        "Organized cultural awareness events"
+      ],
+      "used_in_essays": []
+    },
+    {
+      "value": "Environmental Stewardship",
+      "description": "Responsibility to protect and preserve our planet",
+      "evidence": [
+        "Campus sustainability initiatives",
+        "Community clean-up events"
+      ],
+      "used_in_essays": []
+    },
+    {
+      "value": "Creative Expression",
+      "description": "Belief in the power of words and storytelling",
+      "evidence": [
+        "School literary magazine editor",
+        "Published creative writing"
+      ],
+      "used_in_essays": []
+    }
+  ],
+  "defining_moments": [
+    {
+      "title": "First Programming Success",
+      "description": "Creating my first working program that solved a real problem",
+      "emotional_impact": "Overwhelming sense of accomplishment and purpose",
+      "lessons_learned": "Technology can be a powerful tool for positive change",
+      "used_in_essays": [],
+      "themes": [
+        "problem-solving",
+        "innovation",
+        "purpose"
+      ]
+    },
+    {
+      "title": "Helping Struggling Student",
+      "description": "Tutoring a student who was failing math and seeing them succeed",
+      "emotional_impact": "Deep satisfaction from making a difference",
+      "lessons_learned": "Everyone learns differently; patience and adaptation are key",
+      "used_in_essays": [],
+      "themes": [
+        "empathy",
+        "teaching",
+        "growth"
+      ]
+    },
+    {
+      "title": "Reconnecting with Heritage",
+      "description": "Learning about my family's immigration story and organizing cultural events",
+      "emotional_impact": "Deep pride in my identity and desire to preserve traditions",
+      "lessons_learned": "Understanding your roots strengthens your sense of self",
+      "used_in_essays": [],
+      "themes": [
+        "identity",
+        "culture",
+        "family",
+        "pride"
+      ]
+    },
+    {
+      "title": "Environmental Wake-Up Call",
+      "description": "Witnessing environmental damage in local park and taking action",
+      "emotional_impact": "Urgent need to protect the planet for future generations",
+      "lessons_learned": "Individual actions can create meaningful community change",
+      "used_in_essays": [],
+      "themes": [
+        "environment",
+        "leadership",
+        "community",
+        "responsibility"
+      ]
+    },
+    {
+      "title": "Publishing First Story",
+      "description": "Seeing my creative writing published in the school magazine",
+      "emotional_impact": "Validation of my voice and creative abilities",
+      "lessons_learned": "Authentic expression resonates with others",
+      "used_in_essays": [],
+      "themes": [
+        "creativity",
+        "expression",
+        "achievement",
+        "passion"
+      ]
+    }
+  ],
+  "writing_voice": null,
+  "essay_history": []
+}

@@ -50,7 +50,14 @@ class EssayAgent:  # pylint: disable=too-few-public-methods
     # Public API – new run method
     # ------------------------------------------------------------------
 
-    def run(self, prompt: EssayPrompt, profile: "UserProfile", *, debug: bool = False) -> EssayResult:  # noqa: D401
+    def run(
+        self,
+        prompt: EssayPrompt,
+        profile: "UserProfile",
+        *,
+        debug: bool = False,
+        stop_phase: Phase | None = None,
+    ) -> EssayResult:  # noqa: D401
         """Execute full essay workflow returning structured :class:`EssayResult`."""
 
         if not prompt.text.strip():
@@ -72,6 +79,7 @@ class EssayAgent:  # pylint: disable=too-few-public-methods
                 "context": {
                     "user_id": self.user_id,
                     "essay_prompt": prompt.text,
+                    "word_limit": prompt.word_limit,
                     "user_profile": profile.model_dump() if hasattr(profile, "model_dump") else {},
                 },
             },
@@ -105,6 +113,10 @@ class EssayAgent:  # pylint: disable=too-few-public-methods
                 final_draft = tool_outputs["polish"].get("final_draft") if isinstance(tool_outputs["polish"], dict) else tool_outputs["polish"]
                 # Mark workflow as completed so we don't incorrectly flag errors later
                 plan.phase = Phase.POLISHING
+                break
+
+            # If caller requested partial run, exit once that phase is reached
+            if stop_phase and plan.phase == stop_phase:
                 break
 
             # Let planner choose next (fallback handled inside executor) --

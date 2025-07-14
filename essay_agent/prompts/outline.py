@@ -35,17 +35,29 @@ STEP 2: EXAMINE THE STORY
 • Find the moment of growth or realization
 • Locate specific details that bring the story to life
 
-STEP 3: STRUCTURE THE NARRATIVE
+STEP 3: PLAN STRUCTURAL WORD DISTRIBUTION
+• Target word count: {word_count}
+• Calculate optimal paragraph structure for this length
+• Plan word allocation across 5 sections:
+  - Hook: ~{hook_words} words ({hook_percentage}%)
+  - Context: ~{context_words} words ({context_percentage}%)
+  - Conflict: ~{conflict_words} words ({conflict_percentage}%)
+  - Growth: ~{growth_words} words ({growth_percentage}%)
+  - Reflection: ~{reflection_words} words ({reflection_percentage}%)
+• **Structural constraint**: Your outline must support exactly {word_count} words
+
+STEP 4: STRUCTURE THE NARRATIVE
 • HOOK: Craft an opening that immediately engages the reader
 • CONTEXT: Provide essential background without lengthy exposition
 • CONFLICT: Present the central challenge or tension
 • GROWTH: Show the actions taken and lessons learned
 • REFLECTION: Connect the experience to broader insights and future goals
 
-STEP 4: CALIBRATE FOR LENGTH
-• Target word count: {word_count}
-• Distribute words strategically across sections
-• Ensure each section is substantial but proportional
+STEP 5: VALIDATE WORD COUNT FEASIBILITY
+• Check that each section can realistically support its target word allocation
+• Ensure narrative flow supports the planned word distribution
+• Verify that the story has enough depth for {word_count} words
+• **Validation**: Outline structure supports target length
 
 # == OUTLINE REQUIREMENTS ===================================================
 STRUCTURE STANDARDS:
@@ -55,6 +67,15 @@ STRUCTURE STANDARDS:
 • Growth: 2-3 sentences showing actions and learning
 • Reflection: 1-2 sentences connecting to broader insights
 
+WORD DISTRIBUTION PLANNING:
+• Target: {word_count} words total
+• Hook: ~{hook_words} words (10-15% of total)
+• Context: ~{context_words} words (20-25% of total)
+• Conflict: ~{conflict_words} words (25-30% of total)
+• Growth: ~{growth_words} words (25-30% of total)
+• Reflection: ~{reflection_words} words (15-20% of total)
+• **Constraint**: Your outline must support exactly {word_count} words
+
 CONTENT QUALITY:
 • Each section must advance the narrative
 • Use specific, concrete details from the story
@@ -62,12 +83,11 @@ CONTENT QUALITY:
 • Show rather than tell emotions and growth
 • Connect clearly to the essay prompt
 
-WORD DISTRIBUTION:
-• Hook: ~10-15% of total words
-• Context: ~20-25% of total words
-• Conflict: ~25-30% of total words
-• Growth: ~25-30% of total words
-• Reflection: ~15-20% of total words
+PARAGRAPH STRUCTURE:
+• Plan sections that can realistically support their word targets
+• Ensure each section has sufficient depth for its allocation
+• Consider how many paragraphs each section might need
+• Balance narrative flow with structural requirements
 
 # == OUTPUT REQUIREMENTS ====================================================
 Return ONLY valid JSON matching this exact schema:

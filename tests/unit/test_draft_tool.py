@@ -8,7 +8,8 @@ from essay_agent.prompts.draft import DRAFT_PROMPT
 
 
 def test_prompt_placeholders():
-    required_vars = {"outline", "voice_profile", "word_count"}
+    # Updated to reflect separated concerns - word_count is no longer in main draft prompt
+    required_vars = {"outline", "voice_profile"}
     assert required_vars.issubset(set(DRAFT_PROMPT.input_variables))
 
 

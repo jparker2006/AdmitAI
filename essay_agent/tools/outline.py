@@ -112,11 +112,35 @@ class OutlineTool(ValidatedTool):
             raise ValueError("'word_count' must be a positive integer")
 
         # Render high-stakes prompt --------------------------------------
+        # Calculate word distribution for structural planning
+        hook_words = int(word_count * 0.125)  # 12.5% average of 10-15%
+        context_words = int(word_count * 0.225)  # 22.5% average of 20-25%
+        conflict_words = int(word_count * 0.275)  # 27.5% average of 25-30%
+        growth_words = int(word_count * 0.275)  # 27.5% average of 25-30%
+        reflection_words = int(word_count * 0.175)  # 17.5% average of 15-20%
+        
+        # Calculate percentages for display
+        hook_percentage = "10-15"
+        context_percentage = "20-25"
+        conflict_percentage = "25-30"
+        growth_percentage = "25-30"
+        reflection_percentage = "15-20"
+        
         prompt_rendered = render_template(
             OUTLINE_PROMPT,
             story=story,
             essay_prompt=prompt_txt,
             word_count=word_count,
+            hook_words=hook_words,
+            context_words=context_words,
+            conflict_words=conflict_words,
+            growth_words=growth_words,
+            reflection_words=reflection_words,
+            hook_percentage=hook_percentage,
+            context_percentage=context_percentage,
+            conflict_percentage=conflict_percentage,
+            growth_percentage=growth_percentage,
+            reflection_percentage=reflection_percentage,
         )
 
         # Call LLM in sync mode with automatic retry via llm_client.chat ----
