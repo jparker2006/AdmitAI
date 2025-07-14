@@ -25,6 +25,7 @@ def _profile_path(user_id: str) -> Path:
 
 # Import modules that rely on helpers *after* they are defined to avoid circular deps
 from .conversation import JSONConversationMemory  # noqa: E402  (import after defs)
+from .context_manager import ContextWindowManager  # noqa: E402
 
 
 def load_user_profile(user_id: str) -> Dict[str, Any]:
@@ -40,10 +41,22 @@ def save_user_profile(user_id: str, profile: Dict[str, Any]) -> None:
     path = _profile_path(user_id)
     path.write_text(json.dumps(profile, indent=2, default=str))
 
+# Late import to avoid circular dependency with SimpleMemory -> essay_agent.memory
+# from .hierarchical import HierarchicalMemory  # noqa: E402
+
+# Import modules that depend on helpers AFTER functions are defined to avoid circular imports
+from .hierarchical import HierarchicalMemory  # noqa: E402
+from .semantic_search import SemanticSearchIndex  # noqa: E402
+
 __all__ = [
     "load_user_profile",
     "save_user_profile",
     "JSONConversationMemory",
     "SimpleMemory",
     "is_story_reused",
+    "HierarchicalMemory",
+    "SemanticSearchIndex",
+    "ContextWindowManager",
+    "RAGConfig",
+    "build_rag_chain",
 ] 

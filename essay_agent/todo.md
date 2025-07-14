@@ -305,11 +305,6 @@ Relook at what we should really do next. Is the planner working? How does the ag
 **Deliverable**: **CODE LOGIC + PROMPTS**: Implement LangChain's RetrievalQA and ConversationalRetrievalChain for RAG system. Uses VectorStore retrieval with OpenAI generation. Create prompt templates for combining retrieved memories with generation tasks.  
 **Tests**: LangChain retrieval relevance, generation quality, and personalization accuracy tests.
 
-### 7.1 CLI Interface
-**Files**: `essay_agent/cli.py`  
-**Deliverable**: Rich CLI interface with interactive prompts, progress tracking, and real-time feedback. Supports all essay operations from command line.  
-**Tests**: CLI functionality, user interaction, and error handling tests.
-
 ---
 
 ## Phase 6 · Pre-CLI Agent Readiness
@@ -380,6 +375,12 @@ Relook at what we should really do next. Is the planner working? How does the ag
 
 **Phase 6 Milestone**: Essay Agent is fully ready for CLI integration with robust planning, execution, and evaluation capabilities.
 
+
+### 7.1 CLI Interface
+**Files**: `essay_agent/cli.py`  
+**Deliverable**: Rich CLI interface with interactive prompts, progress tracking, and real-time feedback. Supports all essay operations from command line.  
+**Tests**: CLI functionality, user interaction, and error handling tests.
+
 ---
 
 ## Phase 8 · Workflow & Orchestration
@@ -403,97 +404,6 @@ Relook at what we should really do next. Is the planner working? How does the ag
 **Files**: `essay_agent/workflows/qa_workflow.py`  
 **Deliverable**: Automated QA pipeline with multiple validation stages, final checks, and approval workflows. Integrates all evaluation tools.  
 **Tests**: QA pipeline execution, validation accuracy, and approval workflow tests.
-
----
-
-## Phase 7 · User Interface & Experience
-
-### 7.2 Web API Layer
-**Files**: `essay_agent/api/__init__.py`, `essay_agent/api/routes.py`  
-**Deliverable**: FastAPI-based REST API with endpoints for all essay operations. Includes authentication, rate limiting, and API documentation.  
-**Tests**: API functionality, authentication, rate limiting, and documentation tests.
-
-### 7.3 WebSocket Real-time Updates
-**Files**: `essay_agent/api/websocket.py`  
-**Deliverable**: Real-time updates for essay progress, live feedback, and collaborative editing. Handles connection management and message broadcasting.  
-**Tests**: WebSocket connectivity, message delivery, and connection handling tests.
-
-### 7.4 Configuration & Environment Management
-**Files**: `essay_agent/config.py`, `essay_agent/settings.py`  
-**Deliverable**: Environment-based configuration with validation, secrets management, and feature flags. Supports development, staging, and production environments.  
-**Tests**: Configuration validation, environment switching, and secrets handling tests.
-
----
-
-## Phase 9 · Testing & Quality Assurance
-
-### 9.1 Unit Test Suite
-**Files**: `tests/unit/`  
-**Deliverable**: Comprehensive unit tests for all modules with >90% code coverage. Uses pytest with fixtures, mocks, and parameterized tests.  
-**Tests**: All unit tests pass, coverage reports, and test documentation.
-
-### 9.2 Integration Test Suite
-**Files**: `tests/integration/`  
-**Deliverable**: End-to-end integration tests covering complete essay workflows. Tests agent coordination, memory persistence, and API functionality.  
-**Tests**: Integration test suite, workflow validation, and performance benchmarks.
-
-### 9.3 Performance & Load Testing
-**Files**: `tests/performance/`  
-**Deliverable**: Performance tests measuring response times, memory usage, and concurrent user handling. Includes load testing and stress testing.  
-**Tests**: Performance benchmarks, load test results, and optimization recommendations.
-
-### 9.4 Quality Metrics & Monitoring
-**Files**: `essay_agent/monitoring.py`  
-**Deliverable**: Built-in monitoring for essay quality, user satisfaction, and system performance. Includes metrics collection and alerting.  
-**Tests**: Metrics accuracy, alerting functionality, and dashboard integration tests.
-
----
-
-## Phase 10 · Production Readiness
-
-### 10.1 Error Handling & Recovery
-**Files**: `essay_agent/error_handler.py`  
-**Deliverable**: Comprehensive error handling with graceful degradation, automatic recovery, and user-friendly error messages. Includes retry logic and fallback strategies.  
-**Tests**: Error scenarios, recovery mechanisms, and user experience tests.
-
-### 10.2 Logging & Observability
-**Files**: `essay_agent/logging.py`  
-**Deliverable**: Structured logging with trace IDs, performance metrics, and audit trails. Integrates with monitoring systems and supports log aggregation.  
-**Tests**: Log format validation, trace correlation, and monitoring integration tests.
-
-### 10.3 Security & Privacy
-**Files**: `essay_agent/security.py`  
-**Deliverable**: Data encryption, access controls, and privacy protection. Includes secure memory handling and data anonymization capabilities.  
-**Tests**: Security validation, encryption verification, and privacy compliance tests.
-
-### 10.4 Deployment & Scaling
-**Files**: `deploy/`, `docker-compose.yml`, `Dockerfile`  
-**Deliverable**: Production deployment configuration with Docker containers, environment management, and scaling capabilities. Includes CI/CD pipeline setup.  
-**Tests**: Deployment validation, scaling tests, and CI/CD pipeline verification.
-
----
-
-## Phase 11 · Documentation & Examples
-
-### 11.1 API Documentation
-**Files**: `docs/api/`  
-**Deliverable**: Complete API documentation with examples, authentication guides, and integration tutorials. Auto-generated from code annotations.  
-**Tests**: Documentation accuracy, example validation, and tutorial completion tests.
-
-### 11.2 User Guide & Examples
-**Files**: `docs/user_guide/`, `examples/`  
-**Deliverable**: User documentation with step-by-step guides, example essays, and troubleshooting tips. Includes video tutorials and interactive examples.  
-**Tests**: Documentation completeness, example functionality, and user experience validation.
-
-### 11.3 Developer Documentation
-**Files**: `docs/development/`  
-**Deliverable**: Technical documentation for contributors including architecture overview, coding standards, and contribution guidelines.  
-**Tests**: Documentation accuracy, code example validation, and developer onboarding tests.
-
-### 11.4 Demo & Sample Data
-**Files**: `demo/`, `sample_data/`  
-**Deliverable**: Interactive demo with sample user profiles, example essays, and showcase scenarios. Includes data generation scripts and demo automation.  
-**Tests**: Demo functionality, sample data validation, and showcase scenario tests.
 
 ---
 
