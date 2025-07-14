@@ -258,6 +258,7 @@ Relook at what we should really do next. Is the planner working? How does the ag
 
 ---
 
+
 ## Phase 4 · Multi-Agent Architecture (Post-MVP)
 
 ### 4.1 LangGraph Agent Base Classes
@@ -311,24 +312,94 @@ Relook at what we should really do next. Is the planner working? How does the ag
 
 ---
 
-## Phase 6 · Workflow & Orchestration
+## Phase 6 · Pre-CLI Agent Readiness
 
-### 6.1 LangGraph Essay Workflow Engine ⚙️
+### 6.1 Smart Planner Rework ⚙️ 🧠
+**Files**: `essay_agent/planner.py`, `essay_agent/prompts/smart_planning.py`  
+**Deliverable**: **CODE LOGIC + PROMPTS**: Rewrite `EssayReActPlanner.decide_next_action()` as an intelligent planner that analyzes tool outputs, memory state, and user context to make informed decisions. Add support for plan refinement, looping behavior (revision → polish → retry), and conditional branching based on essay quality metrics.  
+**Prerequisites**: Current planner and memory system  
+**Acceptance Criteria**: 
+- Planner can analyze previous tool outputs and decide whether to continue, retry, or branch
+- Supports revision loops when essay quality is below threshold
+- Uses memory context to avoid story reuse and maintain consistency
+- Provides clear reasoning for each planning decision
+**Tests**: Planning decision logic, revision loop handling, memory integration, and reasoning validation tests
+
+### 6.2 Enhanced Executor with Dynamic Branching ⚙️
+**Files**: `essay_agent/executor.py`  
+**Deliverable**: **CODE LOGIC**: Upgrade `EssayExecutor` to support dynamic plan execution with conditional branching using LangGraph's conditional edges. Add comprehensive fallback/retry mechanisms, state-based tool selection, and better error recovery with exponential backoff.  
+**Prerequisites**: Phase 6.1 complete  
+**Acceptance Criteria**:
+- LangGraph DAG can handle dynamic plans with conditional transitions
+- Automatic retry with exponential backoff for tool failures
+- State-based tool selection based on current essay quality
+- Fallback strategies when primary tools fail
+**Tests**: Dynamic plan execution, conditional branching, retry logic, and error recovery tests
+
+### 6.3 Memory-Integrated Tool Enhancement ⚙️
+**Files**: `essay_agent/tools/brainstorm.py`, `essay_agent/tools/outline.py`, `essay_agent/tools/draft.py`, `essay_agent/tools/revision.py`, `essay_agent/tools/polish.py`  
+**Deliverable**: **CODE LOGIC**: Ensure all core workflow tools read from and update memory appropriately. Add memory context to tool inputs, story reuse prevention, and consistent voice/style maintenance across essay phases.  
+**Prerequisites**: Current tools and memory system  
+**Acceptance Criteria**:
+- All tools access user profile and essay history from memory
+- Story reuse prevention integrated into brainstorm tool
+- Voice consistency maintained across draft and revision tools
+- Memory updated with intermediate results for planner decisions
+**Tests**: Memory read/write integration, story reuse prevention, voice consistency, and data persistence tests
+
+### 6.4 Complete EssayAgent Workflow Implementation ⚙️
+**Files**: `essay_agent/agent.py`  
+**Deliverable**: **CODE LOGIC**: Implement comprehensive `EssayAgent.run(prompt, profile)` method that orchestrates the complete essay pipeline using the enhanced planner and executor. Add debug mode with detailed logging of planner decisions, tool inputs/outputs, and execution flow.  
+**Prerequisites**: Phases 6.1-6.3 complete  
+**Acceptance Criteria**:
+- Single method runs complete essay workflow from prompt to polished draft
+- Debug mode logs all planner decisions and tool executions
+- Proper error handling and graceful degradation
+- Returns structured results with metadata and execution statistics
+**Tests**: End-to-end workflow execution, debug mode functionality, error handling, and result validation tests
+
+### 6.5 Evaluation Harness for End-to-End Testing ⚙️
+**Files**: `essay_agent/eval/__init__.py`, `essay_agent/eval/test_runs.py`, `essay_agent/eval/sample_prompts.py`  
+**Deliverable**: **CODE LOGIC**: Create evaluation harness that runs sample essay prompts through the complete workflow and validates output quality. Include at least 3 diverse essay prompts with different themes and requirements.  
+**Prerequisites**: Phase 6.4 complete  
+**Acceptance Criteria**:
+- Automated test suite runs multiple essay prompts end-to-end
+- Validates essay structure, word count, and prompt adherence
+- Generates performance metrics and quality scores
+- Provides clear pass/fail criteria for workflow validation
+**Tests**: Evaluation harness execution, quality validation, performance metrics, and automated testing integration
+
+---
+
+**Phase 6 Success Criteria**: 
+- ✅ Smart planner makes informed decisions based on context and memory
+- ✅ Executor handles dynamic plans with proper branching and retry logic  
+- ✅ All tools integrate seamlessly with memory system
+- ✅ Complete EssayAgent.run() method works end-to-end with debug mode
+- ✅ Evaluation harness validates workflow with multiple sample prompts
+
+**Phase 6 Milestone**: Essay Agent is fully ready for CLI integration with robust planning, execution, and evaluation capabilities.
+
+---
+
+## Phase 8 · Workflow & Orchestration
+
+### 8.1 LangGraph Essay Workflow Engine ⚙️
 **Files**: `essay_agent/workflows/__init__.py`, `essay_agent/workflows/essay_workflow.py`  
 **Deliverable**: **CODE LOGIC**: LangGraph StateGraph managing essay progression through phases (brainstorm → outline → draft → revise → polish). Uses LangGraph's conditional edges for branching and loops. Integrates with LangChain tools and OpenAI function calling.  
 **Tests**: LangGraph workflow progression, state transitions, and branching logic tests.
 
-### 6.2 Revision & Feedback Loops
+### 8.2 Revision & Feedback Loops
 **Files**: `essay_agent/workflows/revision_workflow.py`  
 **Deliverable**: Automated revision cycles with feedback integration. Tracks improvements and suggests next steps. Handles multiple revision rounds.  
 **Tests**: Revision tracking, feedback integration, and improvement measurement tests.
 
-### 6.3 Multi-Essay Coordination
+### 8.3 Multi-Essay Coordination
 **Files**: `essay_agent/workflows/portfolio_manager.py`  
 **Deliverable**: Manages multiple essays simultaneously, prevents story reuse, ensures theme diversity, and tracks application deadlines.  
 **Tests**: Story uniqueness, theme diversity, and deadline management tests.
 
-### 6.4 Quality Assurance Workflow
+### 8.4 Quality Assurance Workflow
 **Files**: `essay_agent/workflows/qa_workflow.py`  
 **Deliverable**: Automated QA pipeline with multiple validation stages, final checks, and approval workflows. Integrates all evaluation tools.  
 **Tests**: QA pipeline execution, validation accuracy, and approval workflow tests.
@@ -354,72 +425,72 @@ Relook at what we should really do next. Is the planner working? How does the ag
 
 ---
 
-## Phase 8 · Testing & Quality Assurance
+## Phase 9 · Testing & Quality Assurance
 
-### 8.1 Unit Test Suite
+### 9.1 Unit Test Suite
 **Files**: `tests/unit/`  
 **Deliverable**: Comprehensive unit tests for all modules with >90% code coverage. Uses pytest with fixtures, mocks, and parameterized tests.  
 **Tests**: All unit tests pass, coverage reports, and test documentation.
 
-### 8.2 Integration Test Suite
+### 9.2 Integration Test Suite
 **Files**: `tests/integration/`  
 **Deliverable**: End-to-end integration tests covering complete essay workflows. Tests agent coordination, memory persistence, and API functionality.  
 **Tests**: Integration test suite, workflow validation, and performance benchmarks.
 
-### 8.3 Performance & Load Testing
+### 9.3 Performance & Load Testing
 **Files**: `tests/performance/`  
 **Deliverable**: Performance tests measuring response times, memory usage, and concurrent user handling. Includes load testing and stress testing.  
 **Tests**: Performance benchmarks, load test results, and optimization recommendations.
 
-### 8.4 Quality Metrics & Monitoring
+### 9.4 Quality Metrics & Monitoring
 **Files**: `essay_agent/monitoring.py`  
 **Deliverable**: Built-in monitoring for essay quality, user satisfaction, and system performance. Includes metrics collection and alerting.  
 **Tests**: Metrics accuracy, alerting functionality, and dashboard integration tests.
 
 ---
 
-## Phase 9 · Production Readiness
+## Phase 10 · Production Readiness
 
-### 9.1 Error Handling & Recovery
+### 10.1 Error Handling & Recovery
 **Files**: `essay_agent/error_handler.py`  
 **Deliverable**: Comprehensive error handling with graceful degradation, automatic recovery, and user-friendly error messages. Includes retry logic and fallback strategies.  
 **Tests**: Error scenarios, recovery mechanisms, and user experience tests.
 
-### 9.2 Logging & Observability
+### 10.2 Logging & Observability
 **Files**: `essay_agent/logging.py`  
 **Deliverable**: Structured logging with trace IDs, performance metrics, and audit trails. Integrates with monitoring systems and supports log aggregation.  
 **Tests**: Log format validation, trace correlation, and monitoring integration tests.
 
-### 9.3 Security & Privacy
+### 10.3 Security & Privacy
 **Files**: `essay_agent/security.py`  
 **Deliverable**: Data encryption, access controls, and privacy protection. Includes secure memory handling and data anonymization capabilities.  
 **Tests**: Security validation, encryption verification, and privacy compliance tests.
 
-### 9.4 Deployment & Scaling
+### 10.4 Deployment & Scaling
 **Files**: `deploy/`, `docker-compose.yml`, `Dockerfile`  
 **Deliverable**: Production deployment configuration with Docker containers, environment management, and scaling capabilities. Includes CI/CD pipeline setup.  
 **Tests**: Deployment validation, scaling tests, and CI/CD pipeline verification.
 
 ---
 
-## Phase 10 · Documentation & Examples
+## Phase 11 · Documentation & Examples
 
-### 10.1 API Documentation
+### 11.1 API Documentation
 **Files**: `docs/api/`  
 **Deliverable**: Complete API documentation with examples, authentication guides, and integration tutorials. Auto-generated from code annotations.  
 **Tests**: Documentation accuracy, example validation, and tutorial completion tests.
 
-### 10.2 User Guide & Examples
+### 11.2 User Guide & Examples
 **Files**: `docs/user_guide/`, `examples/`  
 **Deliverable**: User documentation with step-by-step guides, example essays, and troubleshooting tips. Includes video tutorials and interactive examples.  
 **Tests**: Documentation completeness, example functionality, and user experience validation.
 
-### 10.3 Developer Documentation
+### 11.3 Developer Documentation
 **Files**: `docs/development/`  
 **Deliverable**: Technical documentation for contributors including architecture overview, coding standards, and contribution guidelines.  
 **Tests**: Documentation accuracy, code example validation, and developer onboarding tests.
 
-### 10.4 Demo & Sample Data
+### 11.4 Demo & Sample Data
 **Files**: `demo/`, `sample_data/`  
 **Deliverable**: Interactive demo with sample user profiles, example essays, and showcase scenarios. Includes data generation scripts and demo automation.  
 **Tests**: Demo functionality, sample data validation, and showcase scenario tests.
@@ -574,7 +645,7 @@ OUTPUT:
 
 Once the MVP is complete with all prompt-based tools working, the next phase will be:
 
-### Phase 11 · Model Fine-Tuning & Replacement
+### Phase 12 · Model Fine-Tuning & Replacement
 - **Data Collection**: Gather prompt/response pairs from MVP usage
 - **Model Training**: Fine-tune smaller models to replace each prompt tool
 - **Performance Comparison**: A/B test fine-tuned models vs. prompt templates
