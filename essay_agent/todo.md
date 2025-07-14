@@ -258,6 +258,60 @@ Relook at what we should really do next. Is the planner working? How does the ag
 
 ---
 
+
+## Phase 4 · Multi-Agent Architecture (Post-MVP)
+
+### 4.1 LangGraph Agent Base Classes
+**Files**: `essay_agent/agents/__init__.py`, `essay_agent/agents/base.py`  
+**Deliverable**: Abstract LangGraph agent class using StateGraph with standardized communication protocols. Implement LangGraph nodes, edges, and state management. Support for both sync and async execution with LangGraph's async runtime.  
+**Tests**: LangGraph agent communication, state transitions, and error propagation tests.
+
+### 4.2 LangGraph Specialist Agent Implementations
+**Files**: `essay_agent/agents/research_agent.py`, `essay_agent/agents/structure_agent.py`, `essay_agent/agents/style_agent.py`  
+**Deliverable**: Concrete LangGraph StateGraph implementations for research, structure, and style tasks. Each agent has specialized LangChain prompt templates and tool access using LangGraph's tool calling nodes.  
+**Tests**: LangGraph agent specialization, task execution, and output quality tests.
+
+### 4.3 LangGraph Supervisor Agent & Coordination
+**Files**: `essay_agent/agents/supervisor.py`  
+**Deliverable**: LangGraph supervisor using StateGraph with conditional edges for task delegation. Manages workflows and coordinates between specialist agents using LangGraph's message passing. Handles parallel and sequential execution with LangGraph's async runtime.  
+**Tests**: LangGraph task delegation, workflow coordination, and error handling tests.
+
+### 4.4 LangGraph Agent Communication Protocol
+**Files**: `essay_agent/agents/communication.py`  
+**Deliverable**: LangGraph state-based message passing using StateGraph's built-in state management. Structured formats using Pydantic models, event queues using LangGraph's conditional edges, and conflict resolution. Supports both direct and broadcast communication through state updates.  
+**Tests**: LangGraph message delivery, state management, and conflict resolution tests.
+
+---
+
+## Phase 5 · Advanced Memory & Context
+
+### 5.1 Hierarchical Memory Implementation ⚙️
+**Files**: `essay_agent/memory/hierarchical.py`  
+**Deliverable**: **CODE LOGIC**: Three-tier memory system: working memory (current context), semantic memory (stories/values), and episodic memory (essay history). Automatic consolidation and retrieval using Python data structures and file I/O.  
+**Tests**: Memory tier isolation, consolidation accuracy, and retrieval performance tests.
+
+### 5.2 LangChain Vector Embedding & Semantic Search ⚙️
+**Files**: `essay_agent/memory/semantic_search.py`  
+**Deliverable**: **CODE LOGIC**: Implement LangChain VectorStore (FAISS or Chroma) with OpenAI embeddings for semantic story/value retrieval. Use LangChain's Document class and embeddings interface. Supports similarity search and clustering using LangChain's retrieval system.  
+**Tests**: LangChain vector store integration, search accuracy, and clustering performance tests.
+
+### 5.3 LangChain Context Window Management ⚙️
+**Files**: `essay_agent/memory/context_manager.py`  
+**Deliverable**: **CODE LOGIC**: Use LangChain's ConversationTokenBufferMemory and ConversationSummaryBufferMemory for intelligent context truncation. Maintains important information while staying within OpenAI token limits. Supports context switching between essays using LangChain's memory management.  
+**Tests**: LangChain context preservation, truncation accuracy, and switching performance tests.
+
+### 5.4 LangChain Memory-Augmented Generation (RAG) ⚙️ 🧠
+**Files**: `essay_agent/memory/rag.py`, `essay_agent/prompts/rag.py`  
+**Deliverable**: **CODE LOGIC + PROMPTS**: Implement LangChain's RetrievalQA and ConversationalRetrievalChain for RAG system. Uses VectorStore retrieval with OpenAI generation. Create prompt templates for combining retrieved memories with generation tasks.  
+**Tests**: LangChain retrieval relevance, generation quality, and personalization accuracy tests.
+
+### 7.1 CLI Interface
+**Files**: `essay_agent/cli.py`  
+**Deliverable**: Rich CLI interface with interactive prompts, progress tracking, and real-time feedback. Supports all essay operations from command line.  
+**Tests**: CLI functionality, user interaction, and error handling tests.
+
+---
+
 ## Phase 6 · Pre-CLI Agent Readiness
 
 ### 6.1 Smart Planner Rework ⚙️ 🧠
@@ -328,77 +382,24 @@ Relook at what we should really do next. Is the planner working? How does the ag
 
 ---
 
-## Phase 4 · Multi-Agent Architecture (Post-MVP)
+## Phase 8 · Workflow & Orchestration
 
-### 4.1 LangGraph Agent Base Classes
-**Files**: `essay_agent/agents/__init__.py`, `essay_agent/agents/base.py`  
-**Deliverable**: Abstract LangGraph agent class using StateGraph with standardized communication protocols. Implement LangGraph nodes, edges, and state management. Support for both sync and async execution with LangGraph's async runtime.  
-**Tests**: LangGraph agent communication, state transitions, and error propagation tests.
-
-### 4.2 LangGraph Specialist Agent Implementations
-**Files**: `essay_agent/agents/research_agent.py`, `essay_agent/agents/structure_agent.py`, `essay_agent/agents/style_agent.py`  
-**Deliverable**: Concrete LangGraph StateGraph implementations for research, structure, and style tasks. Each agent has specialized LangChain prompt templates and tool access using LangGraph's tool calling nodes.  
-**Tests**: LangGraph agent specialization, task execution, and output quality tests.
-
-### 4.3 LangGraph Supervisor Agent & Coordination
-**Files**: `essay_agent/agents/supervisor.py`  
-**Deliverable**: LangGraph supervisor using StateGraph with conditional edges for task delegation. Manages workflows and coordinates between specialist agents using LangGraph's message passing. Handles parallel and sequential execution with LangGraph's async runtime.  
-**Tests**: LangGraph task delegation, workflow coordination, and error handling tests.
-
-### 4.4 LangGraph Agent Communication Protocol
-**Files**: `essay_agent/agents/communication.py`  
-**Deliverable**: LangGraph state-based message passing using StateGraph's built-in state management. Structured formats using Pydantic models, event queues using LangGraph's conditional edges, and conflict resolution. Supports both direct and broadcast communication through state updates.  
-**Tests**: LangGraph message delivery, state management, and conflict resolution tests.
-
----
-
-## Phase 5 · Advanced Memory & Context
-
-### 5.1 Hierarchical Memory Implementation ⚙️
-**Files**: `essay_agent/memory/hierarchical.py`  
-**Deliverable**: **CODE LOGIC**: Three-tier memory system: working memory (current context), semantic memory (stories/values), and episodic memory (essay history). Automatic consolidation and retrieval using Python data structures and file I/O.  
-**Tests**: Memory tier isolation, consolidation accuracy, and retrieval performance tests.
-
-### 5.2 LangChain Vector Embedding & Semantic Search ⚙️
-**Files**: `essay_agent/memory/semantic_search.py`  
-**Deliverable**: **CODE LOGIC**: Implement LangChain VectorStore (FAISS or Chroma) with OpenAI embeddings for semantic story/value retrieval. Use LangChain's Document class and embeddings interface. Supports similarity search and clustering using LangChain's retrieval system.  
-**Tests**: LangChain vector store integration, search accuracy, and clustering performance tests.
-
-### 5.3 LangChain Context Window Management ⚙️
-**Files**: `essay_agent/memory/context_manager.py`  
-**Deliverable**: **CODE LOGIC**: Use LangChain's ConversationTokenBufferMemory and ConversationSummaryBufferMemory for intelligent context truncation. Maintains important information while staying within OpenAI token limits. Supports context switching between essays using LangChain's memory management.  
-**Tests**: LangChain context preservation, truncation accuracy, and switching performance tests.
-
-### 5.4 LangChain Memory-Augmented Generation (RAG) ⚙️ 🧠
-**Files**: `essay_agent/memory/rag.py`, `essay_agent/prompts/rag.py`  
-**Deliverable**: **CODE LOGIC + PROMPTS**: Implement LangChain's RetrievalQA and ConversationalRetrievalChain for RAG system. Uses VectorStore retrieval with OpenAI generation. Create prompt templates for combining retrieved memories with generation tasks.  
-**Tests**: LangChain retrieval relevance, generation quality, and personalization accuracy tests.
-
-### 7.1 CLI Interface
-**Files**: `essay_agent/cli.py`  
-**Deliverable**: Rich CLI interface with interactive prompts, progress tracking, and real-time feedback. Supports all essay operations from command line.  
-**Tests**: CLI functionality, user interaction, and error handling tests.
-
----
-
-## Phase 6 · Workflow & Orchestration
-
-### 6.1 LangGraph Essay Workflow Engine ⚙️
+### 8.1 LangGraph Essay Workflow Engine ⚙️
 **Files**: `essay_agent/workflows/__init__.py`, `essay_agent/workflows/essay_workflow.py`  
 **Deliverable**: **CODE LOGIC**: LangGraph StateGraph managing essay progression through phases (brainstorm → outline → draft → revise → polish). Uses LangGraph's conditional edges for branching and loops. Integrates with LangChain tools and OpenAI function calling.  
 **Tests**: LangGraph workflow progression, state transitions, and branching logic tests.
 
-### 6.2 Revision & Feedback Loops
+### 8.2 Revision & Feedback Loops
 **Files**: `essay_agent/workflows/revision_workflow.py`  
 **Deliverable**: Automated revision cycles with feedback integration. Tracks improvements and suggests next steps. Handles multiple revision rounds.  
 **Tests**: Revision tracking, feedback integration, and improvement measurement tests.
 
-### 6.3 Multi-Essay Coordination
+### 8.3 Multi-Essay Coordination
 **Files**: `essay_agent/workflows/portfolio_manager.py`  
 **Deliverable**: Manages multiple essays simultaneously, prevents story reuse, ensures theme diversity, and tracks application deadlines.  
 **Tests**: Story uniqueness, theme diversity, and deadline management tests.
 
-### 6.4 Quality Assurance Workflow
+### 8.4 Quality Assurance Workflow
 **Files**: `essay_agent/workflows/qa_workflow.py`  
 **Deliverable**: Automated QA pipeline with multiple validation stages, final checks, and approval workflows. Integrates all evaluation tools.  
 **Tests**: QA pipeline execution, validation accuracy, and approval workflow tests.
@@ -424,72 +425,72 @@ Relook at what we should really do next. Is the planner working? How does the ag
 
 ---
 
-## Phase 8 · Testing & Quality Assurance
+## Phase 9 · Testing & Quality Assurance
 
-### 8.1 Unit Test Suite
+### 9.1 Unit Test Suite
 **Files**: `tests/unit/`  
 **Deliverable**: Comprehensive unit tests for all modules with >90% code coverage. Uses pytest with fixtures, mocks, and parameterized tests.  
 **Tests**: All unit tests pass, coverage reports, and test documentation.
 
-### 8.2 Integration Test Suite
+### 9.2 Integration Test Suite
 **Files**: `tests/integration/`  
 **Deliverable**: End-to-end integration tests covering complete essay workflows. Tests agent coordination, memory persistence, and API functionality.  
 **Tests**: Integration test suite, workflow validation, and performance benchmarks.
 
-### 8.3 Performance & Load Testing
+### 9.3 Performance & Load Testing
 **Files**: `tests/performance/`  
 **Deliverable**: Performance tests measuring response times, memory usage, and concurrent user handling. Includes load testing and stress testing.  
 **Tests**: Performance benchmarks, load test results, and optimization recommendations.
 
-### 8.4 Quality Metrics & Monitoring
+### 9.4 Quality Metrics & Monitoring
 **Files**: `essay_agent/monitoring.py`  
 **Deliverable**: Built-in monitoring for essay quality, user satisfaction, and system performance. Includes metrics collection and alerting.  
 **Tests**: Metrics accuracy, alerting functionality, and dashboard integration tests.
 
 ---
 
-## Phase 9 · Production Readiness
+## Phase 10 · Production Readiness
 
-### 9.1 Error Handling & Recovery
+### 10.1 Error Handling & Recovery
 **Files**: `essay_agent/error_handler.py`  
 **Deliverable**: Comprehensive error handling with graceful degradation, automatic recovery, and user-friendly error messages. Includes retry logic and fallback strategies.  
 **Tests**: Error scenarios, recovery mechanisms, and user experience tests.
 
-### 9.2 Logging & Observability
+### 10.2 Logging & Observability
 **Files**: `essay_agent/logging.py`  
 **Deliverable**: Structured logging with trace IDs, performance metrics, and audit trails. Integrates with monitoring systems and supports log aggregation.  
 **Tests**: Log format validation, trace correlation, and monitoring integration tests.
 
-### 9.3 Security & Privacy
+### 10.3 Security & Privacy
 **Files**: `essay_agent/security.py`  
 **Deliverable**: Data encryption, access controls, and privacy protection. Includes secure memory handling and data anonymization capabilities.  
 **Tests**: Security validation, encryption verification, and privacy compliance tests.
 
-### 9.4 Deployment & Scaling
+### 10.4 Deployment & Scaling
 **Files**: `deploy/`, `docker-compose.yml`, `Dockerfile`  
 **Deliverable**: Production deployment configuration with Docker containers, environment management, and scaling capabilities. Includes CI/CD pipeline setup.  
 **Tests**: Deployment validation, scaling tests, and CI/CD pipeline verification.
 
 ---
 
-## Phase 10 · Documentation & Examples
+## Phase 11 · Documentation & Examples
 
-### 10.1 API Documentation
+### 11.1 API Documentation
 **Files**: `docs/api/`  
 **Deliverable**: Complete API documentation with examples, authentication guides, and integration tutorials. Auto-generated from code annotations.  
 **Tests**: Documentation accuracy, example validation, and tutorial completion tests.
 
-### 10.2 User Guide & Examples
+### 11.2 User Guide & Examples
 **Files**: `docs/user_guide/`, `examples/`  
 **Deliverable**: User documentation with step-by-step guides, example essays, and troubleshooting tips. Includes video tutorials and interactive examples.  
 **Tests**: Documentation completeness, example functionality, and user experience validation.
 
-### 10.3 Developer Documentation
+### 11.3 Developer Documentation
 **Files**: `docs/development/`  
 **Deliverable**: Technical documentation for contributors including architecture overview, coding standards, and contribution guidelines.  
 **Tests**: Documentation accuracy, code example validation, and developer onboarding tests.
 
-### 10.4 Demo & Sample Data
+### 11.4 Demo & Sample Data
 **Files**: `demo/`, `sample_data/`  
 **Deliverable**: Interactive demo with sample user profiles, example essays, and showcase scenarios. Includes data generation scripts and demo automation.  
 **Tests**: Demo functionality, sample data validation, and showcase scenario tests.
@@ -644,7 +645,7 @@ OUTPUT:
 
 Once the MVP is complete with all prompt-based tools working, the next phase will be:
 
-### Phase 11 · Model Fine-Tuning & Replacement
+### Phase 12 · Model Fine-Tuning & Replacement
 - **Data Collection**: Gather prompt/response pairs from MVP usage
 - **Model Training**: Fine-tune smaller models to replace each prompt tool
 - **Performance Comparison**: A/B test fine-tuned models vs. prompt templates
