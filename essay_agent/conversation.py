@@ -663,6 +663,22 @@ class IntentRecognizer:
         best_intent = "general"
         best_confidence = 0.0
         
+        # BUGFIX BUG-006: Special handling for essay creation requests
+        # These should trigger brainstorm workflow, not direct draft
+        essay_creation_patterns = [
+            r'\b(?:write.*essay.*about|write.*about.*essay)\b',
+            r'\b(?:want.*to.*write.*about|help.*me.*write.*about)\b',
+            r'\b(?:essay.*about.*my|write.*my.*essay)\b'
+        ]
+        
+        # Check if this is an essay creation request without existing brainstorm
+        for pattern in essay_creation_patterns:
+            if re.search(pattern, user_input_lower):
+                recent_tools = context.get('recent_tools', []) if context else []
+                # If no brainstorm has been done, force brainstorm intent
+                if 'brainstorm' not in recent_tools:
+                    return "brainstorm", 0.8  # High confidence for workflow correction
+        
         # Check each intent pattern
         for intent, patterns in self.intent_patterns.items():
             confidence = 0.0
@@ -691,6 +707,14 @@ class IntentRecognizer:
                     confidence += 0.2
                 elif 'draft' in recent_tools and intent in ['revise', 'polish']:
                     confidence += 0.2
+                
+                # BUGFIX BUG-006: Workflow validation - prevent skipping steps
+                if intent == 'draft' and 'brainstorm' not in recent_tools:
+                    confidence *= 0.5  # Reduce confidence for draft without brainstorm
+                if intent == 'revise' and 'draft' not in recent_tools:
+                    confidence *= 0.3  # Reduce confidence for revise without draft
+                if intent == 'polish' and 'draft' not in recent_tools:
+                    confidence *= 0.3  # Reduce confidence for polish without draft
             
             if confidence > best_confidence:
                 best_confidence = confidence
@@ -818,6 +842,9 @@ class ConversationalToolExecutor:
             result.status = ExecutionStatus.SUCCESS
             result.progress_messages.append(f"{tool_name} completed successfully")
             
+            # BUGFIX BUG-004: Save tool results to plan data for subsequent tools
+            self._save_tool_result_to_plan(tool_name, tool_result, plan)
+            
         except Exception as e:
             result.status = ExecutionStatus.FAILED
             result.error = str(e)
@@ -833,6 +860,77 @@ class ConversationalToolExecutor:
             }
         
         return result
+    
+    def _save_tool_result_to_plan(self, tool_name: str, tool_result: Any, plan: EssayPlan) -> None:
+        """Save tool results to plan data for subsequent tools to access.
+        
+        BUGFIX BUG-004: This ensures draft content is available to revise/polish tools,
+        and outline content is available to draft tool.
+        """
+        try:
+            if not hasattr(plan, 'data') or plan.data is None:
+                plan.data = {}
+            
+            # Extract and save relevant content based on tool type
+            if tool_name == 'brainstorm':
+                if isinstance(tool_result, dict) and 'ok' in tool_result:
+                    brainstorm_data = tool_result['ok']
+                    if 'stories' in brainstorm_data:
+                        plan.data['brainstorm_stories'] = brainstorm_data['stories']
+                        
+            elif tool_name == 'outline':
+                if hasattr(tool_result, 'outline'):
+                    plan.data['outline'] = tool_result.outline
+                elif isinstance(tool_result, dict) and 'outline' in tool_result:
+                    plan.data['outline'] = tool_result['outline']
+                elif isinstance(tool_result, dict) and 'ok' in tool_result:
+                    outline_data = tool_result['ok']
+                    if 'outline' in outline_data:
+                        plan.data['outline'] = outline_data['outline']
+                        
+            elif tool_name == 'draft':
+                if hasattr(tool_result, 'draft'):
+                    plan.data['current_draft'] = tool_result.draft
+                elif isinstance(tool_result, dict) and 'draft' in tool_result:
+                    plan.data['current_draft'] = tool_result['draft']
+                elif isinstance(tool_result, dict) and 'ok' in tool_result:
+                    # BUGFIX: Handle {'ok': {'draft': content}} format
+                    draft_data = tool_result['ok']
+                    if isinstance(draft_data, dict) and 'draft' in draft_data:
+                        plan.data['current_draft'] = draft_data['draft']
+                    
+            elif tool_name == 'revise':
+                if hasattr(tool_result, 'revised_draft'):
+                    plan.data['current_draft'] = tool_result.revised_draft
+                elif isinstance(tool_result, dict) and 'revised_draft' in tool_result:
+                    plan.data['current_draft'] = tool_result['revised_draft']
+                elif isinstance(tool_result, dict) and 'ok' in tool_result:
+                    # BUGFIX: Handle {'ok': {'revised_draft': content}} format
+                    revise_data = tool_result['ok']
+                    if isinstance(revise_data, dict) and 'revised_draft' in revise_data:
+                        plan.data['current_draft'] = revise_data['revised_draft']
+                    
+            elif tool_name == 'polish':
+                if hasattr(tool_result, 'polished_draft'):
+                    plan.data['current_draft'] = tool_result.polished_draft
+                elif isinstance(tool_result, dict) and 'polished_draft' in tool_result:
+                    plan.data['current_draft'] = tool_result['polished_draft']
+                elif isinstance(tool_result, dict) and 'final_draft' in tool_result:
+                    plan.data['current_draft'] = tool_result['final_draft']
+                elif isinstance(tool_result, dict) and 'ok' in tool_result:
+                    # BUGFIX: Handle {'ok': {'polished_draft'/'final_draft': content}} format
+                    polish_data = tool_result['ok']
+                    if isinstance(polish_data, dict):
+                        if 'polished_draft' in polish_data:
+                            plan.data['current_draft'] = polish_data['polished_draft']
+                        elif 'final_draft' in polish_data:
+                            plan.data['current_draft'] = polish_data['final_draft']
+                    
+            logger.debug(f"Saved {tool_name} result to plan data. Plan now contains: {list(plan.data.keys())}")
+            
+        except Exception as e:
+            logger.warning(f"Failed to save {tool_name} result to plan: {e}")
+            # Don't fail the tool execution just because we couldn't save to plan
     
     def _prepare_enhanced_tool_kwargs(self, tool_name: str, profile: UserProfile, plan: EssayPlan) -> Dict[str, Any]:
         """Prepare enhanced tool arguments with robust prompt extraction"""
@@ -2324,6 +2422,12 @@ class ConversationManager:
         # Initialize enhanced features
         self.prompt_extractor = PromptExtractor()
         self.intent_recognizer = IntentRecognizer()
+        
+        # BUGFIX BUG-005: Track tool results for test framework
+        self._last_tool_results = []
+        
+        # BUGFIX PLAN-PERSISTENCE: Keep an active plan across turns
+        self._active_plan: Optional[EssayPlan] = None
     
     def start_conversation(self):
         """Start the interactive conversation loop"""
@@ -2409,11 +2513,16 @@ class ConversationManager:
             
             logger.debug(f"Intent: {intent} (confidence: {confidence:.2f})")
             
-            # Step 3: Create plan based on intent  
-            plan = self.planner.create_conversational_plan(
-                user_input, 
-                PlanningContext.CONVERSATION
-            )
+            # Step 3: Create or reuse plan based on intent and existing state  
+            if self._active_plan is not None and self._active_plan.data:
+                # Reuse the active plan so we preserve accumulated data (outline, draft, etc.)
+                plan = self._active_plan
+                logger.debug("Reusing existing active plan with data keys: %s", list(plan.data.keys()))
+            else:
+                plan = self.planner.create_conversational_plan(
+                    user_input, 
+                    PlanningContext.CONVERSATION
+                )
             
             # Step 4: Execute tools if intent suggests it and we have sufficient confidence/context
             tool_results = []
@@ -2429,6 +2538,15 @@ class ConversationManager:
                     plan, user_input, self.state.profile, self.state
                 )
                 logger.debug(f"Tool execution results: {[r.tool_name + ':' + str(r.status) for r in tool_results]}")
+                
+                # BUGFIX BUG-005: Track tool results for test framework
+                self._last_tool_results = []
+                for result in tool_results:
+                    self._last_tool_results.append({
+                        'tool_name': result.tool_name,
+                        'status': str(result.status),
+                        'result': result.result if hasattr(result, 'result') else None
+                    })
             
             # Step 5: Generate natural response
             response = self.response_generator.generate_response(
@@ -2444,6 +2562,9 @@ class ConversationManager:
             self._learn_from_interaction(user_input, tool_results)
             if self._should_auto_save():
                 self.state.save_state()
+            
+            # BUGFIX PLAN-PERSISTENCE: Update active plan reference
+            self._active_plan = plan
             
             return response
             

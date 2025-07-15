@@ -1,0 +1,138 @@
+{
+  "user_id": "test_HP-003_1752569828",
+  "profile": {
+    "user_info": {
+      "name": "Jordan Kim",
+      "grade": 12,
+      "intended_major": "Fine Arts",
+      "college_list": [
+        "RISD",
+        "Parsons",
+        "Yale",
+        "NYU"
+      ],
+      "platforms": [
+        "Common App",
+        "Coalition"
+      ]
+    },
+    "academic_profile": {
+      "gpa": 3.7,
+      "test_scores": {
+        "SAT": 1450,
+        "ACT": null
+      },
+      "courses": [
+        "AP Fine Arts",
+        "AP Literature",
+        "AP History",
+        "AP Math"
+      ],
+      "activities": [
+        {
+          "name": "Art Gallery Curator",
+          "role": "Student Curator",
+          "duration": "2 years",
+          "description": "Curated 6 exhibitions featuring local emerging artists",
+          "impact": "Showcased 30+ artists, raised $5000 for art scholarships"
+        },
+        {
+          "name": "Community Mural Project",
+          "role": "Lead Artist",
+          "duration": "1 year",
+          "description": "Designed and painted mural reflecting neighborhood history",
+          "impact": "Brought together 100+ community members in collaborative art"
+        }
+      ]
+    },
+    "core_values": [
+      {
+        "value": "Creative Expression",
+        "description": "Art as a universal language for connection",
+        "evidence": [
+          "Gallery work",
+          "Mural project"
+        ],
+        "used_in_essays": []
+      },
+      {
+        "value": "Community Building",
+        "description": "Using art to strengthen community bonds",
+        "evidence": [
+          "Mural project",
+          "Gallery exhibitions"
+        ],
+        "used_in_essays": []
+      }
+    ],
+    "defining_moments": [
+      {
+        "title": "Community Mural Unveiling",
+        "description": "Seeing neighbors of all ages celebrate art together",
+        "emotional_impact": "Art's power to unite across differences",
+        "lessons_learned": "Creativity can heal and build community",
+        "used_in_essays": [],
+        "themes": [
+          "passion",
+          "art",
+          "community",
+          "creativity"
+        ],
+        "story_category": "creative",
+        "story_weight": 1.0,
+        "college_usage": {}
+      }
+    ],
+    "writing_voice": null,
+    "essay_history": [],
+    "college_story_usage": {}
+  },
+  "history": [
+    {
+      "user_input": "I want to write about my community art project for MIT",
+      "agent_response": "Great! I've brainstormed some story ideas based on your essay prompt:\n\n**1. The Mural That United Us**\nAs the lead artist for a community mural, I designed a piece that captured our neighborhood's rich history. The project brought together over 100 residents, fostering connections and a shared pride in our collective identity.\n\n**2. Curating Connections Through Art**\nAs a student curator, I organized exhibitions showcasing local artists, raising $5000 for scholarships. This experience taught me the power of art to connect people and support emerging talent in our community.\n\n**3. Art Unveiling Celebration**\nDuring the unveiling of our mural, I witnessed neighbors of all ages celebrating together, bridging generational gaps. It was a powerful reminder of art's ability to unite and heal communities.\n\nWhich story resonates with you? I can help you create an outline for whichever one you choose!",
+      "timestamp": "2025-07-15T01:57:17.387421",
+      "plan": null,
+      "tool_results": [
+        {
+          "tool_name": "brainstorm",
+          "status": "success",
+          "error": null,
+          "execution_time": 9.366035,
+          "progress_messages": [
+            "Starting brainstorm...",
+            "Executing brainstorm...",
+            "brainstorm completed successfully"
+          ]
+        }
+      ],
+      "execution_time": 9.37011
+    }
+  ],
+  "current_essay_context": {
+    "essay_type": "community",
+    "college_target": "Mit",
+    "current_section": null,
+    "word_count_target": null,
+    "deadline": null,
+    "progress_stage": "planning",
+    "last_updated": "2025-07-15T01:57:08.017439",
+    "extracted_prompt": "my community art project for MIT"
+  },
+  "user_preferences": {
+    "preferred_tone": null,
+    "writing_style": null,
+    "favorite_topics": [
+      "community",
+      "arts"
+    ],
+    "revision_patterns": {},
+    "tool_usage_patterns": {
+      "brainstorm": 1
+    },
+    "last_updated": "2025-07-15T01:57:17.387679"
+  },
+  "essay_context_history": [],
+  "active": true,
+  "last_saved": "2025-07-15T01:57:17.389049"
+}

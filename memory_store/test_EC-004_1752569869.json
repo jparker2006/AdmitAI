@@ -1,0 +1,129 @@
+{
+  "user_info": {
+    "name": "Jordan Kim",
+    "grade": 12,
+    "intended_major": "Fine Arts",
+    "college_list": [
+      "RISD",
+      "Parsons",
+      "Yale",
+      "NYU"
+    ],
+    "platforms": [
+      "Common App",
+      "Coalition"
+    ]
+  },
+  "academic_profile": {
+    "gpa": 3.7,
+    "test_scores": {
+      "SAT": 1450,
+      "ACT": null
+    },
+    "courses": [
+      "AP Fine Arts",
+      "AP Literature",
+      "AP History",
+      "AP Math"
+    ],
+    "activities": [
+      {
+        "name": "Art Gallery Curator",
+        "role": "Student Curator",
+        "duration": "2 years",
+        "description": "Curated 6 exhibitions featuring local emerging artists",
+        "impact": "Showcased 30+ artists, raised $5000 for art scholarships"
+      },
+      {
+        "name": "Community Mural Project",
+        "role": "Lead Artist",
+        "duration": "1 year",
+        "description": "Designed and painted mural reflecting neighborhood history",
+        "impact": "Brought together 100+ community members in collaborative art"
+      }
+    ]
+  },
+  "core_values": [
+    {
+      "value": "Creative Expression",
+      "description": "Art as a universal language for connection",
+      "evidence": [
+        "Gallery work",
+        "Mural project"
+      ],
+      "used_in_essays": []
+    },
+    {
+      "value": "Community Building",
+      "description": "Using art to strengthen community bonds",
+      "evidence": [
+        "Mural project",
+        "Gallery exhibitions"
+      ],
+      "used_in_essays": []
+    }
+  ],
+  "defining_moments": [
+    {
+      "title": "Community Mural Unveiling",
+      "description": "Seeing neighbors of all ages celebrate art together",
+      "emotional_impact": "Art's power to unite across differences",
+      "lessons_learned": "Creativity can heal and build community",
+      "used_in_essays": [],
+      "themes": [
+        "passion",
+        "art",
+        "community",
+        "creativity"
+      ],
+      "story_category": "creative",
+      "story_weight": 1.0,
+      "college_usage": {}
+    },
+    {
+      "title": "Transforming a Blank Wall",
+      "description": "Leading a community mural project, I united diverse neighbors through art. Witnessing the mural's unveiling, I realized creativity's power to bridge divides and foster community spirit.",
+      "emotional_impact": "",
+      "lessons_learned": "",
+      "used_in_essays": [],
+      "themes": [
+        "Creative Expression",
+        "Community Building"
+      ],
+      "story_category": "defining_moment",
+      "story_weight": 1.0,
+      "college_usage": {}
+    },
+    {
+      "title": "Curating Emerging Artists",
+      "description": "As a student curator, I organized exhibitions showcasing local artists, raising funds for scholarships. This experience taught me the importance of supporting emerging talent and the impact of art on community enrichment.",
+      "emotional_impact": "",
+      "lessons_learned": "",
+      "used_in_essays": [],
+      "themes": [
+        "Leadership",
+        "Artistic Impact"
+      ],
+      "story_category": "defining_moment",
+      "story_weight": 1.0,
+      "college_usage": {}
+    },
+    {
+      "title": "Art as a Universal Language",
+      "description": "During an art exhibition, I observed how diverse audiences connected over shared artistic experiences. This reinforced my belief in art's ability to transcend cultural barriers and unite people.",
+      "emotional_impact": "",
+      "lessons_learned": "",
+      "used_in_essays": [],
+      "themes": [
+        "Cultural Connection",
+        "Artistic Understanding"
+      ],
+      "story_category": "defining_moment",
+      "story_weight": 1.0,
+      "college_usage": {}
+    }
+  ],
+  "writing_voice": null,
+  "essay_history": [],
+  "college_story_usage": {}
+}

@@ -135,10 +135,14 @@ Suggested next step: Retry with simplified outline or manual drafting
 
         if isinstance(outline, dict):
             outline_str = json.dumps(outline, ensure_ascii=False, indent=2, default=str)
+            # BUGFIX BUG-003: Handle empty outline by generating basic structure
+            if outline == {} or outline_str == "{}":
+                outline_str = self._generate_basic_outline(voice_profile, word_count)
         else:
             outline_str = str(outline).strip()
             if not outline_str:
-                raise ValueError("outline must not be empty.")
+                # BUGFIX BUG-003: Generate basic outline instead of failing
+                outline_str = self._generate_basic_outline(voice_profile, word_count)
 
         # ----------------------- Generate draft with retry logic --------
         try:
@@ -271,6 +275,43 @@ Suggested next step: Retry with simplified outline or manual drafting
                 voice_profile_truncated = voice_profile_truncated[:20000] + "\n... [truncated for length]"
         
         return voice_profile_truncated
+
+    def _generate_basic_outline(self, voice_profile: str, word_count: int) -> str:
+        """Generate a basic outline structure when none is provided.
+        
+        BUGFIX BUG-003: This method allows draft tool to work without pre-existing outline
+        by creating a simple 3-paragraph structure based on user profile.
+        """
+        import json
+        
+        # Create basic outline structure suitable for personal essays
+        basic_outline = {
+            "structure": {
+                "introduction": {
+                    "hook": "Opening moment or reflection",
+                    "context": "Background and setting"
+                },
+                "body": {
+                    "development": "Main story or experience",
+                    "growth": "Lessons learned and personal growth",
+                    "reflection": "Deeper insights and meaning"
+                },
+                "conclusion": {
+                    "connection": "Link to future goals",
+                    "impact": "How this shapes who you are"
+                }
+            },
+            "word_distribution": {
+                "introduction": f"{int(word_count * 0.2)} words",
+                "body": f"{int(word_count * 0.6)} words", 
+                "conclusion": f"{int(word_count * 0.2)} words"
+            },
+            "keyword_data": {
+                "extracted_keywords": ["personal growth", "experience", "learning", "reflection"]
+            }
+        }
+        
+        return json.dumps(basic_outline, ensure_ascii=False, indent=2)
 
     def _extract_keywords_from_outline(self, outline_str: str) -> list:
         """Extract keywords from outline's keyword_data if present."""
