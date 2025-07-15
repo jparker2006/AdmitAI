@@ -112,7 +112,7 @@ class OutlineGeneratorTool(ValidatedTool):
         "with appropriate word count allocation."
     )
     
-    timeout: float = 15.0  # Outline generation may take longer
+    timeout: float = 45.0  # Outline generation requires careful planning
     
     def _run(self, *, story: str, essay_prompt: str, word_count: int = 650, **_: Any) -> Dict[str, Any]:
         # Input validation

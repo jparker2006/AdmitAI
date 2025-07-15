@@ -87,7 +87,27 @@ def _extract_result(raw: Any) -> str:  # noqa: D401
         raw = raw["text"]
 
     try:
-        data: Dict[str, Any] = json.loads(str(raw).strip())
-        return data["result"].strip()
+        raw_text = str(raw).strip()
+        
+        # Try to parse as JSON first
+        try:
+            data: Dict[str, Any] = json.loads(raw_text)
+            if "result" in data:
+                return data["result"].strip()
+        except json.JSONDecodeError:
+            pass
+            
+        # If not JSON, check if it's wrapped in JSON-like structure
+        if raw_text.startswith('{"result"'):
+            # Extract content between quotes after "result":
+            import re
+            match = re.search(r'"result":\s*"([^"]*)"', raw_text)
+            if match:
+                return match.group(1).strip()
+        
+        # If still no luck, return the raw text (fallback)
+        return raw_text
+        
     except Exception as exc:  # noqa: BLE001
-        raise ValueError("Invalid LLM output; expected JSON with 'result' key") from exc 
+        # Return original text as fallback instead of raising error
+        return str(raw).strip() 

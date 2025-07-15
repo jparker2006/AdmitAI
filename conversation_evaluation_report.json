@@ -1,0 +1,30 @@
+{
+  "quality_metrics": {
+    "relevance_score": 0.4142690528712731,
+    "helpfulness_score": 0.34400000000000003,
+    "coherence_score": 0.40809027777777773,
+    "suggestion_quality": 0.8,
+    "overall_quality": 0.5175186521067072,
+    "turn_count": 25,
+    "tool_success_rate": 0.8333333333333334,
+    "clarification_appropriateness": 0.86
+  },
+  "intent_recognition_accuracy": 0.775,
+  "context_tracking_success": 0.2,
+  "integration_test_results": {
+    "basic_workflow": true,
+    "tool_execution": true,
+    "context_persistence": true,
+    "conversation_flow": true
+  },
+  "overall_score": 0.5748815282373475,
+  "recommendations": [
+    "Improve response relevance by better matching user intent",
+    "Enhance helpfulness by increasing tool execution success rate",
+    "Improve conversation coherence by better topic tracking",
+    "Improve intent recognition accuracy with better training data",
+    "Improve handling of long conversations (10+ turns)"
+  ],
+  "execution_time": 292.19842410087585,
+  "test_timestamp": "2025-07-14 22:12:18"
+}

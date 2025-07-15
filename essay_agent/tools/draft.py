@@ -64,7 +64,7 @@ class DraftTool(ValidatedTool):
     )
 
     # Drafting can take longer than quick tools
-    timeout: float = 30.0
+    timeout: float = 45.0  # drafting full essays requires substantial time
 
     def __init__(self):
         super().__init__()
@@ -75,6 +75,31 @@ class DraftTool(ValidatedTool):
     def word_count_tool(self) -> WordCountTool:
         """Get the word count tool instance."""
         return getattr(self, '_word_count_tool', WordCountTool())
+
+    def _handle_timeout_fallback(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:
+        """Provide fallback draft structure when drafting times out."""
+        word_count = kwargs.get("word_count", 650)
+        fallback_draft = f"""[DRAFT TIMEOUT FALLBACK - {word_count} words]
+
+This essay draft could not be generated due to a timeout error. To resolve this issue:
+
+1. Try reducing the complexity of your outline
+2. Ensure your internet connection is stable  
+3. Consider breaking the draft into smaller sections
+4. Increase the timeout setting if timeouts persist
+
+Your outline structure was preserved and can be used to manually craft your essay or retry with adjusted parameters.
+
+Word count target: {word_count} words
+Timeout occurred during: Essay drafting phase
+Suggested next step: Retry with simplified outline or manual drafting
+
+[Please retry the draft tool with adjusted parameters]"""
+        
+        return {
+            "ok": {"draft": fallback_draft, "word_count": len(fallback_draft.split())},
+            "error": f"Draft tool timed out after {self.timeout}s - using fallback structure"
+        }
 
     # ------------------------------------------------------------------
     # LangChain sync execution

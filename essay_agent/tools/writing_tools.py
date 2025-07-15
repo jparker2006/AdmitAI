@@ -137,7 +137,7 @@ class ParagraphRewriteTool(ValidatedTool):
         "Rewrite an existing paragraph to match a specific stylistic instruction while preserving voice."
     )
 
-    timeout: float = 12.0
+    timeout: float = 45.0  # paragraph rewriting requires careful analysis
 
     def _run(
         self,
@@ -229,7 +229,7 @@ class VoiceStrengtheningTool(ValidatedTool):
         "Adjust a paragraph to better match the user's authentic voice profile."
     )
 
-    timeout: float = 12.0
+    timeout: float = 45.0  # voice strengthening requires deep analysis
 
     def _run(
         self,

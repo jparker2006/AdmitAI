@@ -15,78 +15,84 @@
   "core_values": [],
   "defining_moments": [
     {
-      "title": "Test Story",
-      "description": "Test desc",
+      "title": "Debate Club Transformation",
+      "description": "As President of the Debate Club, I transformed my fear of public speaking into a strength, leading my team to victory. This journey taught me the power of self-confidence and effective communication.",
       "emotional_impact": "",
       "lessons_learned": "",
       "used_in_essays": [],
       "themes": [
-        "insight1"
+        "Leadership",
+        "Self-confidence"
       ],
       "story_category": "defining_moment",
       "story_weight": 1.0,
       "college_usage": {}
     },
     {
-      "title": "Test Story 2",
-      "description": "Test desc 2",
+      "title": "The Self-Taught Programmer",
+      "description": "Driven by curiosity, I embarked on a journey to learn programming independently, turning late-night coding sessions into a passion. This experience deepened my love for learning and problem-solving.",
       "emotional_impact": "",
       "lessons_learned": "",
       "used_in_essays": [],
       "themes": [
-        "insight2"
+        "Learning",
+        "Curiosity"
       ],
       "story_category": "defining_moment",
       "story_weight": 1.0,
       "college_usage": {}
     },
     {
-      "title": "Test Story 3",
-      "description": "Test desc 3",
+      "title": "Cultural Exchange Experience",
+      "description": "Participating in a cultural exchange program opened my eyes to diverse perspectives and the importance of empathy. This experience reshaped my understanding of global interconnectedness and cultural appreciation.",
       "emotional_impact": "",
       "lessons_learned": "",
       "used_in_essays": [],
       "themes": [
-        "insight3"
+        "Empathy",
+        "Cultural Appreciation"
       ],
       "story_category": "defining_moment",
       "story_weight": 1.0,
       "college_usage": {}
     },
     {
-      "title": "Story 1",
-      "description": "Test story 1",
+      "title": "Debate Club Leadership Transformation",
+      "description": "Leading the debate club taught me the power of persuasive communication and teamwork. I discovered the thrill of crafting arguments and the satisfaction of seeing my team grow in confidence and skill.",
       "emotional_impact": "",
       "lessons_learned": "",
       "used_in_essays": [],
       "themes": [
-        "Insight 1"
+        "Leadership",
+        "Communication"
       ],
       "story_category": "defining_moment",
       "story_weight": 1.0,
       "college_usage": {}
     },
     {
-      "title": "Story 2",
-      "description": "Test story 2",
+      "title": "Self-Taught Programming Journey",
+      "description": "Teaching myself programming opened a world of creativity and problem-solving. The process of building projects from scratch fueled my passion for learning and innovation.",
       "emotional_impact": "",
       "lessons_learned": "",
       "used_in_essays": [],
       "themes": [
-        "Insight 2"
+        "Self-motivation",
+        "Innovation"
       ],
       "story_category": "defining_moment",
       "story_weight": 1.0,
       "college_usage": {}
     },
     {
-      "title": "Story 3",
-      "description": "Test story 3",
+      "title": "Public Speaking Breakthrough",
+      "description": "Overcoming my fear of public speaking in debate competitions was a pivotal moment. It taught me resilience and the joy of expressing ideas clearly and confidently.",
       "emotional_impact": "",
       "lessons_learned": "",
       "used_in_essays": [],
       "themes": [
-        "Insight 3"
+        "Resilience",
+        "Confidence"
       ],
       "story_category": "defining_moment",
       "story_weight": 1.0,
@@ -94,15 +100,6 @@
     }
   ],
   "writing_voice": null,
-  "essay_history": [
-    {
-      "prompt_id": "essay_1",
-      "prompt_text": "outline_generation",
-      "platform": "generic",
-      "versions": [],
-      "final_version": 0,
-      "status": "outline"
-    }
-  ],
+  "essay_history": [],
   "college_story_usage": {}
 }

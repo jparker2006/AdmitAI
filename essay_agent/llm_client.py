@@ -9,6 +9,7 @@ instantiating LLMs ad-hoc.  Key features:
 * Automatic SQLite or in-memory cache using ``langchain.cache``.
 * Cost & token accounting via ``get_openai_callback`` context manager.
 * Exponential back-off retry decorator (via *tenacity*) wrapping common helpers.
+* Rate limiting to prevent API quota exhaustion.
 * Graceful degradation: when ``OPENAI_API_KEY`` is absent, falls back to
   ``FakeListLLM`` to allow offline / CI execution without hitting the network.
 
@@ -24,10 +25,12 @@ from __future__ import annotations
 import contextlib
 import functools
 import os
+import time
+import threading
 from typing import Any, Generator, Union, cast
 import tiktoken  # Add tiktoken for token counting
 
-from tenacity import retry, stop_after_attempt, wait_exponential
+from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
 # LangChain cache -----------------------------------------------------------------
 from langchain.cache import InMemoryCache, SQLiteCache
@@ -61,6 +64,11 @@ _DEFAULT_MODEL = os.getenv("ESSAY_AGENT_MODEL", "gpt-4o")
 _CACHE_PATH = os.getenv("ESSAY_AGENT_CACHE_PATH", ".essay_agent_cache.sqlite")
 _USE_CACHE = os.getenv("ESSAY_AGENT_CACHE", "1") == "1"
 
+# Rate limiting configuration
+_MIN_REQUEST_INTERVAL = float(os.getenv("ESSAY_AGENT_MIN_REQUEST_INTERVAL", "1.0"))  # seconds between requests
+_last_request_time = 0.0
+_request_lock = threading.Lock()
+
 # Initialise global cache exactly once at import time.  SQLite is persistent,
 # while the in-memory cache avoids disk I/O when disabled.
 if _USE_CACHE:
@@ -69,19 +77,46 @@ else:  # pragma: no cover
     set_llm_cache(InMemoryCache())
 
 
+def _rate_limit():
+    """Enforce minimum interval between API requests to prevent rate limiting."""
+    global _last_request_time
+    
+    with _request_lock:
+        current_time = time.time()
+        time_since_last = current_time - _last_request_time
+        
+        if time_since_last < _MIN_REQUEST_INTERVAL:
+            sleep_time = _MIN_REQUEST_INTERVAL - time_since_last
+            time.sleep(sleep_time)
+        
+        _last_request_time = time.time()
+
+
 # ---------------------------------------------------------------------------
 # Retry wrapper – applies to helper functions (not to the LLM instance itself)
 # ---------------------------------------------------------------------------
 
 def _retryable(fn):  # noqa: D401
-    """Function decorator adding exponential back-off retry behaviour."""
+    """Function decorator adding exponential back-off retry behaviour with rate limiting."""
+
+    @functools.wraps(fn)
+    def wrapper(*args, **kwargs):
+        # Apply rate limiting before each request
+        _rate_limit()
+        return fn(*args, **kwargs)
 
     return cast(
         Any,
         retry(
-            wait=wait_exponential(multiplier=1, min=1, max=20),
-            stop=stop_after_attempt(6),
-        )(fn),
+            wait=wait_exponential(multiplier=1, min=2, max=30),  # Longer waits for better stability
+            stop=stop_after_attempt(8),  # More attempts for better resilience
+            retry=retry_if_exception_type((
+                ConnectionError,
+                TimeoutError,
+                # Add common OpenAI API exceptions
+                Exception,  # Broad catch for API issues - we'll refine this
+            )),
+        )(wrapper),
     )
 
 

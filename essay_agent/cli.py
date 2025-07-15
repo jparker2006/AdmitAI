@@ -14,6 +14,7 @@ from essay_agent.memory.user_profile_schema import UserProfile
 from essay_agent.tools import REGISTRY as TOOL_REGISTRY
 from essay_agent.utils.logging import debug_print
 from essay_agent.eval import run_real_evaluation
+from essay_agent.conversation import ConversationManager, ConversationShortcuts
 
 try:
     # tqdm is already a declared dependency in requirements.txt
@@ -201,7 +202,7 @@ def _cmd_tool(args: argparse.Namespace) -> None:  # noqa: D401
         print(json.dumps(output, indent=2, default=str))
     else:
         if isinstance(output, (dict, list)):
-            print(json.dumps(output, indent=2))
+            print(json.dumps(output, indent=2, default=str))
         else:
             print(output)
 
@@ -256,6 +257,88 @@ def _cmd_eval(args: argparse.Namespace) -> None:  # noqa: D401
         sys.exit(1)
 
 
+def _cmd_chat(args: argparse.Namespace) -> None:  # noqa: D401
+    """Handle 'essay-agent chat' command to enter conversational mode."""
+    
+    # Check if API key is set for LLM responses
+    if not os.getenv("OPENAI_API_KEY"):
+        print("❌ Error: OPENAI_API_KEY environment variable not set", file=sys.stderr)
+        print("Please set your OpenAI API key:", file=sys.stderr)
+        print("export OPENAI_API_KEY='your-api-key-here'", file=sys.stderr)
+        sys.exit(1)
+    
+    # Handle shortcuts
+    shortcuts = ConversationShortcuts()
+    
+    # Show available shortcuts
+    if hasattr(args, 'shortcuts') and args.shortcuts:
+        print(shortcuts.format_shortcuts_help())
+        return
+    
+    # Process shortcut command
+    if hasattr(args, 'shortcut') and args.shortcut:
+        shortcut_command = shortcuts.process_shortcut(args.shortcut)
+        if shortcut_command:
+            print(f"🚀 Executing shortcut: {args.shortcut}")
+            print(f"   Command: {shortcut_command}")
+            print()
+            
+            # Execute the shortcut by creating a conversation and sending the command
+            try:
+                profile = _load_profile(args.user, args.profile)
+                conversation = ConversationManager(user_id=args.user, profile=profile)
+                
+                # Send the shortcut command
+                response = conversation.handle_message(shortcut_command)
+                print(f"🤖: {response}")
+                
+                # Ask if user wants to continue conversation
+                print("\n" + "="*50)
+                continue_chat = input("Continue conversation? (y/N): ").strip().lower()
+                if continue_chat in ['y', 'yes']:
+                    print()
+                    conversation.start_conversation()
+                else:
+                    print("🤖: Goodbye! Your conversation has been saved.")
+                
+            except Exception as e:
+                print(f"❌ Error executing shortcut: {e}", file=sys.stderr)
+                if hasattr(args, 'debug') and args.debug:
+                    import traceback
+                    traceback.print_exc()
+                sys.exit(1)
+        else:
+            print(f"❌ Unknown shortcut: {args.shortcut}")
+            print("Available shortcuts:")
+            available_shortcuts = shortcuts.get_available_shortcuts()
+            for shortcut in available_shortcuts:
+                print(f"  {shortcut.trigger} - {shortcut.description}")
+            sys.exit(1)
+        
+        return
+    
+    # Normal conversation mode
+    try:
+        # Load user profile
+        profile = _load_profile(args.user, args.profile)
+        
+        # Create conversation manager
+        conversation = ConversationManager(user_id=args.user, profile=profile)
+        
+        # Start conversation
+        conversation.start_conversation()
+        
+    except KeyboardInterrupt:
+        print("\n🤖: Goodbye! Your conversation has been saved.")
+        sys.exit(0)
+    except Exception as e:
+        print(f"❌ Error starting conversation: {e}", file=sys.stderr)
+        if hasattr(args, 'debug') and args.debug:
+            import traceback
+            traceback.print_exc()
+        sys.exit(1)
+
+
 # ---------------------------------------------------------------------------
 # CLI Entrypoint
 # ---------------------------------------------------------------------------
@@ -304,6 +387,15 @@ def build_parser() -> argparse.ArgumentParser:  # noqa: D401
     eval_cmd.add_argument("--user", default="real_eval_user", help="User ID for evaluation (default: real_eval_user)")
     eval_cmd.add_argument("--json", action="store_true", help="Output JSON instead of human-readable text")
     eval_cmd.set_defaults(func=_cmd_eval)
+
+    # --------------------------- chat ------------------------------------
+    chat = sub.add_parser("chat", help="Enter conversational mode for interactive essay assistance")
+    chat.add_argument("--user", default="cli_user", help="User ID (default: cli_user)")
+    chat.add_argument("--profile", help="Path to user profile JSON file")
+    chat.add_argument("--shortcut", choices=["ideas", "stories", "outline", "draft", "revise", "polish", "status", "help"], 
+                  help="Start conversation with a shortcut (e.g., 'outline', 'draft')")
+    chat.add_argument("--shortcuts", action="store_true", help="Show available shortcuts")
+    chat.set_defaults(func=_cmd_chat)
 
     return parser
 

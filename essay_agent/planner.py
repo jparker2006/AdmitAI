@@ -24,6 +24,11 @@ from essay_agent.tools import REGISTRY as TOOL_REGISTRY
 from essay_agent.memory import HierarchicalMemory, SimpleMemory
 from essay_agent.memory.simple_memory import is_story_reused
 
+# Planning system imports (conditional to avoid circular imports)
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .planning import ConversationalPlanner, PlanningContext
+
 # LangChain imports ---------------------------------------------------------
 # Prefer langchain_openai (recommended) then community path, fallback to legacy
 try:
@@ -52,6 +57,7 @@ class Phase(Enum):
     DRAFTING = auto()
     REVISING = auto()
     POLISHING = auto()
+    CONVERSATION = auto()
 
 
 @dataclass
@@ -99,6 +105,46 @@ class EssayPlanner:
             self._react = EssayReActPlanner()
 
         return self._react.decide_next_action(user_input, context)
+    
+    def create_conversational_plan(self, user_id: str, profile, user_request: str, 
+                                 context_type: str = "conversation") -> EssayPlan:
+        """Create a conversational plan using the planning system.
+        
+        This method provides a bridge between the existing planner and the new
+        conversational planning system for backward compatibility.
+        
+        Args:
+            user_id: User identifier
+            profile: User profile object
+            user_request: User's natural language request
+            context_type: Type of planning context
+        
+        Returns:
+            EssayPlan: Plan with conversational context and constraints
+        """
+        try:
+            # Import here to avoid circular import
+            from .planning import ConversationalPlanner, PlanningContext
+            
+            # Create conversational planner
+            conv_planner = ConversationalPlanner(user_id, profile)
+            
+            # Map context type to enum
+            context_map = {
+                "conversation": PlanningContext.CONVERSATION,
+                "workflow": PlanningContext.WORKFLOW,
+                "constraint_driven": PlanningContext.CONSTRAINT_DRIVEN,
+                "re_planning": PlanningContext.RE_PLANNING
+            }
+            
+            planning_context = context_map.get(context_type, PlanningContext.CONVERSATION)
+            
+            # Create plan using conversational planner
+            return conv_planner.create_conversational_plan(user_request, planning_context)
+            
+        except Exception as e:
+            # Fallback to standard planning if conversational planning fails
+            return self.decide_next_action(user_request, {"user_id": user_id, "user_profile": profile})
 
 
 # ---------------------------------------------------------------------------

@@ -39,7 +39,20 @@ class PolishTool(ValidatedTool):
         "Perform final grammar/style polish on a draft while enforcing an exact word count."
     )
 
-    timeout: float = 12.0
+    timeout: float = 45.0  # polishing requires careful analysis and editing
+
+    def _handle_timeout_fallback(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:
+        """Provide fallback polished essay when polishing times out."""
+        draft = kwargs.get("draft", "")
+        word_count = kwargs.get("word_count", len(draft.split()) if draft else 650)
+        
+        # Return the original draft with a note about timeout
+        fallback_essay = draft + "\n\n[POLISH TIMEOUT: Essay returned as-is due to timeout. Consider manual review for final polish.]"
+        
+        return {
+            "ok": {"polished_essay": fallback_essay, "word_count": len(fallback_essay.split())},
+            "error": f"Polish tool timed out after {self.timeout}s - returning original draft"
+        }
 
     # ------------------------------------------------------------------
     # Sync execution

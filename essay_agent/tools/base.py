@@ -37,7 +37,9 @@ class ValidatedTool(BaseTool, ABC):
         """Synchronous entry point with exponential-backoff retry on failure."""
 
         attempt = 0
-        delay = 1.0  # seconds (doubles each retry)
+        delay = 2.0  # seconds (doubles each retry, starting higher)
+        last_error = None
+        
         while attempt < self.max_attempts:
             try:
                 if self.timeout is not None:
@@ -49,16 +51,31 @@ class ValidatedTool(BaseTool, ABC):
                     result = self._run(*args, **kwargs)
 
                 return {"ok": result, "error": None}
-            except Exception as exc:  # noqa: BLE001
+            except asyncio.TimeoutError as exc:
+                last_error = exc
                 attempt += 1
+                print(f"⏰ Tool '{self.name}' timed out on attempt {attempt}/{self.max_attempts}")
+                
+                if attempt >= self.max_attempts:
+                    # Provide graceful degradation for timeout errors
+                    return self._handle_timeout_fallback(*args, **kwargs)
+                    
+            except Exception as exc:  # noqa: BLE001
+                last_error = exc
+                attempt += 1
+                print(f"⚠️  Tool '{self.name}' failed on attempt {attempt}/{self.max_attempts}: {type(exc).__name__}")
+                
                 if attempt >= self.max_attempts:
                     return {"ok": None, "error": _format_exc(exc)}
 
-                # Exponential backoff --------------------------------------------------
+            # Exponential backoff with longer delays
+            if attempt < self.max_attempts:
                 import time
-
+                print(f"🔄 Retrying in {delay:.1f}s...")
                 time.sleep(delay)
-                delay = min(delay * 2, 8.0)  # cap the wait to 8s to avoid long stalls
+                delay = min(delay * 2, 16.0)  # cap the wait to 16s, higher than before
+
+        return {"ok": None, "error": _format_exc(last_error) if last_error else "Unknown error"}
 
     async def ainvoke(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:  # type: ignore[override]
         try:
@@ -77,6 +94,24 @@ class ValidatedTool(BaseTool, ABC):
     async def _arun_wrapper(self, *args: Any, **kwargs: Any):  # noqa: D401
         # Default implementation delegates to sync _run in thread.
         return await asyncio.to_thread(self._run, *args, **kwargs)
+
+    def _handle_timeout_fallback(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:
+        """Provide graceful degradation when tool times out completely.
+        
+        Subclasses can override this to provide tool-specific fallback behavior.
+        """
+        error_msg = f"Tool '{self.name}' timed out after {self.max_attempts} attempts with {self.timeout}s timeout"
+        
+        # Provide helpful context about what failed
+        fallback_result = {
+            "tool_name": self.name,
+            "timeout_seconds": self.timeout,
+            "max_attempts": self.max_attempts,
+            "fallback_reason": "timeout",
+            "suggested_action": f"Consider increasing timeout or simplifying the request to {self.name}"
+        }
+        
+        return {"ok": fallback_result, "error": error_msg}
 
 
 def _format_exc(exc: Exception) -> ToolError:

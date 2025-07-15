@@ -51,7 +51,35 @@ class BrainstormTool(ValidatedTool):
         "Suggest 3 unique personal story ideas for a college essay given the essay prompt and user profile."
     )
 
-    timeout: float = 12.0  # brainstorming can be moderately slow
+    timeout: float = 45.0  # brainstorming can take time with complex prompts
+
+    def _handle_timeout_fallback(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:
+        """Provide fallback stories when brainstorming times out."""
+        fallback_stories = [
+            {
+                "title": "Personal Growth Experience",
+                "description": "A meaningful experience that led to personal development and self-discovery",
+                "prompt_fit": "Addresses the prompt with a focus on growth and learning",
+                "insights": ["Resilience", "Self-reflection", "Adaptability"]
+            },
+            {
+                "title": "Community Impact Initiative", 
+                "description": "An effort to create positive change in your community or school",
+                "prompt_fit": "Shows leadership and commitment to others",
+                "insights": ["Leadership", "Service", "Collaboration"]
+            },
+            {
+                "title": "Overcoming Academic Challenge",
+                "description": "A time when you struggled with a subject or skill and worked to improve",
+                "prompt_fit": "Demonstrates perseverance and intellectual curiosity", 
+                "insights": ["Persistence", "Growth mindset", "Problem-solving"]
+            }
+        ]
+        
+        return {
+            "ok": {"stories": fallback_stories},
+            "error": f"Brainstorm tool timed out - using fallback stories. Consider increasing timeout or simplifying prompt."
+        }
 
     # ------------------------------------------------------------------
     # Synchronous execution
