@@ -424,7 +424,37 @@ def get_scenarios_by_prompt(prompt_id: str) -> List[TestScenario]:
 def validate_scenario_result(scenario: TestScenario, result: Dict[str, Any]) -> List[str]:
     """Validate a scenario result against its success criteria"""
     errors = []
-    
+
+    # 🛠 BUG-2025-07-15-002 FIX: Ensure result behaves like a dict for validators
+    # Some tools return ToolExecutionResult dataclass instances. Convert them
+    # to dictionaries so that existing validators using result.get(...) work.
+    if not isinstance(result, dict):
+        try:
+            # dataclass or pydantic model -> dict
+            if hasattr(result, "model_dump"):
+                result = result.model_dump()  # Pydantic v2
+            elif hasattr(result, "dict"):
+                result = result.dict()  # Pydantic v1
+            elif hasattr(result, "__dict__"):
+                result = vars(result)
+                # Merge nested 'result' dict into top-level if present
+                inner = result.get('result')
+                if isinstance(inner, dict):
+                    # Handle LangChain ok-wrapper pattern
+                    if isinstance(inner, dict) and 'ok' in inner and isinstance(inner['ok'], dict):
+                        for k, v in inner['ok'].items():
+                            if k not in result:
+                                result[k] = v
+                    # Bring inner keys (e.g., final_draft) up for easier validators
+                    for k, v in inner.items():
+                        # Avoid overwriting existing keys
+                        if k not in result:
+                            result[k] = v
+            else:
+                # Fallback: string representation only
+                result = {"_raw": str(result)}
+        except Exception:  # noqa: E722
+            result = {"_raw": str(result)}
     # Run scenario-specific validation functions
     for validator in scenario.validation_functions:
         try:

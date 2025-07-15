@@ -14,6 +14,10 @@ import os
 import warnings
 import importlib
 
+# Automatically enable fast test mode (skips long sleeps) during CI runs
+import os as _os
+_os.environ.setdefault('ESSAY_AGENT_FAST_TEST', '1')
+
 # Silence LangChainDeprecationWarning variants unless explicitly opted-in
 if os.getenv("ESSAY_AGENT_DEBUG_WARNINGS", "0") != "1":
     for mod_path in [

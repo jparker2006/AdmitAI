@@ -1,0 +1,129 @@
+{
+  "user_info": {
+    "name": "Sam Johnson",
+    "grade": 12,
+    "intended_major": "Social Work",
+    "college_list": [
+      "Columbia",
+      "UCLA",
+      "University of Michigan",
+      "Northwestern"
+    ],
+    "platforms": [
+      "Common App",
+      "Coalition"
+    ]
+  },
+  "academic_profile": {
+    "gpa": 3.8,
+    "test_scores": {
+      "SAT": 1480,
+      "ACT": null
+    },
+    "courses": [
+      "AP Social Work",
+      "AP Literature",
+      "AP History",
+      "AP Math"
+    ],
+    "activities": [
+      {
+        "name": "Homeless Shelter Coordinator",
+        "role": "Volunteer Coordinator",
+        "duration": "3 years",
+        "description": "Organized meal service and life skills workshops",
+        "impact": "Served 1000+ meals, helped 15 people find stable housing"
+      },
+      {
+        "name": "Peer Counseling Program",
+        "role": "Peer Counselor",
+        "duration": "2 years",
+        "description": "Provided emotional support to struggling classmates",
+        "impact": "Supported 25+ students through academic and personal challenges"
+      }
+    ]
+  },
+  "core_values": [
+    {
+      "value": "Service",
+      "description": "Dedicating life to helping others in need",
+      "evidence": [
+        "Shelter work",
+        "Peer counseling"
+      ],
+      "used_in_essays": []
+    },
+    {
+      "value": "Empathy",
+      "description": "Understanding and sharing others' experiences",
+      "evidence": [
+        "Counseling work",
+        "Homeless outreach"
+      ],
+      "used_in_essays": []
+    }
+  ],
+  "defining_moments": [
+    {
+      "title": "Helping Someone Find Housing",
+      "description": "Supporting a homeless individual through housing application",
+      "emotional_impact": "Witnessing transformation from despair to hope",
+      "lessons_learned": "Small actions can create profound change",
+      "used_in_essays": [],
+      "themes": [
+        "service",
+        "community",
+        "empathy",
+        "impact"
+      ],
+      "story_category": "service",
+      "story_weight": 1.0,
+      "college_usage": {}
+    },
+    {
+      "title": "Transforming Despair into Hope",
+      "description": "While helping a homeless individual secure housing, I witnessed a profound transformation from despair to hope. This experience taught me that small, dedicated actions can lead to significant changes in people's lives.",
+      "emotional_impact": "",
+      "lessons_learned": "",
+      "used_in_essays": [],
+      "themes": [
+        "Service",
+        "Empathy"
+      ],
+      "story_category": "defining_moment",
+      "story_weight": 1.0,
+      "college_usage": {}
+    },
+    {
+      "title": "Organizing Life Skills Workshops",
+      "description": "I coordinated life skills workshops at the shelter, empowering attendees with practical knowledge and confidence. This role highlighted the importance of education in fostering independence and self-sufficiency.",
+      "emotional_impact": "",
+      "lessons_learned": "",
+      "used_in_essays": [],
+      "themes": [
+        "Leadership",
+        "Empowerment"
+      ],
+      "story_category": "defining_moment",
+      "story_weight": 1.0,
+      "college_usage": {}
+    },
+    {
+      "title": "Meal Service: More Than Food",
+      "description": "Serving meals at the shelter, I learned that providing food was just the beginning; the real impact came from the conversations and connections formed. These interactions deepened my understanding of community and compassion.",
+      "emotional_impact": "",
+      "lessons_learned": "",
+      "used_in_essays": [],
+      "themes": [
+        "Community",
+        "Compassion"
+      ],
+      "story_category": "defining_moment",
+      "story_weight": 1.0,
+      "college_usage": {}
+    }
+  ],
+  "writing_voice": null,
+  "essay_history": [],
+  "college_story_usage": {}
+}

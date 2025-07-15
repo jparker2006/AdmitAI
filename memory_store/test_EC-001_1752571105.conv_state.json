@@ -1,0 +1,119 @@
+{
+  "user_id": "test_EC-001_1752571105",
+  "profile": {
+    "user_info": {
+      "name": "Alex Chen",
+      "grade": 12,
+      "intended_major": "Computer Science",
+      "college_list": [
+        "MIT",
+        "Stanford",
+        "UC Berkeley",
+        "Caltech"
+      ],
+      "platforms": [
+        "Common App",
+        "Coalition"
+      ]
+    },
+    "academic_profile": {
+      "gpa": 3.95,
+      "test_scores": {
+        "SAT": 1580,
+        "ACT": null
+      },
+      "courses": [
+        "AP Computer Science",
+        "AP Literature",
+        "AP History",
+        "AP Math"
+      ],
+      "activities": [
+        {
+          "name": "Robotics Team Captain",
+          "role": "Team Captain",
+          "duration": "3 years",
+          "description": "Led 15-person robotics team to state championships",
+          "impact": "Won regional championship, mentored 8 underclassmen"
+        },
+        {
+          "name": "Math Tutoring",
+          "role": "Volunteer Tutor",
+          "duration": "2 years",
+          "description": "Tutored underperforming students in calculus",
+          "impact": "Helped 20+ students improve grades by 1+ letter grade"
+        }
+      ]
+    },
+    "core_values": [
+      {
+        "value": "Innovation",
+        "description": "Using technology to solve real-world problems",
+        "evidence": [
+          "Robotics projects",
+          "Programming competitions"
+        ],
+        "used_in_essays": []
+      },
+      {
+        "value": "Teaching",
+        "description": "Sharing knowledge to empower others",
+        "evidence": [
+          "Math tutoring",
+          "Mentoring teammates"
+        ],
+        "used_in_essays": []
+      }
+    ],
+    "defining_moments": [
+      {
+        "title": "First Robot Competition Victory",
+        "description": "Leading team to unexpected victory after months of setbacks",
+        "emotional_impact": "Profound sense of accomplishment and team unity",
+        "lessons_learned": "Persistence and collaboration can overcome any obstacle",
+        "used_in_essays": [],
+        "themes": [
+          "leadership",
+          "perseverance",
+          "innovation"
+        ],
+        "story_category": "accomplishment",
+        "story_weight": 1.0,
+        "college_usage": {}
+      }
+    ],
+    "writing_voice": null,
+    "essay_history": [],
+    "college_story_usage": {}
+  },
+  "history": [
+    {
+      "user_input": "",
+      "agent_response": "Hey there! How can I assist you with your essay today? Are you working on a specific topic or do you need help with brainstorming ideas? Let me know what you need, and we can tackle it together!",
+      "timestamp": "2025-07-15T02:18:25.355563",
+      "plan": null,
+      "tool_results": [],
+      "execution_time": 0.00484
+    },
+    {
+      "user_input": "   ",
+      "agent_response": "Hey! It looks like you might need some help with your essay. Do you have a specific topic or question in mind that you're working on? Or maybe you're stuck on a particular part of the writing process? Let me know how I can help!",
+      "timestamp": "2025-07-15T02:18:25.357994",
+      "plan": null,
+      "tool_results": [],
+      "execution_time": 0.001678
+    }
+  ],
+  "current_essay_context": null,
+  "user_preferences": {
+    "preferred_tone": null,
+    "writing_style": null,
+    "favorite_topics": [],
+    "revision_patterns": {},
+    "tool_usage_patterns": {},
+    "last_updated": "2025-07-15T02:18:25.330780"
+  },
+  "essay_context_history": [],
+  "active": true,
+  "last_saved": "2025-07-15T02:18:25.358090"
+}

@@ -70,10 +70,15 @@ class ValidatedTool(BaseTool, ABC):
 
             # Exponential backoff with longer delays
             if attempt < self.max_attempts:
-                import time
-                print(f"🔄 Retrying in {delay:.1f}s...")
-                time.sleep(delay)
-                delay = min(delay * 2, 16.0)  # cap the wait to 16s, higher than before
+                import time, os
+                if os.getenv('ESSAY_AGENT_FAST_TEST', '0') == '1':
+                    # Skip real sleeping to keep tests fast
+                    print("🔄 Retrying immediately (FAST_TEST mode)...")
+                    time.sleep(0.01)
+                else:
+                    print(f"🔄 Retrying in {delay:.1f}s...")
+                    time.sleep(delay)
+                    delay = min(delay * 2, 16.0)  # cap the wait to 16s
 
         return {"ok": None, "error": _format_exc(last_error) if last_error else "Unknown error"}
 

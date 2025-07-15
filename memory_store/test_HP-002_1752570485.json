@@ -1,0 +1,129 @@
+{
+  "user_info": {
+    "name": "Maya Rodriguez",
+    "grade": 12,
+    "intended_major": "International Relations",
+    "college_list": [
+      "Harvard",
+      "Yale",
+      "Georgetown",
+      "Princeton"
+    ],
+    "platforms": [
+      "Common App",
+      "Coalition"
+    ]
+  },
+  "academic_profile": {
+    "gpa": 3.85,
+    "test_scores": {
+      "SAT": 1520,
+      "ACT": 34
+    },
+    "courses": [
+      "AP International Relations",
+      "AP Literature",
+      "AP History",
+      "AP Math"
+    ],
+    "activities": [
+      {
+        "name": "Model UN Secretary-General",
+        "role": "Secretary-General",
+        "duration": "2 years",
+        "description": "Organized international conferences with 200+ delegates",
+        "impact": "Increased participation by 40%, established scholarship fund"
+      },
+      {
+        "name": "Immigration Legal Aid",
+        "role": "Volunteer Translator",
+        "duration": "3 years",
+        "description": "Provided Spanish translation for legal consultations",
+        "impact": "Assisted 50+ families with asylum and citizenship applications"
+      }
+    ]
+  },
+  "core_values": [
+    {
+      "value": "Justice",
+      "description": "Fighting for equality and human rights",
+      "evidence": [
+        "Legal aid work",
+        "Model UN advocacy"
+      ],
+      "used_in_essays": []
+    },
+    {
+      "value": "Cultural Bridge-Building",
+      "description": "Connecting communities across cultural divides",
+      "evidence": [
+        "Translation work",
+        "International conferences"
+      ],
+      "used_in_essays": []
+    }
+  ],
+  "defining_moments": [
+    {
+      "title": "Family Immigration Struggle",
+      "description": "Helping parents navigate complex immigration system",
+      "emotional_impact": "Deep understanding of systemic barriers and injustice",
+      "lessons_learned": "Personal experience drives authentic advocacy",
+      "used_in_essays": [],
+      "themes": [
+        "challenge",
+        "family",
+        "justice",
+        "identity"
+      ],
+      "story_category": "obstacle",
+      "story_weight": 1.0,
+      "college_usage": {}
+    },
+    {
+      "title": "Bridging Cultures Through Translation",
+      "description": "As a volunteer translator for Immigration Legal Aid, I helped families navigate the complex legal system. This experience taught me the power of language in bridging cultural divides and advocating for justice.",
+      "emotional_impact": "",
+      "lessons_learned": "",
+      "used_in_essays": [],
+      "themes": [
+        "Cultural Bridge-Building",
+        "Justice"
+      ],
+      "story_category": "defining_moment",
+      "story_weight": 1.0,
+      "college_usage": {}
+    },
+    {
+      "title": "Model UN: From Delegate to Leader",
+      "description": "As Secretary-General of Model UN, I organized international conferences, increasing participation by 40%. This role honed my leadership skills and deepened my understanding of global diplomacy.",
+      "emotional_impact": "",
+      "lessons_learned": "",
+      "used_in_essays": [],
+      "themes": [
+        "Leadership",
+        "Global Understanding"
+      ],
+      "story_category": "defining_moment",
+      "story_weight": 1.0,
+      "college_usage": {}
+    },
+    {
+      "title": "Family's Immigration Journey",
+      "description": "Helping my parents navigate the immigration system revealed systemic barriers and fueled my passion for advocacy. This personal journey instilled a deep sense of justice and empathy in me.",
+      "emotional_impact": "",
+      "lessons_learned": "",
+      "used_in_essays": [],
+      "themes": [
+        "Justice",
+        "Empathy"
+      ],
+      "story_category": "defining_moment",
+      "story_weight": 1.0,
+      "college_usage": {}
+    }
+  ],
+  "writing_voice": null,
+  "essay_history": [],
+  "college_story_usage": {}
+}
