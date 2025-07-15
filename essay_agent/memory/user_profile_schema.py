@@ -8,7 +8,7 @@ NOTE: Spec is truncated for brevity in MVP. Complete all fields as per
 from typing import List, Dict, Optional
 from datetime import datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class Activity(BaseModel):
@@ -49,8 +49,8 @@ class DefiningMoment(BaseModel):
     used_in_essays: List[str] = Field(default_factory=list)
     themes: List[str] = Field(default_factory=list)
     story_category: str = Field(
-        default="general",
-        description="Category: identity, passion, challenge, achievement, community, general"
+        default="defining_moment",
+        description="Story category aligned with brainstorm tool: heritage, creative, obstacle, accomplishment, service, defining_moment, etc."
     )
     story_weight: float = Field(
         default=1.0,
@@ -60,6 +60,37 @@ class DefiningMoment(BaseModel):
         default_factory=dict,
         description="Maps college_id -> [prompt_ids] where story was used"
     )
+
+    @field_validator('story_category')
+    @classmethod
+    def validate_story_category(cls, v: str) -> str:
+        """Validate and migrate story categories to match brainstorm tool expectations."""
+        # Map old categories to new brainstorm tool categories
+        category_mapping = {
+            # Old schema -> New schema (aligned with brainstorm tool)
+            'identity': 'heritage',
+            'passion': 'creative', 
+            'challenge': 'obstacle',
+            'achievement': 'accomplishment',
+            'community': 'service',
+            'general': 'defining_moment'
+        }
+        
+        # If it's already a new category, keep it
+        valid_new_categories = {
+            'heritage', 'family', 'cultural', 'personal_defining',
+            'creative', 'academic', 'intellectual', 'hobby',
+            'obstacle', 'failure', 'conflict', 'problem_solving',
+            'accomplishment', 'leadership', 'growth', 'skill',
+            'service', 'cultural_involvement', 'social_impact', 'tradition',
+            'defining_moment', 'values', 'experiences'
+        }
+        
+        if v in valid_new_categories:
+            return v
+        
+        # Apply mapping for old categories
+        return category_mapping.get(v, v)
 
 
 class WritingVoice(BaseModel):
@@ -99,4 +130,30 @@ class UserProfile(BaseModel):
     college_story_usage: Dict[str, Dict[str, List[str]]] = Field(
         default_factory=dict,
         description="Maps college_id -> prompt_type -> [story_titles] for tracking story diversification"
-    ) 
+    )
+
+
+def migrate_story_categories(profile: UserProfile) -> UserProfile:
+    """Migrate existing story categories to new schema.
+    
+    This function ensures backward compatibility by automatically converting
+    old category names to new ones when loading existing profiles.
+    
+    Args:
+        profile: UserProfile with potentially old story categories
+        
+    Returns:
+        UserProfile with updated story categories
+    """
+    # The field validator will automatically handle migration when the profile
+    # is re-instantiated, so we just need to trigger validation
+    try:
+        # Create a new profile instance to trigger validation
+        migrated_profile = UserProfile.model_validate(profile.model_dump())
+        return migrated_profile
+    except Exception as e:
+        # If migration fails, log the error but return original profile
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.warning(f"Failed to migrate story categories: {e}")
+        return profile 

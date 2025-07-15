@@ -115,7 +115,7 @@
         "purpose",
         "technology"
       ],
-      "story_category": "passion",
+      "story_category": "creative",
       "story_weight": 1.0,
       "college_usage": {}
     },
@@ -131,7 +131,7 @@
         "perseverance",
         "education"
       ],
-      "story_category": "identity",
+      "story_category": "heritage",
       "story_weight": 1.0,
       "college_usage": {}
     },
@@ -147,7 +147,7 @@
         "belonging",
         "growth"
       ],
-      "story_category": "identity",
+      "story_category": "heritage",
       "story_weight": 1.0,
       "college_usage": {}
     },
@@ -163,7 +163,7 @@
         "humility",
         "growth"
       ],
-      "story_category": "challenge",
+      "story_category": "obstacle",
       "story_weight": 1.0,
       "college_usage": {}
     },
@@ -179,7 +179,7 @@
         "empathy",
         "achievement"
       ],
-      "story_category": "achievement",
+      "story_category": "accomplishment",
       "story_weight": 1.0,
       "college_usage": {}
     }

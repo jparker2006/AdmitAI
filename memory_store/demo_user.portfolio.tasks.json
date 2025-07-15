@@ -1,0 +1,1868 @@
+{
+  "34d33d2763d5": {
+    "id": "34d33d2763d5",
+    "prompt": {
+      "text": "Describe a challenge you've overcome and how it shaped you as a person.",
+      "word_limit": 650,
+      "college": "harvard",
+      "additional_instructions": null
+    },
+    "profile": {
+      "user_info": {
+        "name": "Alex Johnson",
+        "grade": 12,
+        "intended_major": "Computer Science",
+        "college_list": [
+          "Harvard",
+          "MIT",
+          "Stanford",
+          "Carnegie Mellon",
+          "UC Berkeley"
+        ],
+        "platforms": [
+          "Common App",
+          "UC Application"
+        ]
+      },
+      "academic_profile": {
+        "gpa": 3.95,
+        "test_scores": {
+          "SAT": 1580,
+          "ACT": 35
+        },
+        "courses": [
+          "AP Calculus BC",
+          "AP Computer Science A",
+          "AP Physics C",
+          "AP English Literature"
+        ],
+        "activities": [
+          {
+            "name": "Programming Competition Team",
+            "role": "Captain",
+            "duration": "3 years",
+            "description": "Led team in USACO and local programming contests",
+            "impact": "Qualified for state championships, mentored 10+ students"
+          },
+          {
+            "name": "Math Tutoring Program",
+            "role": "Volunteer Tutor",
+            "duration": "2 years",
+            "description": "Weekly tutoring for underserved students",
+            "impact": "Helped 15 students improve grades by average of 1.5 letter grades"
+          }
+        ]
+      },
+      "core_values": [
+        {
+          "value": "Intellectual Curiosity",
+          "description": "Driven by desire to understand and solve complex problems",
+          "evidence": [
+            "Independent research projects",
+            "Extra coursework",
+            "Competition participation"
+          ],
+          "used_in_essays": []
+        },
+        {
+          "value": "Community Service",
+          "description": "Commitment to helping others and giving back",
+          "evidence": [
+            "Tutoring program",
+            "Food bank volunteering",
+            "Peer mentoring"
+          ],
+          "used_in_essays": []
+        }
+      ],
+      "defining_moments": [
+        {
+          "title": "First Programming Competition",
+          "description": "Struggled with algorithmic thinking but persevered through practice",
+          "emotional_impact": "Initial frustration turned into determination and eventual success",
+          "lessons_learned": "Persistence and methodical practice can overcome initial struggles",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Tutoring a Struggling Student",
+          "description": "Helped Maria overcome math anxiety and improve her grades",
+          "emotional_impact": "Profound satisfaction from seeing someone else succeed",
+          "lessons_learned": "Teaching others deepens your own understanding",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Family Financial Hardship",
+          "description": "Dad lost job during pandemic, family had to make sacrifices",
+          "emotional_impact": "Stress and worry, but also brought family closer",
+          "lessons_learned": "Resilience and the importance of supporting each other",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        }
+      ],
+      "writing_voice": null,
+      "essay_history": [],
+      "college_story_usage": {}
+    },
+    "college_id": "harvard",
+    "deadline": "2025-07-21 15:24:02.715912",
+    "status": "completed",
+    "created_at": "2025-07-14 22:24:02.715991",
+    "updated_at": "2025-07-14 22:24:02.720090",
+    "draft": null,
+    "used_stories": [
+      "First Programming Competition"
+    ],
+    "priority_score": 74.5
+  },
+  "10b7293e5176": {
+    "id": "10b7293e5176",
+    "prompt": {
+      "text": "Tell us about a time you were intellectually curious about something.",
+      "word_limit": 650,
+      "college": "mit",
+      "additional_instructions": null
+    },
+    "profile": {
+      "user_info": {
+        "name": "Alex Johnson",
+        "grade": 12,
+        "intended_major": "Computer Science",
+        "college_list": [
+          "Harvard",
+          "MIT",
+          "Stanford",
+          "Carnegie Mellon",
+          "UC Berkeley"
+        ],
+        "platforms": [
+          "Common App",
+          "UC Application"
+        ]
+      },
+      "academic_profile": {
+        "gpa": 3.95,
+        "test_scores": {
+          "SAT": 1580,
+          "ACT": 35
+        },
+        "courses": [
+          "AP Calculus BC",
+          "AP Computer Science A",
+          "AP Physics C",
+          "AP English Literature"
+        ],
+        "activities": [
+          {
+            "name": "Programming Competition Team",
+            "role": "Captain",
+            "duration": "3 years",
+            "description": "Led team in USACO and local programming contests",
+            "impact": "Qualified for state championships, mentored 10+ students"
+          },
+          {
+            "name": "Math Tutoring Program",
+            "role": "Volunteer Tutor",
+            "duration": "2 years",
+            "description": "Weekly tutoring for underserved students",
+            "impact": "Helped 15 students improve grades by average of 1.5 letter grades"
+          }
+        ]
+      },
+      "core_values": [
+        {
+          "value": "Intellectual Curiosity",
+          "description": "Driven by desire to understand and solve complex problems",
+          "evidence": [
+            "Independent research projects",
+            "Extra coursework",
+            "Competition participation"
+          ],
+          "used_in_essays": []
+        },
+        {
+          "value": "Community Service",
+          "description": "Commitment to helping others and giving back",
+          "evidence": [
+            "Tutoring program",
+            "Food bank volunteering",
+            "Peer mentoring"
+          ],
+          "used_in_essays": []
+        }
+      ],
+      "defining_moments": [
+        {
+          "title": "First Programming Competition",
+          "description": "Struggled with algorithmic thinking but persevered through practice",
+          "emotional_impact": "Initial frustration turned into determination and eventual success",
+          "lessons_learned": "Persistence and methodical practice can overcome initial struggles",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Tutoring a Struggling Student",
+          "description": "Helped Maria overcome math anxiety and improve her grades",
+          "emotional_impact": "Profound satisfaction from seeing someone else succeed",
+          "lessons_learned": "Teaching others deepens your own understanding",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Family Financial Hardship",
+          "description": "Dad lost job during pandemic, family had to make sacrifices",
+          "emotional_impact": "Stress and worry, but also brought family closer",
+          "lessons_learned": "Resilience and the importance of supporting each other",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        }
+      ],
+      "writing_voice": null,
+      "essay_history": [],
+      "college_story_usage": {}
+    },
+    "college_id": "mit",
+    "deadline": "2025-07-28 15:24:02.715920",
+    "status": "pending",
+    "created_at": "2025-07-14 22:24:02.716690",
+    "updated_at": null,
+    "draft": null,
+    "used_stories": [],
+    "priority_score": 62.5
+  },
+  "da5e33e010c1": {
+    "id": "da5e33e010c1",
+    "prompt": {
+      "text": "Describe a meaningful experience you've had helping others.",
+      "word_limit": 650,
+      "college": "stanford",
+      "additional_instructions": null
+    },
+    "profile": {
+      "user_info": {
+        "name": "Alex Johnson",
+        "grade": 12,
+        "intended_major": "Computer Science",
+        "college_list": [
+          "Harvard",
+          "MIT",
+          "Stanford",
+          "Carnegie Mellon",
+          "UC Berkeley"
+        ],
+        "platforms": [
+          "Common App",
+          "UC Application"
+        ]
+      },
+      "academic_profile": {
+        "gpa": 3.95,
+        "test_scores": {
+          "SAT": 1580,
+          "ACT": 35
+        },
+        "courses": [
+          "AP Calculus BC",
+          "AP Computer Science A",
+          "AP Physics C",
+          "AP English Literature"
+        ],
+        "activities": [
+          {
+            "name": "Programming Competition Team",
+            "role": "Captain",
+            "duration": "3 years",
+            "description": "Led team in USACO and local programming contests",
+            "impact": "Qualified for state championships, mentored 10+ students"
+          },
+          {
+            "name": "Math Tutoring Program",
+            "role": "Volunteer Tutor",
+            "duration": "2 years",
+            "description": "Weekly tutoring for underserved students",
+            "impact": "Helped 15 students improve grades by average of 1.5 letter grades"
+          }
+        ]
+      },
+      "core_values": [
+        {
+          "value": "Intellectual Curiosity",
+          "description": "Driven by desire to understand and solve complex problems",
+          "evidence": [
+            "Independent research projects",
+            "Extra coursework",
+            "Competition participation"
+          ],
+          "used_in_essays": []
+        },
+        {
+          "value": "Community Service",
+          "description": "Commitment to helping others and giving back",
+          "evidence": [
+            "Tutoring program",
+            "Food bank volunteering",
+            "Peer mentoring"
+          ],
+          "used_in_essays": []
+        }
+      ],
+      "defining_moments": [
+        {
+          "title": "First Programming Competition",
+          "description": "Struggled with algorithmic thinking but persevered through practice",
+          "emotional_impact": "Initial frustration turned into determination and eventual success",
+          "lessons_learned": "Persistence and methodical practice can overcome initial struggles",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Tutoring a Struggling Student",
+          "description": "Helped Maria overcome math anxiety and improve her grades",
+          "emotional_impact": "Profound satisfaction from seeing someone else succeed",
+          "lessons_learned": "Teaching others deepens your own understanding",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Family Financial Hardship",
+          "description": "Dad lost job during pandemic, family had to make sacrifices",
+          "emotional_impact": "Stress and worry, but also brought family closer",
+          "lessons_learned": "Resilience and the importance of supporting each other",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        }
+      ],
+      "writing_voice": null,
+      "essay_history": [],
+      "college_story_usage": {}
+    },
+    "college_id": "stanford",
+    "deadline": "2025-08-04 15:24:02.715921",
+    "status": "pending",
+    "created_at": "2025-07-14 22:24:02.717177",
+    "updated_at": null,
+    "draft": null,
+    "used_stories": [],
+    "priority_score": 68.5
+  },
+  "70ee8161d898": {
+    "id": "70ee8161d898",
+    "prompt": {
+      "text": "Share a story about overcoming a personal challenge.",
+      "word_limit": 650,
+      "college": "harvard",
+      "additional_instructions": null
+    },
+    "profile": {
+      "user_info": {
+        "name": "Alex Johnson",
+        "grade": 12,
+        "intended_major": "Computer Science",
+        "college_list": [
+          "Harvard",
+          "MIT",
+          "Stanford",
+          "Carnegie Mellon",
+          "UC Berkeley"
+        ],
+        "platforms": [
+          "Common App",
+          "UC Application"
+        ]
+      },
+      "academic_profile": {
+        "gpa": 3.95,
+        "test_scores": {
+          "SAT": 1580,
+          "ACT": 35
+        },
+        "courses": [
+          "AP Calculus BC",
+          "AP Computer Science A",
+          "AP Physics C",
+          "AP English Literature"
+        ],
+        "activities": [
+          {
+            "name": "Programming Competition Team",
+            "role": "Captain",
+            "duration": "3 years",
+            "description": "Led team in USACO and local programming contests",
+            "impact": "Qualified for state championships, mentored 10+ students"
+          },
+          {
+            "name": "Math Tutoring Program",
+            "role": "Volunteer Tutor",
+            "duration": "2 years",
+            "description": "Weekly tutoring for underserved students",
+            "impact": "Helped 15 students improve grades by average of 1.5 letter grades"
+          }
+        ]
+      },
+      "core_values": [
+        {
+          "value": "Intellectual Curiosity",
+          "description": "Driven by desire to understand and solve complex problems",
+          "evidence": [
+            "Independent research projects",
+            "Extra coursework",
+            "Competition participation"
+          ],
+          "used_in_essays": []
+        },
+        {
+          "value": "Community Service",
+          "description": "Commitment to helping others and giving back",
+          "evidence": [
+            "Tutoring program",
+            "Food bank volunteering",
+            "Peer mentoring"
+          ],
+          "used_in_essays": []
+        }
+      ],
+      "defining_moments": [
+        {
+          "title": "First Programming Competition",
+          "description": "Struggled with algorithmic thinking but persevered through practice",
+          "emotional_impact": "Initial frustration turned into determination and eventual success",
+          "lessons_learned": "Persistence and methodical practice can overcome initial struggles",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Tutoring a Struggling Student",
+          "description": "Helped Maria overcome math anxiety and improve her grades",
+          "emotional_impact": "Profound satisfaction from seeing someone else succeed",
+          "lessons_learned": "Teaching others deepens your own understanding",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Family Financial Hardship",
+          "description": "Dad lost job during pandemic, family had to make sacrifices",
+          "emotional_impact": "Stress and worry, but also brought family closer",
+          "lessons_learned": "Resilience and the importance of supporting each other",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        }
+      ],
+      "writing_voice": null,
+      "essay_history": [],
+      "college_story_usage": {}
+    },
+    "college_id": "harvard",
+    "deadline": "2025-08-11 15:24:02.715922",
+    "status": "pending",
+    "created_at": "2025-07-14 22:24:02.717690",
+    "updated_at": null,
+    "draft": null,
+    "used_stories": [],
+    "priority_score": 60.099999999999994
+  },
+  "b9668faa1df6": {
+    "id": "b9668faa1df6",
+    "prompt": {
+      "text": "Describe your intellectual interests and how you pursue them.",
+      "word_limit": 650,
+      "college": "carnegie_mellon",
+      "additional_instructions": null
+    },
+    "profile": {
+      "user_info": {
+        "name": "Alex Johnson",
+        "grade": 12,
+        "intended_major": "Computer Science",
+        "college_list": [
+          "Harvard",
+          "MIT",
+          "Stanford",
+          "Carnegie Mellon",
+          "UC Berkeley"
+        ],
+        "platforms": [
+          "Common App",
+          "UC Application"
+        ]
+      },
+      "academic_profile": {
+        "gpa": 3.95,
+        "test_scores": {
+          "SAT": 1580,
+          "ACT": 35
+        },
+        "courses": [
+          "AP Calculus BC",
+          "AP Computer Science A",
+          "AP Physics C",
+          "AP English Literature"
+        ],
+        "activities": [
+          {
+            "name": "Programming Competition Team",
+            "role": "Captain",
+            "duration": "3 years",
+            "description": "Led team in USACO and local programming contests",
+            "impact": "Qualified for state championships, mentored 10+ students"
+          },
+          {
+            "name": "Math Tutoring Program",
+            "role": "Volunteer Tutor",
+            "duration": "2 years",
+            "description": "Weekly tutoring for underserved students",
+            "impact": "Helped 15 students improve grades by average of 1.5 letter grades"
+          }
+        ]
+      },
+      "core_values": [
+        {
+          "value": "Intellectual Curiosity",
+          "description": "Driven by desire to understand and solve complex problems",
+          "evidence": [
+            "Independent research projects",
+            "Extra coursework",
+            "Competition participation"
+          ],
+          "used_in_essays": []
+        },
+        {
+          "value": "Community Service",
+          "description": "Commitment to helping others and giving back",
+          "evidence": [
+            "Tutoring program",
+            "Food bank volunteering",
+            "Peer mentoring"
+          ],
+          "used_in_essays": []
+        }
+      ],
+      "defining_moments": [
+        {
+          "title": "First Programming Competition",
+          "description": "Struggled with algorithmic thinking but persevered through practice",
+          "emotional_impact": "Initial frustration turned into determination and eventual success",
+          "lessons_learned": "Persistence and methodical practice can overcome initial struggles",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Tutoring a Struggling Student",
+          "description": "Helped Maria overcome math anxiety and improve her grades",
+          "emotional_impact": "Profound satisfaction from seeing someone else succeed",
+          "lessons_learned": "Teaching others deepens your own understanding",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Family Financial Hardship",
+          "description": "Dad lost job during pandemic, family had to make sacrifices",
+          "emotional_impact": "Stress and worry, but also brought family closer",
+          "lessons_learned": "Resilience and the importance of supporting each other",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        }
+      ],
+      "writing_voice": null,
+      "essay_history": [],
+      "college_story_usage": {}
+    },
+    "college_id": "carnegie_mellon",
+    "deadline": "2025-08-18 15:24:02.715923",
+    "status": "pending",
+    "created_at": "2025-07-14 22:24:02.718266",
+    "updated_at": null,
+    "draft": null,
+    "used_stories": [],
+    "priority_score": 51.7
+  },
+  "1fa73525fd0d": {
+    "id": "1fa73525fd0d",
+    "prompt": {
+      "text": "Describe a challenge you've overcome and how it shaped you as a person.",
+      "word_limit": 650,
+      "college": "harvard",
+      "additional_instructions": null
+    },
+    "profile": {
+      "user_info": {
+        "name": "Alex Johnson",
+        "grade": 12,
+        "intended_major": "Computer Science",
+        "college_list": [
+          "Harvard",
+          "MIT",
+          "Stanford",
+          "Carnegie Mellon",
+          "UC Berkeley"
+        ],
+        "platforms": [
+          "Common App",
+          "UC Application"
+        ]
+      },
+      "academic_profile": {
+        "gpa": 3.95,
+        "test_scores": {
+          "SAT": 1580,
+          "ACT": 35
+        },
+        "courses": [
+          "AP Calculus BC",
+          "AP Computer Science A",
+          "AP Physics C",
+          "AP English Literature"
+        ],
+        "activities": [
+          {
+            "name": "Programming Competition Team",
+            "role": "Captain",
+            "duration": "3 years",
+            "description": "Led team in USACO and local programming contests",
+            "impact": "Qualified for state championships, mentored 10+ students"
+          },
+          {
+            "name": "Math Tutoring Program",
+            "role": "Volunteer Tutor",
+            "duration": "2 years",
+            "description": "Weekly tutoring for underserved students",
+            "impact": "Helped 15 students improve grades by average of 1.5 letter grades"
+          }
+        ]
+      },
+      "core_values": [
+        {
+          "value": "Intellectual Curiosity",
+          "description": "Driven by desire to understand and solve complex problems",
+          "evidence": [
+            "Independent research projects",
+            "Extra coursework",
+            "Competition participation"
+          ],
+          "used_in_essays": []
+        },
+        {
+          "value": "Community Service",
+          "description": "Commitment to helping others and giving back",
+          "evidence": [
+            "Tutoring program",
+            "Food bank volunteering",
+            "Peer mentoring"
+          ],
+          "used_in_essays": []
+        }
+      ],
+      "defining_moments": [
+        {
+          "title": "First Programming Competition",
+          "description": "Struggled with algorithmic thinking but persevered through practice",
+          "emotional_impact": "Initial frustration turned into determination and eventual success",
+          "lessons_learned": "Persistence and methodical practice can overcome initial struggles",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Tutoring a Struggling Student",
+          "description": "Helped Maria overcome math anxiety and improve her grades",
+          "emotional_impact": "Profound satisfaction from seeing someone else succeed",
+          "lessons_learned": "Teaching others deepens your own understanding",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Family Financial Hardship",
+          "description": "Dad lost job during pandemic, family had to make sacrifices",
+          "emotional_impact": "Stress and worry, but also brought family closer",
+          "lessons_learned": "Resilience and the importance of supporting each other",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        }
+      ],
+      "writing_voice": null,
+      "essay_history": [],
+      "college_story_usage": {}
+    },
+    "college_id": "harvard",
+    "deadline": "2025-07-21 15:36:37.228249",
+    "status": "completed",
+    "created_at": "2025-07-14 22:36:37.228342",
+    "updated_at": "2025-07-14 22:36:37.240204",
+    "draft": null,
+    "used_stories": [
+      "First Programming Competition"
+    ],
+    "priority_score": 74.5
+  },
+  "b7544d6c6891": {
+    "id": "b7544d6c6891",
+    "prompt": {
+      "text": "Tell us about a time you were intellectually curious about something.",
+      "word_limit": 650,
+      "college": "mit",
+      "additional_instructions": null
+    },
+    "profile": {
+      "user_info": {
+        "name": "Alex Johnson",
+        "grade": 12,
+        "intended_major": "Computer Science",
+        "college_list": [
+          "Harvard",
+          "MIT",
+          "Stanford",
+          "Carnegie Mellon",
+          "UC Berkeley"
+        ],
+        "platforms": [
+          "Common App",
+          "UC Application"
+        ]
+      },
+      "academic_profile": {
+        "gpa": 3.95,
+        "test_scores": {
+          "SAT": 1580,
+          "ACT": 35
+        },
+        "courses": [
+          "AP Calculus BC",
+          "AP Computer Science A",
+          "AP Physics C",
+          "AP English Literature"
+        ],
+        "activities": [
+          {
+            "name": "Programming Competition Team",
+            "role": "Captain",
+            "duration": "3 years",
+            "description": "Led team in USACO and local programming contests",
+            "impact": "Qualified for state championships, mentored 10+ students"
+          },
+          {
+            "name": "Math Tutoring Program",
+            "role": "Volunteer Tutor",
+            "duration": "2 years",
+            "description": "Weekly tutoring for underserved students",
+            "impact": "Helped 15 students improve grades by average of 1.5 letter grades"
+          }
+        ]
+      },
+      "core_values": [
+        {
+          "value": "Intellectual Curiosity",
+          "description": "Driven by desire to understand and solve complex problems",
+          "evidence": [
+            "Independent research projects",
+            "Extra coursework",
+            "Competition participation"
+          ],
+          "used_in_essays": []
+        },
+        {
+          "value": "Community Service",
+          "description": "Commitment to helping others and giving back",
+          "evidence": [
+            "Tutoring program",
+            "Food bank volunteering",
+            "Peer mentoring"
+          ],
+          "used_in_essays": []
+        }
+      ],
+      "defining_moments": [
+        {
+          "title": "First Programming Competition",
+          "description": "Struggled with algorithmic thinking but persevered through practice",
+          "emotional_impact": "Initial frustration turned into determination and eventual success",
+          "lessons_learned": "Persistence and methodical practice can overcome initial struggles",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Tutoring a Struggling Student",
+          "description": "Helped Maria overcome math anxiety and improve her grades",
+          "emotional_impact": "Profound satisfaction from seeing someone else succeed",
+          "lessons_learned": "Teaching others deepens your own understanding",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Family Financial Hardship",
+          "description": "Dad lost job during pandemic, family had to make sacrifices",
+          "emotional_impact": "Stress and worry, but also brought family closer",
+          "lessons_learned": "Resilience and the importance of supporting each other",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        }
+      ],
+      "writing_voice": null,
+      "essay_history": [],
+      "college_story_usage": {}
+    },
+    "college_id": "mit",
+    "deadline": "2025-07-28 15:36:37.228258",
+    "status": "pending",
+    "created_at": "2025-07-14 22:36:37.230026",
+    "updated_at": null,
+    "draft": null,
+    "used_stories": [],
+    "priority_score": 62.5
+  },
+  "46096804ee36": {
+    "id": "46096804ee36",
+    "prompt": {
+      "text": "Describe a meaningful experience you've had helping others.",
+      "word_limit": 650,
+      "college": "stanford",
+      "additional_instructions": null
+    },
+    "profile": {
+      "user_info": {
+        "name": "Alex Johnson",
+        "grade": 12,
+        "intended_major": "Computer Science",
+        "college_list": [
+          "Harvard",
+          "MIT",
+          "Stanford",
+          "Carnegie Mellon",
+          "UC Berkeley"
+        ],
+        "platforms": [
+          "Common App",
+          "UC Application"
+        ]
+      },
+      "academic_profile": {
+        "gpa": 3.95,
+        "test_scores": {
+          "SAT": 1580,
+          "ACT": 35
+        },
+        "courses": [
+          "AP Calculus BC",
+          "AP Computer Science A",
+          "AP Physics C",
+          "AP English Literature"
+        ],
+        "activities": [
+          {
+            "name": "Programming Competition Team",
+            "role": "Captain",
+            "duration": "3 years",
+            "description": "Led team in USACO and local programming contests",
+            "impact": "Qualified for state championships, mentored 10+ students"
+          },
+          {
+            "name": "Math Tutoring Program",
+            "role": "Volunteer Tutor",
+            "duration": "2 years",
+            "description": "Weekly tutoring for underserved students",
+            "impact": "Helped 15 students improve grades by average of 1.5 letter grades"
+          }
+        ]
+      },
+      "core_values": [
+        {
+          "value": "Intellectual Curiosity",
+          "description": "Driven by desire to understand and solve complex problems",
+          "evidence": [
+            "Independent research projects",
+            "Extra coursework",
+            "Competition participation"
+          ],
+          "used_in_essays": []
+        },
+        {
+          "value": "Community Service",
+          "description": "Commitment to helping others and giving back",
+          "evidence": [
+            "Tutoring program",
+            "Food bank volunteering",
+            "Peer mentoring"
+          ],
+          "used_in_essays": []
+        }
+      ],
+      "defining_moments": [
+        {
+          "title": "First Programming Competition",
+          "description": "Struggled with algorithmic thinking but persevered through practice",
+          "emotional_impact": "Initial frustration turned into determination and eventual success",
+          "lessons_learned": "Persistence and methodical practice can overcome initial struggles",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Tutoring a Struggling Student",
+          "description": "Helped Maria overcome math anxiety and improve her grades",
+          "emotional_impact": "Profound satisfaction from seeing someone else succeed",
+          "lessons_learned": "Teaching others deepens your own understanding",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Family Financial Hardship",
+          "description": "Dad lost job during pandemic, family had to make sacrifices",
+          "emotional_impact": "Stress and worry, but also brought family closer",
+          "lessons_learned": "Resilience and the importance of supporting each other",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        }
+      ],
+      "writing_voice": null,
+      "essay_history": [],
+      "college_story_usage": {}
+    },
+    "college_id": "stanford",
+    "deadline": "2025-08-04 15:36:37.228259",
+    "status": "pending",
+    "created_at": "2025-07-14 22:36:37.234209",
+    "updated_at": null,
+    "draft": null,
+    "used_stories": [],
+    "priority_score": 68.5
+  },
+  "a84b5f9329db": {
+    "id": "a84b5f9329db",
+    "prompt": {
+      "text": "Share a story about overcoming a personal challenge.",
+      "word_limit": 650,
+      "college": "harvard",
+      "additional_instructions": null
+    },
+    "profile": {
+      "user_info": {
+        "name": "Alex Johnson",
+        "grade": 12,
+        "intended_major": "Computer Science",
+        "college_list": [
+          "Harvard",
+          "MIT",
+          "Stanford",
+          "Carnegie Mellon",
+          "UC Berkeley"
+        ],
+        "platforms": [
+          "Common App",
+          "UC Application"
+        ]
+      },
+      "academic_profile": {
+        "gpa": 3.95,
+        "test_scores": {
+          "SAT": 1580,
+          "ACT": 35
+        },
+        "courses": [
+          "AP Calculus BC",
+          "AP Computer Science A",
+          "AP Physics C",
+          "AP English Literature"
+        ],
+        "activities": [
+          {
+            "name": "Programming Competition Team",
+            "role": "Captain",
+            "duration": "3 years",
+            "description": "Led team in USACO and local programming contests",
+            "impact": "Qualified for state championships, mentored 10+ students"
+          },
+          {
+            "name": "Math Tutoring Program",
+            "role": "Volunteer Tutor",
+            "duration": "2 years",
+            "description": "Weekly tutoring for underserved students",
+            "impact": "Helped 15 students improve grades by average of 1.5 letter grades"
+          }
+        ]
+      },
+      "core_values": [
+        {
+          "value": "Intellectual Curiosity",
+          "description": "Driven by desire to understand and solve complex problems",
+          "evidence": [
+            "Independent research projects",
+            "Extra coursework",
+            "Competition participation"
+          ],
+          "used_in_essays": []
+        },
+        {
+          "value": "Community Service",
+          "description": "Commitment to helping others and giving back",
+          "evidence": [
+            "Tutoring program",
+            "Food bank volunteering",
+            "Peer mentoring"
+          ],
+          "used_in_essays": []
+        }
+      ],
+      "defining_moments": [
+        {
+          "title": "First Programming Competition",
+          "description": "Struggled with algorithmic thinking but persevered through practice",
+          "emotional_impact": "Initial frustration turned into determination and eventual success",
+          "lessons_learned": "Persistence and methodical practice can overcome initial struggles",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Tutoring a Struggling Student",
+          "description": "Helped Maria overcome math anxiety and improve her grades",
+          "emotional_impact": "Profound satisfaction from seeing someone else succeed",
+          "lessons_learned": "Teaching others deepens your own understanding",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Family Financial Hardship",
+          "description": "Dad lost job during pandemic, family had to make sacrifices",
+          "emotional_impact": "Stress and worry, but also brought family closer",
+          "lessons_learned": "Resilience and the importance of supporting each other",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        }
+      ],
+      "writing_voice": null,
+      "essay_history": [],
+      "college_story_usage": {}
+    },
+    "college_id": "harvard",
+    "deadline": "2025-08-11 15:36:37.228260",
+    "status": "pending",
+    "created_at": "2025-07-14 22:36:37.235701",
+    "updated_at": null,
+    "draft": null,
+    "used_stories": [],
+    "priority_score": 60.099999999999994
+  },
+  "fdac64c97a43": {
+    "id": "fdac64c97a43",
+    "prompt": {
+      "text": "Describe your intellectual interests and how you pursue them.",
+      "word_limit": 650,
+      "college": "carnegie_mellon",
+      "additional_instructions": null
+    },
+    "profile": {
+      "user_info": {
+        "name": "Alex Johnson",
+        "grade": 12,
+        "intended_major": "Computer Science",
+        "college_list": [
+          "Harvard",
+          "MIT",
+          "Stanford",
+          "Carnegie Mellon",
+          "UC Berkeley"
+        ],
+        "platforms": [
+          "Common App",
+          "UC Application"
+        ]
+      },
+      "academic_profile": {
+        "gpa": 3.95,
+        "test_scores": {
+          "SAT": 1580,
+          "ACT": 35
+        },
+        "courses": [
+          "AP Calculus BC",
+          "AP Computer Science A",
+          "AP Physics C",
+          "AP English Literature"
+        ],
+        "activities": [
+          {
+            "name": "Programming Competition Team",
+            "role": "Captain",
+            "duration": "3 years",
+            "description": "Led team in USACO and local programming contests",
+            "impact": "Qualified for state championships, mentored 10+ students"
+          },
+          {
+            "name": "Math Tutoring Program",
+            "role": "Volunteer Tutor",
+            "duration": "2 years",
+            "description": "Weekly tutoring for underserved students",
+            "impact": "Helped 15 students improve grades by average of 1.5 letter grades"
+          }
+        ]
+      },
+      "core_values": [
+        {
+          "value": "Intellectual Curiosity",
+          "description": "Driven by desire to understand and solve complex problems",
+          "evidence": [
+            "Independent research projects",
+            "Extra coursework",
+            "Competition participation"
+          ],
+          "used_in_essays": []
+        },
+        {
+          "value": "Community Service",
+          "description": "Commitment to helping others and giving back",
+          "evidence": [
+            "Tutoring program",
+            "Food bank volunteering",
+            "Peer mentoring"
+          ],
+          "used_in_essays": []
+        }
+      ],
+      "defining_moments": [
+        {
+          "title": "First Programming Competition",
+          "description": "Struggled with algorithmic thinking but persevered through practice",
+          "emotional_impact": "Initial frustration turned into determination and eventual success",
+          "lessons_learned": "Persistence and methodical practice can overcome initial struggles",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Tutoring a Struggling Student",
+          "description": "Helped Maria overcome math anxiety and improve her grades",
+          "emotional_impact": "Profound satisfaction from seeing someone else succeed",
+          "lessons_learned": "Teaching others deepens your own understanding",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Family Financial Hardship",
+          "description": "Dad lost job during pandemic, family had to make sacrifices",
+          "emotional_impact": "Stress and worry, but also brought family closer",
+          "lessons_learned": "Resilience and the importance of supporting each other",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        }
+      ],
+      "writing_voice": null,
+      "essay_history": [],
+      "college_story_usage": {}
+    },
+    "college_id": "carnegie_mellon",
+    "deadline": "2025-08-18 15:36:37.228260",
+    "status": "pending",
+    "created_at": "2025-07-14 22:36:37.236921",
+    "updated_at": null,
+    "draft": null,
+    "used_stories": [],
+    "priority_score": 51.7
+  },
+  "59d3c8f6af75": {
+    "id": "59d3c8f6af75",
+    "prompt": {
+      "text": "Describe a challenge you've overcome and how it shaped you as a person.",
+      "word_limit": 650,
+      "college": "harvard",
+      "additional_instructions": null
+    },
+    "profile": {
+      "user_info": {
+        "name": "Alex Johnson",
+        "grade": 12,
+        "intended_major": "Computer Science",
+        "college_list": [
+          "Harvard",
+          "MIT",
+          "Stanford",
+          "Carnegie Mellon",
+          "UC Berkeley"
+        ],
+        "platforms": [
+          "Common App",
+          "UC Application"
+        ]
+      },
+      "academic_profile": {
+        "gpa": 3.95,
+        "test_scores": {
+          "SAT": 1580,
+          "ACT": 35
+        },
+        "courses": [
+          "AP Calculus BC",
+          "AP Computer Science A",
+          "AP Physics C",
+          "AP English Literature"
+        ],
+        "activities": [
+          {
+            "name": "Programming Competition Team",
+            "role": "Captain",
+            "duration": "3 years",
+            "description": "Led team in USACO and local programming contests",
+            "impact": "Qualified for state championships, mentored 10+ students"
+          },
+          {
+            "name": "Math Tutoring Program",
+            "role": "Volunteer Tutor",
+            "duration": "2 years",
+            "description": "Weekly tutoring for underserved students",
+            "impact": "Helped 15 students improve grades by average of 1.5 letter grades"
+          }
+        ]
+      },
+      "core_values": [
+        {
+          "value": "Intellectual Curiosity",
+          "description": "Driven by desire to understand and solve complex problems",
+          "evidence": [
+            "Independent research projects",
+            "Extra coursework",
+            "Competition participation"
+          ],
+          "used_in_essays": []
+        },
+        {
+          "value": "Community Service",
+          "description": "Commitment to helping others and giving back",
+          "evidence": [
+            "Tutoring program",
+            "Food bank volunteering",
+            "Peer mentoring"
+          ],
+          "used_in_essays": []
+        }
+      ],
+      "defining_moments": [
+        {
+          "title": "First Programming Competition",
+          "description": "Struggled with algorithmic thinking but persevered through practice",
+          "emotional_impact": "Initial frustration turned into determination and eventual success",
+          "lessons_learned": "Persistence and methodical practice can overcome initial struggles",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Tutoring a Struggling Student",
+          "description": "Helped Maria overcome math anxiety and improve her grades",
+          "emotional_impact": "Profound satisfaction from seeing someone else succeed",
+          "lessons_learned": "Teaching others deepens your own understanding",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Family Financial Hardship",
+          "description": "Dad lost job during pandemic, family had to make sacrifices",
+          "emotional_impact": "Stress and worry, but also brought family closer",
+          "lessons_learned": "Resilience and the importance of supporting each other",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        }
+      ],
+      "writing_voice": null,
+      "essay_history": [],
+      "college_story_usage": {}
+    },
+    "college_id": "harvard",
+    "deadline": "2025-07-21 15:39:13.729474",
+    "status": "completed",
+    "created_at": "2025-07-14 22:39:13.729547",
+    "updated_at": "2025-07-14 22:39:13.745502",
+    "draft": null,
+    "used_stories": [
+      "First Programming Competition"
+    ],
+    "priority_score": 74.5
+  },
+  "01b22e8f1269": {
+    "id": "01b22e8f1269",
+    "prompt": {
+      "text": "Tell us about a time you were intellectually curious about something.",
+      "word_limit": 650,
+      "college": "mit",
+      "additional_instructions": null
+    },
+    "profile": {
+      "user_info": {
+        "name": "Alex Johnson",
+        "grade": 12,
+        "intended_major": "Computer Science",
+        "college_list": [
+          "Harvard",
+          "MIT",
+          "Stanford",
+          "Carnegie Mellon",
+          "UC Berkeley"
+        ],
+        "platforms": [
+          "Common App",
+          "UC Application"
+        ]
+      },
+      "academic_profile": {
+        "gpa": 3.95,
+        "test_scores": {
+          "SAT": 1580,
+          "ACT": 35
+        },
+        "courses": [
+          "AP Calculus BC",
+          "AP Computer Science A",
+          "AP Physics C",
+          "AP English Literature"
+        ],
+        "activities": [
+          {
+            "name": "Programming Competition Team",
+            "role": "Captain",
+            "duration": "3 years",
+            "description": "Led team in USACO and local programming contests",
+            "impact": "Qualified for state championships, mentored 10+ students"
+          },
+          {
+            "name": "Math Tutoring Program",
+            "role": "Volunteer Tutor",
+            "duration": "2 years",
+            "description": "Weekly tutoring for underserved students",
+            "impact": "Helped 15 students improve grades by average of 1.5 letter grades"
+          }
+        ]
+      },
+      "core_values": [
+        {
+          "value": "Intellectual Curiosity",
+          "description": "Driven by desire to understand and solve complex problems",
+          "evidence": [
+            "Independent research projects",
+            "Extra coursework",
+            "Competition participation"
+          ],
+          "used_in_essays": []
+        },
+        {
+          "value": "Community Service",
+          "description": "Commitment to helping others and giving back",
+          "evidence": [
+            "Tutoring program",
+            "Food bank volunteering",
+            "Peer mentoring"
+          ],
+          "used_in_essays": []
+        }
+      ],
+      "defining_moments": [
+        {
+          "title": "First Programming Competition",
+          "description": "Struggled with algorithmic thinking but persevered through practice",
+          "emotional_impact": "Initial frustration turned into determination and eventual success",
+          "lessons_learned": "Persistence and methodical practice can overcome initial struggles",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Tutoring a Struggling Student",
+          "description": "Helped Maria overcome math anxiety and improve her grades",
+          "emotional_impact": "Profound satisfaction from seeing someone else succeed",
+          "lessons_learned": "Teaching others deepens your own understanding",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Family Financial Hardship",
+          "description": "Dad lost job during pandemic, family had to make sacrifices",
+          "emotional_impact": "Stress and worry, but also brought family closer",
+          "lessons_learned": "Resilience and the importance of supporting each other",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        }
+      ],
+      "writing_voice": null,
+      "essay_history": [],
+      "college_story_usage": {}
+    },
+    "college_id": "mit",
+    "deadline": "2025-07-28 15:39:13.729482",
+    "status": "pending",
+    "created_at": "2025-07-14 22:39:13.731601",
+    "updated_at": null,
+    "draft": null,
+    "used_stories": [],
+    "priority_score": 62.5
+  },
+  "5d3ba64fa9f9": {
+    "id": "5d3ba64fa9f9",
+    "prompt": {
+      "text": "Describe a meaningful experience you've had helping others.",
+      "word_limit": 650,
+      "college": "stanford",
+      "additional_instructions": null
+    },
+    "profile": {
+      "user_info": {
+        "name": "Alex Johnson",
+        "grade": 12,
+        "intended_major": "Computer Science",
+        "college_list": [
+          "Harvard",
+          "MIT",
+          "Stanford",
+          "Carnegie Mellon",
+          "UC Berkeley"
+        ],
+        "platforms": [
+          "Common App",
+          "UC Application"
+        ]
+      },
+      "academic_profile": {
+        "gpa": 3.95,
+        "test_scores": {
+          "SAT": 1580,
+          "ACT": 35
+        },
+        "courses": [
+          "AP Calculus BC",
+          "AP Computer Science A",
+          "AP Physics C",
+          "AP English Literature"
+        ],
+        "activities": [
+          {
+            "name": "Programming Competition Team",
+            "role": "Captain",
+            "duration": "3 years",
+            "description": "Led team in USACO and local programming contests",
+            "impact": "Qualified for state championships, mentored 10+ students"
+          },
+          {
+            "name": "Math Tutoring Program",
+            "role": "Volunteer Tutor",
+            "duration": "2 years",
+            "description": "Weekly tutoring for underserved students",
+            "impact": "Helped 15 students improve grades by average of 1.5 letter grades"
+          }
+        ]
+      },
+      "core_values": [
+        {
+          "value": "Intellectual Curiosity",
+          "description": "Driven by desire to understand and solve complex problems",
+          "evidence": [
+            "Independent research projects",
+            "Extra coursework",
+            "Competition participation"
+          ],
+          "used_in_essays": []
+        },
+        {
+          "value": "Community Service",
+          "description": "Commitment to helping others and giving back",
+          "evidence": [
+            "Tutoring program",
+            "Food bank volunteering",
+            "Peer mentoring"
+          ],
+          "used_in_essays": []
+        }
+      ],
+      "defining_moments": [
+        {
+          "title": "First Programming Competition",
+          "description": "Struggled with algorithmic thinking but persevered through practice",
+          "emotional_impact": "Initial frustration turned into determination and eventual success",
+          "lessons_learned": "Persistence and methodical practice can overcome initial struggles",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Tutoring a Struggling Student",
+          "description": "Helped Maria overcome math anxiety and improve her grades",
+          "emotional_impact": "Profound satisfaction from seeing someone else succeed",
+          "lessons_learned": "Teaching others deepens your own understanding",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Family Financial Hardship",
+          "description": "Dad lost job during pandemic, family had to make sacrifices",
+          "emotional_impact": "Stress and worry, but also brought family closer",
+          "lessons_learned": "Resilience and the importance of supporting each other",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        }
+      ],
+      "writing_voice": null,
+      "essay_history": [],
+      "college_story_usage": {}
+    },
+    "college_id": "stanford",
+    "deadline": "2025-08-04 15:39:13.729483",
+    "status": "pending",
+    "created_at": "2025-07-14 22:39:13.734072",
+    "updated_at": null,
+    "draft": null,
+    "used_stories": [],
+    "priority_score": 68.5
+  },
+  "fac6624bf3ec": {
+    "id": "fac6624bf3ec",
+    "prompt": {
+      "text": "Share a story about overcoming a personal challenge.",
+      "word_limit": 650,
+      "college": "harvard",
+      "additional_instructions": null
+    },
+    "profile": {
+      "user_info": {
+        "name": "Alex Johnson",
+        "grade": 12,
+        "intended_major": "Computer Science",
+        "college_list": [
+          "Harvard",
+          "MIT",
+          "Stanford",
+          "Carnegie Mellon",
+          "UC Berkeley"
+        ],
+        "platforms": [
+          "Common App",
+          "UC Application"
+        ]
+      },
+      "academic_profile": {
+        "gpa": 3.95,
+        "test_scores": {
+          "SAT": 1580,
+          "ACT": 35
+        },
+        "courses": [
+          "AP Calculus BC",
+          "AP Computer Science A",
+          "AP Physics C",
+          "AP English Literature"
+        ],
+        "activities": [
+          {
+            "name": "Programming Competition Team",
+            "role": "Captain",
+            "duration": "3 years",
+            "description": "Led team in USACO and local programming contests",
+            "impact": "Qualified for state championships, mentored 10+ students"
+          },
+          {
+            "name": "Math Tutoring Program",
+            "role": "Volunteer Tutor",
+            "duration": "2 years",
+            "description": "Weekly tutoring for underserved students",
+            "impact": "Helped 15 students improve grades by average of 1.5 letter grades"
+          }
+        ]
+      },
+      "core_values": [
+        {
+          "value": "Intellectual Curiosity",
+          "description": "Driven by desire to understand and solve complex problems",
+          "evidence": [
+            "Independent research projects",
+            "Extra coursework",
+            "Competition participation"
+          ],
+          "used_in_essays": []
+        },
+        {
+          "value": "Community Service",
+          "description": "Commitment to helping others and giving back",
+          "evidence": [
+            "Tutoring program",
+            "Food bank volunteering",
+            "Peer mentoring"
+          ],
+          "used_in_essays": []
+        }
+      ],
+      "defining_moments": [
+        {
+          "title": "First Programming Competition",
+          "description": "Struggled with algorithmic thinking but persevered through practice",
+          "emotional_impact": "Initial frustration turned into determination and eventual success",
+          "lessons_learned": "Persistence and methodical practice can overcome initial struggles",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Tutoring a Struggling Student",
+          "description": "Helped Maria overcome math anxiety and improve her grades",
+          "emotional_impact": "Profound satisfaction from seeing someone else succeed",
+          "lessons_learned": "Teaching others deepens your own understanding",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Family Financial Hardship",
+          "description": "Dad lost job during pandemic, family had to make sacrifices",
+          "emotional_impact": "Stress and worry, but also brought family closer",
+          "lessons_learned": "Resilience and the importance of supporting each other",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        }
+      ],
+      "writing_voice": null,
+      "essay_history": [],
+      "college_story_usage": {}
+    },
+    "college_id": "harvard",
+    "deadline": "2025-08-11 15:39:13.729484",
+    "status": "pending",
+    "created_at": "2025-07-14 22:39:13.735750",
+    "updated_at": null,
+    "draft": null,
+    "used_stories": [],
+    "priority_score": 60.099999999999994
+  },
+  "d58700295692": {
+    "id": "d58700295692",
+    "prompt": {
+      "text": "Describe your intellectual interests and how you pursue them.",
+      "word_limit": 650,
+      "college": "carnegie_mellon",
+      "additional_instructions": null
+    },
+    "profile": {
+      "user_info": {
+        "name": "Alex Johnson",
+        "grade": 12,
+        "intended_major": "Computer Science",
+        "college_list": [
+          "Harvard",
+          "MIT",
+          "Stanford",
+          "Carnegie Mellon",
+          "UC Berkeley"
+        ],
+        "platforms": [
+          "Common App",
+          "UC Application"
+        ]
+      },
+      "academic_profile": {
+        "gpa": 3.95,
+        "test_scores": {
+          "SAT": 1580,
+          "ACT": 35
+        },
+        "courses": [
+          "AP Calculus BC",
+          "AP Computer Science A",
+          "AP Physics C",
+          "AP English Literature"
+        ],
+        "activities": [
+          {
+            "name": "Programming Competition Team",
+            "role": "Captain",
+            "duration": "3 years",
+            "description": "Led team in USACO and local programming contests",
+            "impact": "Qualified for state championships, mentored 10+ students"
+          },
+          {
+            "name": "Math Tutoring Program",
+            "role": "Volunteer Tutor",
+            "duration": "2 years",
+            "description": "Weekly tutoring for underserved students",
+            "impact": "Helped 15 students improve grades by average of 1.5 letter grades"
+          }
+        ]
+      },
+      "core_values": [
+        {
+          "value": "Intellectual Curiosity",
+          "description": "Driven by desire to understand and solve complex problems",
+          "evidence": [
+            "Independent research projects",
+            "Extra coursework",
+            "Competition participation"
+          ],
+          "used_in_essays": []
+        },
+        {
+          "value": "Community Service",
+          "description": "Commitment to helping others and giving back",
+          "evidence": [
+            "Tutoring program",
+            "Food bank volunteering",
+            "Peer mentoring"
+          ],
+          "used_in_essays": []
+        }
+      ],
+      "defining_moments": [
+        {
+          "title": "First Programming Competition",
+          "description": "Struggled with algorithmic thinking but persevered through practice",
+          "emotional_impact": "Initial frustration turned into determination and eventual success",
+          "lessons_learned": "Persistence and methodical practice can overcome initial struggles",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Tutoring a Struggling Student",
+          "description": "Helped Maria overcome math anxiety and improve her grades",
+          "emotional_impact": "Profound satisfaction from seeing someone else succeed",
+          "lessons_learned": "Teaching others deepens your own understanding",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        },
+        {
+          "title": "Family Financial Hardship",
+          "description": "Dad lost job during pandemic, family had to make sacrifices",
+          "emotional_impact": "Stress and worry, but also brought family closer",
+          "lessons_learned": "Resilience and the importance of supporting each other",
+          "used_in_essays": [],
+          "themes": [],
+          "story_category": "defining_moment",
+          "story_weight": 1.0,
+          "college_usage": {}
+        }
+      ],
+      "writing_voice": null,
+      "essay_history": [],
+      "college_story_usage": {}
+    },
+    "college_id": "carnegie_mellon",
+    "deadline": "2025-08-18 15:39:13.729485",
+    "status": "pending",
+    "created_at": "2025-07-14 22:39:13.740723",
+    "updated_at": null,
+    "draft": null,
+    "used_stories": [],
+    "priority_score": 51.7
+  }
+}

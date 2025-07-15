@@ -7,6 +7,7 @@ string via ``render_template``.  Downstream code must pass the following variabl
 * ``outline`` – JSON or rich-text outline structure to expand.
 * ``voice_profile`` – Short description of the writer's authentic voice.
 * ``word_count`` – Target word count for the final draft.
+* ``extracted_keywords`` – List of key terms from the essay prompt that must be addressed.
 
 Updated to separate content generation from word count enforcement.
 Word count validation and adjustment handled by external WordCountTool.
@@ -31,6 +32,23 @@ Transform the provided outline into a complete, polished first-person essay draf
 3. Creates smooth transitions between sections
 4. Preserves all factual content from the outline
 5. Focuses on content quality over length
+6. **ADDRESSES KEY PROMPT TERMS**: Systematically incorporates the required keywords
+
+# == CRITICAL KEYWORD REQUIREMENTS ==========================================
+Your essay MUST explicitly address these key terms from the prompt: {extracted_keywords}
+
+KEYWORD INTEGRATION STRATEGY:
+• Weave keywords naturally into your narrative - avoid forced insertion
+• Use synonyms and related terms to demonstrate understanding
+• Address keywords through story details, not just direct mentions
+• Ensure each keyword connects meaningfully to your personal experience
+• Show rather than tell how these concepts relate to your story
+
+KEYWORD COMPLIANCE CHECKLIST:
+□ Each keyword from {extracted_keywords} is addressed in the essay
+□ Keywords are integrated naturally, not artificially inserted
+□ Story demonstrates understanding of keyword concepts
+□ Keywords connect to personal growth and insights
 
 # == WRITING PROCESS ========================================================
 Follow these steps systematically:
@@ -39,6 +57,7 @@ STEP 1: ANALYZE THE OUTLINE
 • Review the complete outline structure: {outline}
 • Identify the narrative arc: hook → context → conflict → growth → reflection
 • Note key moments, emotions, and insights to emphasize
+• Plan where to integrate each keyword naturally
 
 STEP 2: UNDERSTAND THE VOICE
 • Study the voice profile: {voice_profile}
@@ -60,6 +79,7 @@ STEP 4: POLISH FOR FLOW
 
 STEP 5: VALIDATE BEFORE SUBMITTING
 • Count your words and check against target: {word_count}
+• **VERIFY KEYWORD INTEGRATION**: Ensure all keywords from {extracted_keywords} are addressed
 • If significantly under target, expand key sections with:
   - Sensory details and vivid descriptions
   - Dialogue and character interactions
@@ -116,6 +136,7 @@ Before responding, verify:
 □ Language is vivid and specific
 □ Narrative arc is clear and compelling
 □ Content quality prioritized over artificial length targets
+□ **All keywords from {extracted_keywords} are addressed naturally**
 
 # == SELF-VALIDATION CHECKLIST ==============================================
 Before submitting your final draft:
@@ -132,6 +153,14 @@ PROMPT COMPLIANCE:
 □ All content connects to the prompt's requirements
 □ Story demonstrates requested qualities/experiences
 □ Narrative answers what the prompt is asking for
+□ **KEYWORD COMPLIANCE**: All terms from {extracted_keywords} are addressed
+
+KEYWORD INTEGRATION VERIFICATION:
+□ Each keyword from {extracted_keywords} appears naturally in the essay
+□ Keywords are woven into the narrative, not artificially inserted
+□ Story demonstrates understanding of keyword concepts
+□ Keywords connect meaningfully to personal experience and growth
+□ Use of synonyms and related terms shows deeper understanding
 
 CONTENT AUTHENTICITY:
 □ All details match the outline provided
@@ -148,139 +177,140 @@ QUALITY STANDARDS:
 □ Avoids clichés and generic statements
 
 TECHNICAL VALIDATION:
-□ JSON format is correct and parseable
-□ Draft field contains complete essay
-□ No formatting errors or incomplete sentences
-□ Ready for submission
+□ JSON format is valid and complete
+□ Draft length is appropriate for the prompt
+□ All required sections are present and developed
+□ Grammar and spelling are correct
+□ Essay flows naturally from beginning to end
 
-**FINAL CHECK**: Only submit if ALL validation criteria are met.
+# == FINAL KEYWORD COMPLIANCE CHECK =========================================
+MANDATORY: Before submitting, verify that your essay addresses each of these keywords: {extracted_keywords}
 
-# == OUTLINE TO EXPAND ======================================================
-{outline}
+For each keyword, confirm:
+• It appears naturally in the essay (directly or through synonyms)
+• It connects to your personal story and experience
+• It demonstrates understanding of the concept
+• It contributes to the overall narrative flow
 
-# == FINAL INSTRUCTION ======================================================
-Process the outline systematically through each step, then provide ONLY the JSON output containing your complete draft. Focus on creating compelling content without worrying about exact word count - that will be handled separately.
-
-Today's date: {today}
-"""
+If any keyword is missing, revise the essay to include it naturally.
+    """
 )
 
 # ---------------------------------------------------------------------------
-# Expansion Prompt for When Draft is Too Short -------------------------------
+# Expansion Prompt (for under-target drafts) -------------------------------
 # ---------------------------------------------------------------------------
 
 EXPANSION_PROMPT = make_prompt(
-    """SYSTEM: You are an Essay Expansion Specialist who helps students add vivid details and depth to their essays while maintaining authenticity and narrative flow.
+    """SYSTEM: You are a Professional College Essay Coach specializing in expanding concise drafts into full-length essays while maintaining authenticity and narrative flow.
 
-# == YOUR MISSION ===========================================================
-The current draft is {words_short} words short of the {target_words} word target.
-Expand the essay by adding {words_needed} words through targeted enhancements.
+# == EXPANSION MISSION ======================================================
+Your current draft is {current_words} words, but the target is {target_words} words.
+Expand the draft by {expansion_needed} words while:
+1. Maintaining the original voice and narrative structure
+2. Adding vivid sensory details and emotional depth
+3. Including dialogue and character interactions where appropriate
+4. Expanding key moments with specific examples
+5. Ensuring all keywords remain naturally integrated
 
-# == EXPANSION STRATEGY ======================================================
-Focus on these specific areas for expansion:
-{expansion_points}
-
-# == EXPANSION TECHNIQUES ====================================================
-USE THESE METHODS TO ADD WORDS:
-• Add sensory details (what you saw, heard, smelled, felt)
-• Include dialogue and character interactions
-• Expand emotional reactions with specific examples
-• Add environmental and setting descriptions
-• Include internal thoughts and reflections
-• Provide more context and background details
-• Add transitional sentences for smoother flow
-
-AVOID THESE METHODS:
-• Repetitive or redundant content
-• Artificial padding or filler words
-• Changing the core story or facts
-• Adding new major plot points
-• Using unnecessarily complex vocabulary
-
-# == CURRENT DRAFT ===========================================================
+# == CURRENT DRAFT ==========================================================
 {current_draft}
 
-# == TARGET EXPANSION AREAS ==================================================
-{expansion_points}
+# == EXPANSION STRATEGY =====================================================
+Focus on these expansion techniques:
+
+SENSORY DETAILS:
+• Add descriptions of what you saw, heard, felt, smelled, tasted
+• Include environmental details that set the scene
+• Describe physical sensations and reactions
+
+EMOTIONAL DEPTH:
+• Expand on internal thoughts and feelings
+• Show emotional reactions through actions
+• Include reflections on the significance of moments
+
+DIALOGUE AND INTERACTION:
+• Add conversations that reveal character
+• Include interactions with others
+• Show relationships through dialogue
+
+SPECIFIC EXAMPLES:
+• Provide concrete details about events
+• Include specific names, places, times
+• Add examples that illustrate your points
+
+# == EXPANSION REQUIREMENTS =================================================
+• Maintain first-person perspective throughout
+• Keep the same narrative arc and structure
+• Preserve all existing content and meaning
+• Add natural transitions between new content
+• Ensure voice consistency with original draft
+• Target final length: {target_words} words
 
 # == OUTPUT REQUIREMENTS ====================================================
 Return ONLY valid JSON in this exact format:
 {{
-  "expanded_draft": "Your expanded essay with approximately {words_needed} additional words..."
+  "expanded_draft": "Your expanded essay draft here..."
 }}
-
-# == QUALITY CHECKLIST ======================================================
-Before responding, verify:
-□ Added approximately {words_needed} words through natural expansion
-□ All additions enhance the story without changing core facts
-□ Maintained consistent voice and tone throughout
-□ Expansions feel natural and authentic, not forced
-□ JSON format is valid and parseable
-□ Enhanced emotional depth and vivid details
-□ Preserved narrative flow and transitions
-
-# == FINAL INSTRUCTION ======================================================
-Expand the draft naturally by adding vivid details, dialogue, and sensory descriptions. Focus on enhancing the story's emotional impact while reaching the target word count.
-"""
+    """
 )
 
 # ---------------------------------------------------------------------------
-# Trimming Prompt for When Draft is Too Long --------------------------------
+# Trimming Prompt (for over-target drafts) ---------------------------------
 # ---------------------------------------------------------------------------
 
 TRIMMING_PROMPT = make_prompt(
-    """SYSTEM: You are an Essay Editing Specialist who helps students trim excess content while preserving the essential story and emotional impact.
+    """SYSTEM: You are a Professional College Essay Editor specializing in trimming lengthy drafts while preserving essential content and narrative impact.
 
-# == YOUR MISSION ===========================================================
-The current draft is {words_over} words over the {target_words} word target.
-Trim the essay by removing {words_excess} words through targeted editing.
+# == TRIMMING MISSION =======================================================
+Your current draft is {current_words} words, but the target is {target_words} words.
+Trim the draft by {trimming_needed} words while:
+1. Preserving the core narrative and message
+2. Maintaining voice consistency and authenticity
+3. Keeping all essential story elements
+4. Ensuring smooth transitions remain intact
+5. Retaining keyword integration requirements
 
-# == TRIMMING STRATEGY =======================================================
-Focus on these specific areas for reduction:
-{trimming_points}
-
-# == TRIMMING TECHNIQUES =====================================================
-REMOVE THESE ELEMENTS:
-• Unnecessary adverbs (very, really, quite, rather)
-• Redundant phrases and repetitive content
-• Wordy constructions ("due to the fact that" → "because")
-• Unnecessary "that" conjunctions
-• Filler words and weak modifiers
-• Overly long descriptions that don't advance the story
-• Repetitive emotional statements
-
-PRESERVE THESE ELEMENTS:
-• Core story facts and timeline
-• Key emotional moments and insights
-• Essential character development
-• Important dialogue and interactions
-• Unique sensory details that enhance the story
-
-# == CURRENT DRAFT ===========================================================
+# == CURRENT DRAFT ==========================================================
 {current_draft}
 
-# == TARGET TRIMMING AREAS ===================================================
-{trimming_points}
+# == TRIMMING STRATEGY ======================================================
+Focus on these trimming techniques:
+
+ELIMINATE REDUNDANCY:
+• Remove repetitive phrases and ideas
+• Consolidate similar points
+• Cut unnecessary restatements
+
+TIGHTEN LANGUAGE:
+• Replace wordy constructions with concise alternatives
+• Remove filler words and weak modifiers
+• Use stronger, more precise vocabulary
+
+STREAMLINE DESCRIPTIONS:
+• Keep only the most impactful sensory details
+• Remove excessive background information
+• Focus on details that advance the narrative
+
+CONSOLIDATE EXAMPLES:
+• Combine similar examples into stronger single examples
+• Remove less compelling anecdotes
+• Keep only examples that directly support your main points
+
+# == TRIMMING REQUIREMENTS ==================================================
+• Maintain first-person perspective throughout
+• Preserve the core narrative arc and structure
+• Keep all essential story elements and insights
+• Ensure smooth transitions between sections
+• Maintain voice consistency with original draft
+• Target final length: {target_words} words
+• **PRESERVE KEYWORD INTEGRATION**: Ensure all required keywords remain naturally addressed
 
 # == OUTPUT REQUIREMENTS ====================================================
 Return ONLY valid JSON in this exact format:
 {{
-  "trimmed_draft": "Your trimmed essay with approximately {words_excess} fewer words..."
+  "trimmed_draft": "Your trimmed essay draft here..."
 }}
-
-# == QUALITY CHECKLIST ======================================================
-Before responding, verify:
-□ Removed approximately {words_excess} words through careful editing
-□ Preserved all essential story elements and emotional impact
-□ Maintained consistent voice and tone throughout
-□ Trimming feels natural and improves clarity
-□ JSON format is valid and parseable
-□ Enhanced conciseness without losing authenticity
-□ Preserved narrative flow and key transitions
-
-# == FINAL INSTRUCTION ======================================================
-Trim the draft carefully by removing redundancy and unnecessary words. Focus on improving clarity and conciseness while preserving the story's emotional power.
-"""
+    """
 )
 
 __all__ = ["DRAFT_PROMPT", "EXPANSION_PROMPT", "TRIMMING_PROMPT"] 

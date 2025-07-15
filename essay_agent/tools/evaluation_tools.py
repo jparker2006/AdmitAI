@@ -2,12 +2,13 @@
 
 LangChain-compatible tools for essay evaluation and scoring.
 Each tool uses GPT-4 with high-stakes prompts to analyze completed essays.
+Enhanced with workflow integration methods for revision loop orchestration.
 """
 
 from __future__ import annotations
 
 import json
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Union, Tuple, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -100,62 +101,35 @@ class ClicheItem(BaseModel):
     text_excerpt: str = Field(..., max_length=100, description="Exact cliché phrase from essay")
     cliche_type: str = Field(..., description="Type of cliché")
     severity: int = Field(..., ge=1, le=5, description="Severity level (1-5)")
-    frequency: int = Field(..., ge=1, description="Times this phrase appears")
-    alternative_suggestion: str = Field(..., max_length=150, description="Specific replacement idea")
+    alternative_suggestion: str = Field(..., max_length=150, description="Better alternative")
     
     @field_validator('cliche_type')
     @classmethod
     def validate_cliche_type(cls, v):
-        allowed_types = ["overused_phrase", "generic_description", "essay_trope"]
+        allowed_types = ["overused_phrase", "generic_opening", "predictable_conclusion", "common_metaphor"]
         if v not in allowed_types:
             raise ValueError(f"cliche_type must be one of: {allowed_types}")
         return v
 
 class ClicheDetectionResult(BaseModel):
-    cliches_found: List[ClicheItem] = Field(..., description="List of clichés detected")
-    total_cliches: int = Field(..., description="Number of clichés found")
-    uniqueness_score: float = Field(..., ge=0.0, le=1.0, description="Uniqueness score (0.0-1.0)")
-    overall_assessment: str = Field(..., max_length=100, description="Brief authenticity summary")
+    cliches: List[ClicheItem] = Field(..., description="List of clichés found")
+    overall_cliche_count: int = Field(..., description="Total number of clichés")
+    originality_score: int = Field(..., ge=0, le=10, description="Originality score (0-10)")
     
-    @field_validator('total_cliches')
+    @field_validator('overall_cliche_count')
     @classmethod
-    def validate_total_cliches(cls, v, info):
-        if 'cliches_found' in info.data:
-            expected_count = len(info.data['cliches_found'])
+    def validate_overall_count(cls, v, info):
+        if 'cliches' in info.data:
+            expected_count = len(info.data['cliches'])
             if v != expected_count:
-                raise ValueError(f"total_cliches ({v}) must match number of clichés found ({expected_count})")
-        return v
-
-class RequirementAnalysis(BaseModel):
-    requirement: str = Field(..., max_length=100, description="Specific requirement from prompt")
-    addressed: bool = Field(..., description="True if adequately addressed")
-    quality: int = Field(..., ge=0, le=2, description="Quality score (0-2)")
-    evidence: str = Field(..., max_length=150, description="Where/how essay addresses this")
-    
-    @field_validator('addressed')
-    @classmethod
-    def validate_addressed(cls, v, info):
-        if 'quality' in info.data:
-            expected_addressed = info.data['quality'] >= 1
-            if v != expected_addressed:
-                raise ValueError(f"addressed ({v}) must be true if quality >= 1")
+                raise ValueError(f"overall_cliche_count ({v}) must match number of clichés ({expected_count})")
         return v
 
 class AlignmentCheckResult(BaseModel):
-    alignment_score: float = Field(..., ge=0.0, le=10.0, description="Alignment score (0.0-10.0)")
-    requirements_analysis: List[RequirementAnalysis] = Field(..., description="Analysis of each requirement")
-    missing_elements: List[str] = Field(..., description="Requirements not adequately addressed")
-    is_fully_aligned: bool = Field(..., description="True if alignment_score >= 8.0")
-    improvement_priority: str = Field(..., max_length=100, description="Most important missing element")
-    
-    @field_validator('is_fully_aligned')
-    @classmethod
-    def validate_is_fully_aligned(cls, v, info):
-        if 'alignment_score' in info.data:
-            expected_aligned = info.data['alignment_score'] >= 8.0
-            if v != expected_aligned:
-                raise ValueError(f"is_fully_aligned ({v}) must match alignment_score >= 8.0 ({expected_aligned})")
-        return v
+    alignment_score: int = Field(..., ge=0, le=10, description="Prompt alignment score (0-10)")
+    covered_aspects: List[str] = Field(..., description="Prompt aspects that are covered")
+    missing_aspects: List[str] = Field(..., description="Prompt aspects that are missing")
+    improvement_suggestions: List[str] = Field(..., description="Specific suggestions for better alignment")
 
 # ---------------------------------------------------------------------------
 # Tool implementations
@@ -198,6 +172,132 @@ class EssayScoringTool(ValidatedTool):
             
         except Exception as e:
             return {"error": f"Essay scoring failed: {str(e)}"}
+    
+    # ---------------------------------------------------------------------------
+    # Workflow integration methods
+    # ---------------------------------------------------------------------------
+    
+    def get_weakest_dimensions(self, result: Dict[str, Any]) -> List[Tuple[str, int]]:
+        """Return dimensions with lowest scores for targeted revision."""
+        if not result or "scores" not in result:
+            return []
+        
+        scores = result["scores"]
+        dimension_scores = [
+            (dim, score) for dim, score in scores.items()
+            if isinstance(score, (int, float))
+        ]
+        
+        # Sort by score (ascending) and return all dimensions with their scores
+        dimension_scores.sort(key=lambda x: x[1])
+        return dimension_scores
+    
+    def generate_revision_feedback(self, result: Dict[str, Any]) -> str:
+        """Generate specific revision instructions based on evaluation."""
+        if not result or "scores" not in result:
+            return "Focus on overall clarity and structure"
+        
+        weakest_dims = self.get_weakest_dimensions(result)
+        if not weakest_dims:
+            return "Focus on overall improvement and polish"
+        
+        # Focus on the lowest 2-3 scoring dimensions
+        focus_dimensions = weakest_dims[:3]
+        
+        # Map dimensions to specific revision instructions
+        dimension_instructions = {
+            "clarity": "Improve logical organization and paragraph transitions. Make arguments clearer and more coherent.",
+            "insight": "Develop deeper self-reflection and personal growth. Add more meaningful insights and lessons learned.",
+            "structure": "Strengthen narrative flow and pacing. Improve introduction hook and conclusion impact.",
+            "voice": "Enhance authentic personal voice with more specific details and vivid examples.",
+            "prompt_fit": "Better address all aspects of the prompt. Ensure complete response to the question."
+        }
+        
+        # Generate targeted feedback
+        feedback_parts = []
+        for dim, score in focus_dimensions:
+            if dim in dimension_instructions:
+                feedback_parts.append(f"**{dim.title()}** (Score: {score}/10): {dimension_instructions[dim]}")
+        
+        # Add overall feedback if available
+        if "feedback" in result:
+            feedback_parts.append(f"**Additional guidance**: {result['feedback']}")
+        
+        return " ".join(feedback_parts)
+    
+    async def evaluate_with_workflow_integration(self, essay_text: str, essay_prompt: str, context: Dict[str, Any]) -> Dict[str, Any]:
+        """Enhanced evaluation with workflow-specific metadata."""
+        # Run standard evaluation
+        result = self._run(essay_text=essay_text, essay_prompt=essay_prompt)
+        
+        if "error" in result:
+            return result
+        
+        # Add workflow-specific enhancements
+        workflow_metadata = {
+            "weakest_dimensions": self.get_weakest_dimensions(result),
+            "revision_feedback": self.generate_revision_feedback(result),
+            "improvement_priority": self._get_improvement_priority(result),
+            "context_metadata": self._analyze_context(context)
+        }
+        
+        # Merge with original result
+        return {**result, "workflow_metadata": workflow_metadata}
+    
+    def _get_improvement_priority(self, result: Dict[str, Any]) -> str:
+        """Determine the highest priority area for improvement."""
+        weakest_dims = self.get_weakest_dimensions(result)
+        if not weakest_dims:
+            return "general_improvement"
+        
+        lowest_dim, lowest_score = weakest_dims[0]
+        
+        # Determine priority based on score thresholds
+        if lowest_score <= 4:
+            return f"critical_{lowest_dim}"
+        elif lowest_score <= 6:
+            return f"major_{lowest_dim}"
+        else:
+            return f"minor_{lowest_dim}"
+    
+    def _analyze_context(self, context: Dict[str, Any]) -> Dict[str, Any]:
+        """Analyze workflow context for additional insights."""
+        metadata = {
+            "revision_attempt": context.get("revision_attempt", 0),
+            "previous_score": context.get("previous_score", 0.0),
+            "time_elapsed": context.get("time_elapsed", 0.0)
+        }
+        
+        # Calculate improvement if this is a revision
+        if metadata["revision_attempt"] > 0 and metadata["previous_score"] > 0:
+            current_score = context.get("current_score", 0.0)
+            metadata["score_improvement"] = current_score - metadata["previous_score"]
+            metadata["improvement_percentage"] = (metadata["score_improvement"] / metadata["previous_score"]) * 100
+        
+        return metadata
+    
+    def is_ready_for_polish(self, result: Dict[str, Any], threshold: float = 7.5) -> bool:
+        """Check if essay is ready for polishing phase."""
+        if not result or "overall_score" not in result:
+            return False
+        
+        return result["overall_score"] >= threshold
+    
+    def get_revision_urgency(self, result: Dict[str, Any]) -> str:
+        """Determine urgency level for revision."""
+        if not result or "overall_score" not in result:
+            return "unknown"
+        
+        score = result["overall_score"]
+        
+        if score >= 8.0:
+            return "none"
+        elif score >= 7.0:
+            return "low"
+        elif score >= 5.0:
+            return "medium"
+        else:
+            return "high"
 
 @register_tool("weakness_highlight")
 class WeaknessHighlightTool(ValidatedTool):
@@ -233,6 +333,31 @@ class WeaknessHighlightTool(ValidatedTool):
             
         except Exception as e:
             return {"error": f"Weakness highlighting failed: {str(e)}"}
+    
+    def get_targeted_revision_focus(self, result: Dict[str, Any]) -> str:
+        """Generate targeted revision focus based on weakness analysis."""
+        if not result or "weaknesses" not in result:
+            return "Focus on overall improvement"
+        
+        weaknesses = result["weaknesses"]
+        priority_focus = result.get("priority_focus", "general improvement")
+        
+        # Group weaknesses by type
+        weakness_groups = {}
+        for weakness in weaknesses:
+            weakness_type = weakness.get("weakness_type", "general")
+            if weakness_type not in weakness_groups:
+                weakness_groups[weakness_type] = []
+            weakness_groups[weakness_type].append(weakness)
+        
+        # Generate focus based on most common weakness types
+        focus_parts = [f"Priority: {priority_focus}"]
+        
+        for weakness_type, items in weakness_groups.items():
+            if len(items) >= 2:  # If multiple weaknesses of same type
+                focus_parts.append(f"Address {weakness_type} issues ({len(items)} identified)")
+        
+        return ". ".join(focus_parts)
 
 @register_tool("cliche_detection")
 class ClicheDetectionTool(ValidatedTool):
@@ -271,15 +396,15 @@ class ClicheDetectionTool(ValidatedTool):
 
 @register_tool("alignment_check")
 class AlignmentCheckTool(ValidatedTool):
-    """Check if essay directly addresses the prompt requirements"""
+    """Check how well essay aligns with prompt requirements"""
     
     name: str = "alignment_check"
     description: str = (
-        "Verify that an essay addresses all explicit and implicit requirements of the prompt. "
-        "Returns alignment score and analysis of missing elements."
+        "Analyze how well an essay addresses the specific prompt requirements. "
+        "Returns alignment score and identifies missing aspects."
     )
     
-    timeout: float = 18.0  # Alignment checking may take longer
+    timeout: float = 15.0
     
     def _run(self, *, essay_text: str, essay_prompt: str, **_: Any) -> Dict[str, Any]:
         # Input validation
@@ -307,30 +432,51 @@ class AlignmentCheckTool(ValidatedTool):
         except Exception as e:
             return {"error": f"Alignment check failed: {str(e)}"}
 
-# ---------------------------------------------------------------------------
-# All tools are registered via decorators above
-# ---------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------------
-# Convenience functions for direct usage
+# Utility functions for workflow integration
 # ---------------------------------------------------------------------------
 
-def score_essay(essay_text: str, essay_prompt: str) -> Dict[str, Any]:
-    """Score an essay on the admissions rubric."""
-    tool = EssayScoringTool()
-    return tool(essay_text=essay_text, essay_prompt=essay_prompt)
+def create_enhanced_evaluator() -> EssayScoringTool:
+    """Create an enhanced EssayScoringTool with workflow integration."""
+    return EssayScoringTool()
 
-def highlight_weaknesses(essay_text: str) -> Dict[str, Any]:
-    """Identify specific weaknesses in an essay."""
-    tool = WeaknessHighlightTool()
-    return tool(essay_text=essay_text)
 
-def detect_cliches(essay_text: str) -> Dict[str, Any]:
-    """Detect clichés and overused phrases in an essay."""
-    tool = ClicheDetectionTool()
-    return tool(essay_text=essay_text)
+async def evaluate_for_revision_loop(essay_text: str, essay_prompt: str, context: Dict[str, Any]) -> Dict[str, Any]:
+    """Evaluate essay specifically for revision loop workflow."""
+    evaluator = create_enhanced_evaluator()
+    return await evaluator.evaluate_with_workflow_integration(essay_text, essay_prompt, context)
 
-def check_alignment(essay_text: str, essay_prompt: str) -> Dict[str, Any]:
-    """Check if essay addresses prompt requirements."""
-    tool = AlignmentCheckTool()
-    return tool(essay_text=essay_text, essay_prompt=essay_prompt) 
+
+def generate_comprehensive_feedback(scoring_result: Dict[str, Any], weakness_result: Dict[str, Any]) -> str:
+    """Generate comprehensive revision feedback from multiple evaluation tools."""
+    feedback_parts = []
+    
+    # Add scoring-based feedback
+    if scoring_result and "workflow_metadata" in scoring_result:
+        feedback_parts.append(scoring_result["workflow_metadata"]["revision_feedback"])
+    
+    # Add weakness-based feedback
+    if weakness_result and "weaknesses" in weakness_result:
+        weakness_tool = WeaknessHighlightTool()
+        feedback_parts.append(weakness_tool.get_targeted_revision_focus(weakness_result))
+    
+    return " | ".join(feedback_parts)
+
+
+# ---------------------------------------------------------------------------
+# Test utility for validating tools
+# ---------------------------------------------------------------------------
+
+tool = EssayScoringTool()
+test_essay = "This is a test essay about overcoming challenges in my life."
+test_prompt = "Describe a challenge you faced and how you overcame it."
+
+async def test_workflow_integration():
+    """Test the workflow integration features."""
+    result = await tool.evaluate_with_workflow_integration(test_essay, test_prompt, {"revision_attempt": 1})
+    print("Workflow integration test result:", result)
+
+if __name__ == "__main__":
+    import asyncio
+    asyncio.run(test_workflow_integration()) 

@@ -97,6 +97,10 @@ class BrainstormTool(ValidatedTool):
         if conflicts:
             raise ValueError(f"Story reuse detected for {college_id}: {conflicts}")
 
+        # Debug logging for story selection process -------------------
+        self._debug_story_selection(parsed.stories, prompt_type, college_blacklist, 
+                                  cross_college_suggestions, college_id)
+
         # Persist brainstorm results in memory --------------------------
         if user_id:
             try:
@@ -144,40 +148,45 @@ class BrainstormTool(ValidatedTool):
         """Categorize prompt as identity/passion/challenge/achievement/community."""
         prompt_lower = essay_prompt.lower()
         
+        # Challenge/Problem indicators (check first to avoid conflicts)
+        if any(keyword in prompt_lower for keyword in [
+            'problem you\'ve solved', 'problem you have solved', 'challenge you faced',
+            'obstacle', 'difficulty', 'struggle', 'overcome', 'failed', 'failure', 
+            'setback', 'conflict', 'disagreement', 'solve', 'solution', 'dilemma'
+        ]):
+            return 'challenge'
+        
+        # Community/Culture indicators (check before identity to avoid conflicts)
+        if any(keyword in prompt_lower for keyword in [
+            'community', 'service', 'volunteer', 'help', 'impact', 'contribute',
+            'social', 'cultural background', 'family traditions', 'diversity', 'inclusion',
+            'cultural heritage', 'relates to your cultural', 'community or family'
+        ]):
+            return 'community'
+        
         # Identity/Background indicators
         if any(keyword in prompt_lower for keyword in [
             'identity', 'background', 'heritage', 'culture', 'family', 'who you are', 
-            'describe yourself', 'personal story', 'upbringing', 'community you belong'
+            'describe yourself', 'personal story', 'upbringing', 'community you belong',
+            'meaningful they believe', 'application would be incomplete'
         ]):
             return 'identity'
         
-        # Passion/Interest indicators
+        # Passion/Interest indicators (enhanced with missing keywords)
         if any(keyword in prompt_lower for keyword in [
             'passion', 'interest', 'hobby', 'love', 'enjoy', 'fascinated', 'curious',
-            'intellectual', 'academic interest', 'subject you find', 'activity you enjoy'
+            'engaging', 'captivate', 'lose track of time', 'learn more', 'intellectual curiosity',
+            'academic interest', 'subject you find', 'activity you enjoy', 'find so engaging'
         ]):
             return 'passion'
-        
-        # Challenge/Problem indicators
-        if any(keyword in prompt_lower for keyword in [
-            'challenge', 'problem', 'obstacle', 'difficulty', 'struggle', 'overcome',
-            'failed', 'failure', 'setback', 'conflict', 'disagreement'
-        ]):
-            return 'challenge'
         
         # Achievement/Growth indicators
         if any(keyword in prompt_lower for keyword in [
             'achievement', 'accomplishment', 'success', 'proud', 'leadership', 'growth',
-            'learned', 'developed', 'improved', 'skill', 'talent', 'award'
+            'learned', 'developed', 'improved', 'skill', 'talent', 'award', 'sparked a period',
+            'personal growth', 'new understanding'
         ]):
             return 'achievement'
-        
-        # Community/Culture indicators
-        if any(keyword in prompt_lower for keyword in [
-            'community', 'service', 'volunteer', 'help', 'impact', 'contribute',
-            'social', 'cultural', 'tradition', 'diversity', 'inclusion'
-        ]):
-            return 'community'
         
         return 'general'
 
@@ -205,7 +214,7 @@ class BrainstormTool(ValidatedTool):
         return render_template(BRAINSTORM_PROMPT, **template_vars)
 
     def _get_recommended_story_categories(self, prompt_type: str) -> List[str]:
-        """Get recommended story categories for a given prompt type."""
+        """Get recommended story categories aligned with user profile schema."""
         category_map = {
             'identity': ['heritage', 'family', 'cultural', 'personal_defining'],
             'passion': ['creative', 'academic', 'intellectual', 'hobby'],
@@ -214,7 +223,13 @@ class BrainstormTool(ValidatedTool):
             'community': ['service', 'cultural_involvement', 'social_impact', 'tradition'],
             'general': ['defining_moment', 'growth', 'values', 'experiences']
         }
-        return category_map.get(prompt_type, category_map['general'])
+        
+        # Add debug logging
+        from essay_agent.utils.logging import debug_print, VERBOSE
+        recommended_categories = category_map.get(prompt_type, category_map['general'])
+        debug_print(VERBOSE, f"Story categories for {prompt_type}: {recommended_categories}")
+        
+        return recommended_categories
 
     def _detect_story_conflicts(self, selected_stories: List[str], college_id: str | None, 
                                user_id: str | None) -> List[str]:
@@ -228,11 +243,70 @@ class BrainstormTool(ValidatedTool):
                 conflicts.append(story_title)
         return conflicts
 
+    def _debug_story_selection(self, stories: List[Story], prompt_type: str, 
+                               college_blacklist: Set[str], cross_college_suggestions: List[str],
+                               college_id: str | None) -> None:
+        """Debug log story selection process for troubleshooting."""
+        from essay_agent.utils.logging import debug_print, VERBOSE
+        
+        if not VERBOSE:
+            return
+            
+        debug_print(VERBOSE, f"=== STORY SELECTION DEBUG ===")
+        debug_print(VERBOSE, f"Prompt type: {prompt_type}")
+        debug_print(VERBOSE, f"College ID: {college_id}")
+        
+        # College ID verification logging
+        self._verify_college_id_usage(college_id)
+        
+        debug_print(VERBOSE, f"Selected stories: {[s.title for s in stories]}")
+        debug_print(VERBOSE, f"Blacklisted stories (this college): {list(college_blacklist)}")
+        debug_print(VERBOSE, f"Cross-college suggestions: {cross_college_suggestions}")
+        
+        # Log story categories and prompt fit
+        for i, story in enumerate(stories, 1):
+            debug_print(VERBOSE, f"Story {i}: '{story.title}' - {story.prompt_fit}")
+        
+        debug_print(VERBOSE, f"=== END STORY SELECTION DEBUG ===")
+    
+    def _verify_college_id_usage(self, college_id: str | None) -> None:
+        """Verify college_id parameter is properly passed and used in story selection."""
+        from essay_agent.utils.logging import debug_print, VERBOSE
+        
+        if not VERBOSE:
+            return
+            
+        debug_print(VERBOSE, f"--- COLLEGE ID VERIFICATION ---")
+        debug_print(VERBOSE, f"College ID received: {college_id}")
+        
+        if college_id is None:
+            debug_print(VERBOSE, "WARNING: college_id is None - story selection will not be college-aware")
+        else:
+            debug_print(VERBOSE, f"College-aware story selection ACTIVE for college: {college_id}")
+        
+        # Verify college_id is being used in story selection logic
+        try:
+            # Check if college-specific memory exists
+            if college_id:
+                debug_print(VERBOSE, f"Checking college-specific story usage for: {college_id}")
+                # This would be logged in the blacklist generation
+        except Exception as e:
+            debug_print(VERBOSE, f"Error verifying college ID usage: {e}")
+        
+        debug_print(VERBOSE, f"--- END COLLEGE ID VERIFICATION ---")
+
     def _update_user_profile_with_stories(self, user_id: str, stories: List[Story], 
                                         college_id: str | None, prompt_type: str) -> None:
         """Update user profile with new story information."""
+        from essay_agent.utils.logging import debug_print, VERBOSE
+        
         try:
             prof = SimpleMemory.load(user_id)
+            
+            # Log college-aware story tracking
+            if VERBOSE:
+                debug_print(VERBOSE, f"Updating user profile with {len(stories)} stories for college: {college_id}")
+            
             for story in stories:
                 # Create or update defining moment
                 defining_moment = DefiningMoment(
@@ -247,8 +321,18 @@ class BrainstormTool(ValidatedTool):
                 existing_titles = [dm.title for dm in prof.defining_moments]
                 if story.title not in existing_titles:
                     prof.defining_moments.append(defining_moment)
+                    if VERBOSE:
+                        debug_print(VERBOSE, f"Added new story to profile: '{story.title}'")
+                elif VERBOSE:
+                    debug_print(VERBOSE, f"Story already exists in profile: '{story.title}'")
             
             SimpleMemory.save(user_id, prof)
-        except Exception:
+            
+            if VERBOSE:
+                debug_print(VERBOSE, f"Profile updated successfully for user: {user_id}")
+                
+        except Exception as e:
+            if VERBOSE:
+                debug_print(VERBOSE, f"Error updating user profile: {e}")
             # Don't fail the tool if memory update fails
             pass 

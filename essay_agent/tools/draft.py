@@ -125,44 +125,75 @@ class DraftTool(ValidatedTool):
             raise ValueError(f"Failed to generate draft meeting word count requirements: {str(e)}")
 
     def _run_with_word_count_retry(self, outline_str: str, voice_profile: str, word_count: int) -> str:
-        """Execute draft generation with intelligent word count retry."""
-        # Truncate voice_profile to prevent token limit issues
-        voice_profile_truncated = self._prepare_voice_profile(voice_profile)
+        """Execute draft generation with comprehensive error handling."""
+        from essay_agent.utils.logging import debug_print, VERBOSE, tool_trace
         
-        # Attempt 1: Generate initial draft
-        current_draft = self._generate_initial_draft(outline_str, voice_profile_truncated, word_count)
+        max_retries = 3
+        current_draft = ""
         
-        # Validate word count
-        validation_result = self.word_count_tool.validate_target(current_draft, word_count, tolerance=0.05)
-        
-        if validation_result.passed:
-            return current_draft
-        
-        # Attempt 2: Smart adjustment based on word count deviation
-        try:
-            adjustment = self.word_count_tool.calculate_adjustment(current_draft, word_count, tolerance=0.05)
-            
-            if adjustment.needs_expansion:
-                current_draft = self._expand_draft(
-                    current_draft, voice_profile_truncated, word_count, adjustment
-                )
-            elif adjustment.needs_trimming:
-                current_draft = self._trim_draft(
-                    current_draft, voice_profile_truncated, word_count, adjustment
-                )
-            
-            # Validate adjusted draft
-            validation_result = self.word_count_tool.validate_target(current_draft, word_count, tolerance=0.05)
-            
-            if validation_result.passed:
-                return current_draft
+        for attempt in range(max_retries):
+            try:
+                # Add debug logging
+                debug_print(VERBOSE, f"Draft generation attempt {attempt + 1}/{max_retries}")
+                debug_print(VERBOSE, f"Outline length: {len(outline_str)} chars")
+                debug_print(VERBOSE, f"Voice profile length: {len(voice_profile)} chars")
+                debug_print(VERBOSE, f"Target word count: {word_count}")
                 
-        except Exception:
-            # If targeted adjustment fails, continue to attempt 3
-            pass
+                # Truncate voice_profile to prevent token limit issues
+                voice_profile_truncated = self._prepare_voice_profile(voice_profile)
+                debug_print(VERBOSE, f"Truncated voice profile length: {len(voice_profile_truncated)} chars")
+                
+                # Generate initial draft
+                current_draft = self._generate_initial_draft(outline_str, voice_profile_truncated, word_count)
+                
+                # Validate draft is not empty
+                if not current_draft or not current_draft.strip():
+                    error_msg = f"Generated draft is empty (attempt {attempt + 1})"
+                    debug_print(VERBOSE, error_msg)
+                    if attempt == max_retries - 1:
+                        raise ValueError(error_msg)
+                    continue
+                
+                debug_print(VERBOSE, f"Generated draft length: {len(current_draft)} chars")
+                
+                # Validate word count
+                validation_result = self.word_count_tool.validate_target(current_draft, word_count, tolerance=0.05)
+                debug_print(VERBOSE, f"Word count validation: {validation_result.passed} ({validation_result.word_count}/{word_count})")
+                
+                if validation_result.passed:
+                    debug_print(VERBOSE, f"Draft generation succeeded on attempt {attempt + 1}")
+                    return current_draft
+                
+                # Smart adjustment based on word count deviation
+                adjustment = self.word_count_tool.calculate_adjustment(current_draft, word_count, tolerance=0.05)
+                debug_print(VERBOSE, f"Word count adjustment needed: expansion={adjustment.needs_expansion}, trimming={adjustment.needs_trimming}")
+                
+                if adjustment.needs_expansion:
+                    current_draft = self._expand_draft(
+                        current_draft, voice_profile_truncated, word_count, adjustment
+                    )
+                elif adjustment.needs_trimming:
+                    current_draft = self._trim_draft(
+                        current_draft, voice_profile_truncated, word_count, adjustment
+                    )
+                
+                # Validate adjusted draft
+                validation_result = self.word_count_tool.validate_target(current_draft, word_count, tolerance=0.05)
+                
+                if validation_result.passed:
+                    debug_print(VERBOSE, f"Draft adjustment succeeded on attempt {attempt + 1}")
+                    return current_draft
+                    
+            except Exception as e:
+                debug_print(VERBOSE, f"Draft generation failed (attempt {attempt + 1}): {str(e)}")
+                if attempt == max_retries - 1:
+                    tool_trace("error", "draft", error=str(e))
+                    raise ValueError(f"Failed to generate draft after {max_retries} attempts: {str(e)}")
+                continue
         
-        # Attempt 3: Final attempt with regeneration and larger tolerance
+        # Final attempt with larger tolerance
         try:
+            debug_print(VERBOSE, "Final attempt with larger tolerance")
             final_adjustment = self.word_count_tool.calculate_adjustment(current_draft, word_count, tolerance=0.10)
             
             if final_adjustment.needs_expansion:
@@ -178,14 +209,19 @@ class DraftTool(ValidatedTool):
             final_validation = self.word_count_tool.validate_target(current_draft, word_count, tolerance=0.10)
             
             if final_validation.passed:
+                debug_print(VERBOSE, "Final attempt succeeded")
                 return current_draft
                 
-        except Exception:
-            pass
+        except Exception as e:
+            debug_print(VERBOSE, f"Final attempt failed: {str(e)}")
         
-        # If all attempts fail, return the best attempt with a warning
-        # At this point, we have a reasonable draft even if word count isn't perfect
-        return current_draft
+        # If all attempts fail but we have a draft, return it
+        if current_draft and current_draft.strip():
+            debug_print(VERBOSE, "Returning best available draft despite word count issues")
+            return current_draft
+        
+        # Complete failure
+        raise ValueError("Failed to generate any valid draft after all attempts")
 
     def _prepare_voice_profile(self, voice_profile: str) -> str:
         """Prepare voice profile for LLM consumption."""
@@ -211,11 +247,31 @@ class DraftTool(ValidatedTool):
         
         return voice_profile_truncated
 
+    def _extract_keywords_from_outline(self, outline_str: str) -> list:
+        """Extract keywords from outline's keyword_data if present."""
+        try:
+            import json
+            outline_data = json.loads(outline_str)
+            if isinstance(outline_data, dict):
+                keyword_data = outline_data.get("keyword_data", {})
+                if isinstance(keyword_data, dict):
+                    extracted_keywords = keyword_data.get("extracted_keywords", [])
+                    if isinstance(extracted_keywords, list):
+                        return extracted_keywords
+        except (json.JSONDecodeError, KeyError, TypeError):
+            pass
+        
+        # Fallback to empty list if no keywords found
+        return []
+
     def _generate_initial_draft(self, outline_str: str, voice_profile: str, word_count: int) -> str:
         """Generate initial draft focused on content quality."""
         # Calculate word count range for self-validation (±10%)
         word_count_min = int(word_count * 0.9)
         word_count_max = int(word_count * 1.1)
+        
+        # Extract keywords from outline for prompt
+        extracted_keywords = self._extract_keywords_from_outline(outline_str)
         
         prompt = render_template(
             DRAFT_PROMPT,
@@ -224,6 +280,7 @@ class DraftTool(ValidatedTool):
             word_count=word_count,  # Still pass for context, but not enforced
             word_count_min=word_count_min,
             word_count_max=word_count_max,
+            extracted_keywords=extracted_keywords,
         )
 
         llm = get_chat_llm()
@@ -244,17 +301,15 @@ class DraftTool(ValidatedTool):
 
     def _expand_draft(self, current_draft: str, voice_profile: str, target_words: int, adjustment) -> str:
         """Expand draft using targeted expansion techniques."""
-        words_short = target_words - self.word_count_tool.count_words(current_draft)
-        words_needed = adjustment.words_needed
-        expansion_points = "\n".join(f"• {point}" for point in adjustment.expansion_points)
+        current_words = self.word_count_tool.count_words(current_draft)
+        expansion_needed = adjustment.words_needed
         
         expansion_prompt = render_template(
             EXPANSION_PROMPT,
             current_draft=current_draft,
-            words_short=words_short,
+            current_words=current_words,
             target_words=target_words,
-            words_needed=words_needed,
-            expansion_points=expansion_points,
+            expansion_needed=expansion_needed,
         )
 
         llm = get_chat_llm()
@@ -271,17 +326,15 @@ class DraftTool(ValidatedTool):
 
     def _trim_draft(self, current_draft: str, voice_profile: str, target_words: int, adjustment) -> str:
         """Trim draft using targeted trimming techniques."""
-        words_over = self.word_count_tool.count_words(current_draft) - target_words
-        words_excess = adjustment.words_excess
-        trimming_points = "\n".join(f"• {point}" for point in adjustment.trimming_points)
+        current_words = self.word_count_tool.count_words(current_draft)
+        trimming_needed = adjustment.words_excess
         
         trimming_prompt = render_template(
             TRIMMING_PROMPT,
             current_draft=current_draft,
-            words_over=words_over,
+            current_words=current_words,
             target_words=target_words,
-            words_excess=words_excess,
-            trimming_points=trimming_points,
+            trimming_needed=trimming_needed,
         )
 
         llm = get_chat_llm()

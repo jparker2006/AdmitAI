@@ -48,6 +48,27 @@ Match stories to prompt types:
 - Achievement/Growth → Accomplishments, leadership, learning, personal development
 - Community/Culture → Service, cultural involvement, family traditions, social impact
 
+# == STORY SELECTION BIAS PREVENTION ========================================
+CRITICAL ANTI-BIAS INSTRUCTIONS:
+1. **Technology/Robotics Stories**: Only suggest if prompt explicitly asks for technical interests
+2. **Identity Prompts**: Focus on heritage, family, cultural background, personal defining moments
+3. **Passion Prompts**: Explore creative pursuits, artistic interests, unique hobbies, intellectual curiosity
+4. **Challenge Prompts**: Focus on personal obstacles, failures, conflicts, non-technical problems
+5. **Achievement Prompts**: Highlight leadership, personal growth, skill development, accomplishments
+6. **Community Prompts**: Emphasize service, cultural involvement, social impact, traditions
+
+**EXPLICIT ROBOTICS FILTER**: 
+- If prompt mentions "passion" or "interest" but NOT "technology/engineering/coding/robotics"
+- Then AVOID suggesting robotics/programming/technology stories
+- Instead suggest: arts, music, writing, sports, community service, cultural activities
+
+**STORY DIVERSITY ENFORCEMENT**:
+- For identity prompts: prioritize heritage, family, cultural stories
+- For passion prompts: prioritize creative, artistic, non-technical interests
+- For challenge prompts: prioritize personal, emotional, social obstacles
+- For achievement prompts: prioritize leadership, service, personal growth
+- For community prompts: prioritize service, cultural involvement, social impact
+
 # == REASONING PROCESS =======================================================
 Follow these steps in order (think through each step):
 

@@ -23,7 +23,8 @@
       "themes": [
         "insight1"
       ],
-      "story_category": "general",
+      "story_category": "defining_moment",
+      "story_weight": 1.0,
       "college_usage": {}
     },
     {
@@ -35,7 +36,8 @@
       "themes": [
         "insight2"
       ],
-      "story_category": "general",
+      "story_category": "defining_moment",
+      "story_weight": 1.0,
       "college_usage": {}
     },
     {
@@ -47,11 +49,60 @@
       "themes": [
         "insight3"
       ],
-      "story_category": "general",
+      "story_category": "defining_moment",
+      "story_weight": 1.0,
+      "college_usage": {}
+    },
+    {
+      "title": "Story 1",
+      "description": "Test story 1",
+      "emotional_impact": "",
+      "lessons_learned": "",
+      "used_in_essays": [],
+      "themes": [
+        "Insight 1"
+      ],
+      "story_category": "defining_moment",
+      "story_weight": 1.0,
+      "college_usage": {}
+    },
+    {
+      "title": "Story 2",
+      "description": "Test story 2",
+      "emotional_impact": "",
+      "lessons_learned": "",
+      "used_in_essays": [],
+      "themes": [
+        "Insight 2"
+      ],
+      "story_category": "defining_moment",
+      "story_weight": 1.0,
+      "college_usage": {}
+    },
+    {
+      "title": "Story 3",
+      "description": "Test story 3",
+      "emotional_impact": "",
+      "lessons_learned": "",
+      "used_in_essays": [],
+      "themes": [
+        "Insight 3"
+      ],
+      "story_category": "defining_moment",
+      "story_weight": 1.0,
       "college_usage": {}
     }
   ],
   "writing_voice": null,
-  "essay_history": [],
+  "essay_history": [
+    {
+      "prompt_id": "essay_1",
+      "prompt_text": "outline_generation",
+      "platform": "generic",
+      "versions": [],
+      "final_version": 0,
+      "status": "outline"
+    }
+  ],
   "college_story_usage": {}
 }

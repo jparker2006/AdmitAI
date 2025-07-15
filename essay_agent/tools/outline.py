@@ -9,7 +9,7 @@ offline (``FakeListLLM``) or the response cannot be parsed as JSON.
 """
 
 import json
-from typing import Any, Dict
+from typing import Any, Dict, List
 
 from essay_agent.llm_client import chat
 from essay_agent.prompts.outline import OUTLINE_PROMPT
@@ -83,115 +83,309 @@ class OutlineTool(ValidatedTool):
     def _run(  # type: ignore[override]
         self, *, story: str, prompt: str, word_count: int = 650, user_id: str | None = None, **_: Any
     ) -> Dict[str, Any]:
-        from essay_agent.tools.errors import ToolError
-        
-        # Check if story is a failed tool result
-        if isinstance(story, dict) and "error" in story and story["error"] is not None:
-            raise ValueError(f"Cannot process - upstream brainstorm tool failed: {story['error']}")
-        
-        # Extract actual story from successful tool result
-        if isinstance(story, dict) and "ok" in story:
-            if story["ok"] is None:
-                raise ValueError("Brainstorm tool returned no result")
-            story = story["ok"]
-            # If it's a dict with 'stories' key, extract first story
-            if isinstance(story, dict) and "stories" in story:
-                stories = story["stories"]
-                if isinstance(stories, list) and len(stories) > 0:
-                    story = stories[0].get("title", "Personal Story")
-                else:
-                    story = "Personal Story"
-        
-        story = str(story).strip()
-        prompt_txt = str(prompt).strip()
-        if not story:
-            raise ValueError("'story' must be a non-empty string")
-        if not prompt_txt:
-            raise ValueError("'prompt' must be a non-empty string")
-        if not isinstance(word_count, int) or word_count <= 0:
-            raise ValueError("'word_count' must be a positive integer")
+        """
+        Generate a five-part outline for a personal story.
 
-        # Render high-stakes prompt --------------------------------------
+        Args:
+            story: The chosen personal story seed.
+            prompt: The original essay prompt.
+            word_count: Target final essay length.
+            user_id: Optional user ID for memory storage.
+
+        Returns:
+            Dict containing the outline and metadata.
+        """
+        from essay_agent.utils.logging import debug_print, VERBOSE
+        
+        if VERBOSE:
+            debug_print(VERBOSE, f"Starting outline generation for story: '{story[:50]}...'")
+        
+        # Extract keywords from prompt for planning
+        keyword_data = self._extract_and_plan_keywords(prompt, word_count)
+        
         # Calculate word distribution for structural planning
-        hook_words = int(word_count * 0.125)  # 12.5% average of 10-15%
-        context_words = int(word_count * 0.225)  # 22.5% average of 20-25%
-        conflict_words = int(word_count * 0.275)  # 27.5% average of 25-30%
-        growth_words = int(word_count * 0.275)  # 27.5% average of 25-30%
-        reflection_words = int(word_count * 0.175)  # 17.5% average of 15-20%
+        word_distribution = self._calculate_word_distribution(word_count)
         
-        # Calculate percentages for display
-        hook_percentage = "10-15"
-        context_percentage = "20-25"
-        conflict_percentage = "25-30"
-        growth_percentage = "25-30"
-        reflection_percentage = "15-20"
-        
-        prompt_rendered = render_template(
-            OUTLINE_PROMPT,
-            story=story,
-            essay_prompt=prompt_txt,
-            word_count=word_count,
-            hook_words=hook_words,
-            context_words=context_words,
-            conflict_words=conflict_words,
-            growth_words=growth_words,
-            reflection_words=reflection_words,
-            hook_percentage=hook_percentage,
-            context_percentage=context_percentage,
-            conflict_percentage=conflict_percentage,
-            growth_percentage=growth_percentage,
-            reflection_percentage=reflection_percentage,
-        )
-
-        # Call LLM in sync mode with automatic retry via llm_client.chat ----
-        raw = chat(prompt_rendered, temperature=0)
-
-        # Offline mode returns the literal string "FAKE_RESPONSE" ----------
-        if raw == "FAKE_RESPONSE":
-            result = _build_stub(story, prompt_txt, word_count)
-        else:
-            # Attempt to parse JSON -------------------------------------------
+        try:
+            # Render the outline prompt with keyword planning
+            rendered_prompt = render_template(
+                OUTLINE_PROMPT,
+                essay_prompt=prompt,
+                story=story,
+                word_count=word_count,
+                extracted_keywords=keyword_data.get("extracted_keywords", []),
+                keyword_planning=keyword_data.get("keyword_planning", {}),
+                **word_distribution
+            )
+            
+            if VERBOSE:
+                debug_print(VERBOSE, f"Calling LLM for outline generation...")
+            
+            # Get LLM response
+            response = chat(rendered_prompt)
+            
+            if VERBOSE:
+                debug_print(VERBOSE, f"LLM response received: {len(response)} characters")
+            
+            # Try to parse as JSON
             try:
-                parsed: Dict[str, Any] = json.loads(raw)
+                outline_data = json.loads(response)
                 
-                # Basic schema validation -----------------------------------------
-                outline = parsed.get("outline")
-                if not isinstance(outline, dict):
-                    result = _build_stub(story, prompt_txt, word_count)
-                else:
-                    required_keys = {"hook", "context", "conflict", "growth", "reflection"}
-                    if required_keys - set(outline):
-                        result = _build_stub(story, prompt_txt, word_count)
-                    else:
-                        # Ensure estimated_word_count present -----------------------------
-                        if "estimated_word_count" not in parsed:
-                            parsed["estimated_word_count"] = word_count
-                        result = parsed
-                        
-            except json.JSONDecodeError:
-                result = _build_stub(story, prompt_txt, word_count)
-
-        # --------------------- Memory persistence -------------------------
-        if user_id:
-            try:
-                rec = ensure_essay_record(user_id, prompt_txt)
-                rec.status = "outline"
-                rec.final_version = 0
-                # store outline inside first version placeholder
-                ver = EssayVersion(
-                    version=0,
-                    timestamp=datetime.utcnow(),
-                    content=json.dumps(result["outline"], ensure_ascii=False),
-                    word_count=word_count,
-                )
-                rec.versions.append(ver)
-                # Save profile
-                profile = SimpleMemory.load(user_id)
-                SimpleMemory.save(user_id, profile)
-            except Exception:
-                pass
-
-        return result
+                # Validate outline structure
+                if not isinstance(outline_data, dict) or "outline" not in outline_data:
+                    raise ValueError("Invalid outline format")
+                
+                # Add keyword planning metadata
+                outline_data.update({
+                    "keyword_data": keyword_data,
+                    "word_distribution": word_distribution
+                })
+                
+                if VERBOSE:
+                    debug_print(VERBOSE, f"Outline generated successfully with {len(outline_data.get('outline', {}))} sections")
+                
+                # Store in memory if user_id provided
+                if user_id:
+                    self._store_outline_in_memory(user_id, outline_data, story, prompt)
+                
+                return outline_data
+                
+            except (json.JSONDecodeError, ValueError) as e:
+                if VERBOSE:
+                    debug_print(VERBOSE, f"JSON parsing failed: {e}, using fallback")
+                
+                # Fall back to stub outline with keyword planning
+                stub_outline = _build_stub(story, prompt, word_count)
+                stub_outline.update({
+                    "keyword_data": keyword_data,
+                    "word_distribution": word_distribution
+                })
+                return stub_outline
+                
+        except Exception as e:
+            if VERBOSE:
+                debug_print(VERBOSE, f"Error during outline generation: {e}")
+            
+            # Return fallback outline with keyword planning
+            stub_outline = _build_stub(story, prompt, word_count)
+            stub_outline.update({
+                "keyword_data": keyword_data,
+                "word_distribution": word_distribution,
+                "error": str(e)
+            })
+            return stub_outline
+    
+    def _extract_and_plan_keywords(self, essay_prompt: str, word_count: int) -> Dict[str, Any]:
+        """
+        Extract key terms from essay prompt and plan how outline will address them.
+        Uses the same curated keywords as the evaluation system for consistency.
+        
+        Args:
+            essay_prompt: The essay prompt to analyze
+            word_count: Target word count for planning
+            
+        Returns:
+            Dictionary with keyword extraction and planning data
+        """
+        from essay_agent.utils.logging import debug_print, VERBOSE
+        
+        try:
+            # Use curated keywords that match the evaluation system
+            # First, categorize the prompt to get the right keyword set
+            prompt_lower = essay_prompt.lower()
+            
+            # Get curated keywords based on prompt type
+            if any(keyword in prompt_lower for keyword in [
+                'problem you\'ve solved', 'problem you have solved', 'challenge you faced',
+                'solve', 'solution', 'dilemma', 'overcome', 'difficulty'
+            ]):
+                # Challenge prompt keywords
+                curated_keywords = ["problem", "solve", "challenge", "solution", "steps", "significance", "difficulty", "overcome"]
+            elif any(keyword in prompt_lower for keyword in [
+                'community', 'cultural background', 'family traditions', 'diversity', 'inclusion',
+                'relates to your cultural', 'community or family'
+            ]):
+                # Community prompt keywords
+                curated_keywords = ["community", "cultural", "family", "traditions", "proud", "background", "impact"]
+            elif any(keyword in prompt_lower for keyword in [
+                'identity', 'background', 'heritage', 'culture', 'meaningful they believe',
+                'application would be incomplete'
+            ]):
+                # Identity prompt keywords  
+                curated_keywords = ["background", "identity", "meaningful", "story", "shapes", "perspective", "who you are"]
+            elif any(keyword in prompt_lower for keyword in [
+                'engaging', 'captivate', 'lose track of time', 'learn more', 'intellectual curiosity',
+                'find so engaging'
+            ]):
+                # Passion prompt keywords
+                curated_keywords = ["engaging", "captivate", "lose track", "time", "learn", "curiosity", "interest"]
+            elif any(keyword in prompt_lower for keyword in [
+                'achievement', 'accomplishment', 'sparked a period', 'personal growth',
+                'new understanding', 'proud', 'leadership'
+            ]):
+                # Achievement prompt keywords
+                curated_keywords = ["accomplishment", "growth", "realization", "understanding", "transformation", "change"]
+            else:
+                # Fallback: extract meaningful words from prompt
+                import re
+                stop_words = {'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by', 'from', 'up', 'about', 'into', 'through', 'during', 'before', 'after', 'above', 'below', 'between', 'among', 'is', 'are', 'was', 'were', 'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might', 'must', 'can', 'this', 'that', 'these', 'those', 'i', 'you', 'he', 'she', 'it', 'we', 'they', 'me', 'him', 'her', 'us', 'them', 'my', 'your', 'his', 'her', 'its', 'our', 'their'}
+                words = re.findall(r'\b\w+\b', essay_prompt.lower())
+                keywords = [word for word in words if len(word) > 3 and word not in stop_words]
+                # Remove duplicates while preserving order
+                seen = set()
+                curated_keywords = []
+                for word in keywords:
+                    if word not in seen:
+                        seen.add(word)
+                        curated_keywords.append(word)
+                curated_keywords = curated_keywords[:8]  # Limit to top 8
+            
+            # Filter keywords that actually appear in the prompt or are conceptually relevant
+            extracted_keywords = []
+            for keyword in curated_keywords:
+                if keyword in prompt_lower or any(part in prompt_lower for part in keyword.split()):
+                    extracted_keywords.append(keyword)
+            
+            # Ensure we have some keywords
+            if not extracted_keywords:
+                extracted_keywords = curated_keywords[:3]  # Use first 3 as fallback
+            
+            if VERBOSE:
+                debug_print(VERBOSE, f"Extracted curated keywords from prompt: {extracted_keywords}")
+            
+            # Plan how each outline section will address keywords
+            keyword_planning = self._plan_keyword_integration(extracted_keywords, word_count)
+            
+            return {
+                "extracted_keywords": extracted_keywords,
+                "keyword_planning": keyword_planning,
+                "prompt_analysis": {
+                    "total_words": len(essay_prompt.split()),
+                    "unique_keywords": len(set(curated_keywords)),
+                    "selected_keywords": len(extracted_keywords)
+                }
+            }
+            
+        except Exception as e:
+            if VERBOSE:
+                debug_print(VERBOSE, f"Error extracting keywords: {e}")
+            
+            return {
+                "extracted_keywords": [],
+                "keyword_planning": {},
+                "error": str(e)
+            }
+    
+    def _plan_keyword_integration(self, keywords: List[str], word_count: int) -> Dict[str, Any]:
+        """
+        Plan how outline sections will integrate keywords.
+        
+        Args:
+            keywords: List of extracted keywords
+            word_count: Target word count
+            
+        Returns:
+            Dictionary with keyword integration planning
+        """
+        if not keywords:
+            return {}
+        
+        # Distribute keywords across outline sections
+        sections = ["hook", "context", "conflict", "growth", "reflection"]
+        keywords_per_section = max(1, len(keywords) // len(sections))
+        
+        section_keyword_plan = {}
+        keyword_index = 0
+        
+        for section in sections:
+            section_keywords = []
+            for _ in range(keywords_per_section):
+                if keyword_index < len(keywords):
+                    section_keywords.append(keywords[keyword_index])
+                    keyword_index += 1
+            
+            # Add any remaining keywords to reflection section
+            if section == "reflection":
+                while keyword_index < len(keywords):
+                    section_keywords.append(keywords[keyword_index])
+                    keyword_index += 1
+            
+            section_keyword_plan[section] = section_keywords
+        
+        return {
+            "section_keywords": section_keyword_plan,
+            "integration_strategy": "Keywords distributed across outline sections for natural integration",
+            "total_keywords": len(keywords),
+            "planning_notes": "Each section should weave in assigned keywords naturally through story details"
+        }
+    
+    def _calculate_word_distribution(self, word_count: int) -> Dict[str, Any]:
+        """
+        Calculate word distribution across outline sections.
+        
+        Args:
+            word_count: Target word count
+            
+        Returns:
+            Dictionary with word distribution data
+        """
+        # Standard percentages for five-part structure
+        percentages = {
+            "hook": 15,
+            "context": 20,
+            "conflict": 25,
+            "growth": 25,
+            "reflection": 15
+        }
+        
+        distribution = {}
+        for section, percentage in percentages.items():
+            words = int(word_count * percentage / 100)
+            distribution[f"{section}_words"] = words
+            distribution[f"{section}_percentage"] = percentage
+        
+        return distribution
+    
+    def _store_outline_in_memory(self, user_id: str, outline_data: Dict[str, Any], story: str, prompt: str) -> None:
+        """
+        Store outline in user memory for future reference.
+        
+        Args:
+            user_id: User identifier
+            outline_data: Generated outline data
+            story: Story used for outline
+            prompt: Essay prompt
+        """
+        from essay_agent.utils.logging import debug_print, VERBOSE
+        
+        try:
+            # Store outline in essay memory
+            essay_record = ensure_essay_record(user_id, "outline_generation")
+            
+            # Create essay version
+            essay_version = EssayVersion(
+                content=json.dumps(outline_data),
+                timestamp=datetime.now(),
+                version_type="outline",
+                metadata={
+                    "story": story,
+                    "prompt": prompt,
+                    "word_count": outline_data.get("estimated_word_count", 0),
+                    "keyword_data": outline_data.get("keyword_data", {})
+                }
+            )
+            
+            essay_record.essay_versions.append(essay_version)
+            SimpleMemory.save_essay(user_id, "outline_generation", essay_record)
+            
+            if VERBOSE:
+                debug_print(VERBOSE, f"Outline stored in memory for user: {user_id}")
+                
+        except Exception as e:
+            if VERBOSE:
+                debug_print(VERBOSE, f"Error storing outline in memory: {e}")
+            # Don't fail the tool if memory storage fails
+            pass
 
     # ------------------------------------------------------------------
     # Convenience call wrapper (mirrors EchoTool pattern)

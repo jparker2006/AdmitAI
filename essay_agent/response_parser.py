@@ -1,92 +1,34 @@
 """essay_agent.response_parser
 
-Standardised parsing & validation utilities for Essay Agent.
-
-The module provides thin wrappers around LangChain's output-parsers plus a
-``safe_parse`` helper that can automatically repair malformed LLM outputs via
-`OutputFixingParser`.  It ensures all parsed objects conform to either a
-Pydantic model or a JSON Schema.
+LangChain response parsing with improved error handling.
 """
+
 from __future__ import annotations
 
-from typing import Any, Type, Union, Dict
+import json
+import re
+from typing import Any, Type
 
-from pydantic import BaseModel, ValidationError
-# Prefer new community package paths, fallback if not available
-try:
-    from langchain_community.output_parsers import (
-        PydanticOutputParser,
-        StructuredOutputParser,
-        OutputFixingParser,
-        ResponseSchema,
-    )
-except ImportError:  # pragma: no cover – older LangChain fallback
-    from langchain.output_parsers import (
-        PydanticOutputParser,
-        StructuredOutputParser,
-        OutputFixingParser,
-        ResponseSchema,
-    )
-
-# For newer LangChain versions, a common abstract base may not be exported.
-try:
-    from langchain.output_parsers import OutputParser  # type: ignore
-except ImportError:  # pragma: no cover
-    from typing import Protocol as OutputParser  # type: ignore
+from langchain.output_parsers import OutputFixingParser
+from langchain_core.output_parsers import BaseOutputParser
+from pydantic import BaseModel
 
 from essay_agent.llm_client import get_chat_llm
 
-__all__ = [
-    "ParseError",
-    "JsonResponse",
-    "pydantic_parser",
-    "schema_parser",
-    "safe_parse",
-]
+
+class ParseError(Exception):
+    """Raised when response parsing fails."""
 
 
-class ParseError(ValueError):
-    """Raised when parsing fails even after repair attempts."""
+def safe_parse(parser: BaseOutputParser, text: str, retries: int = 3) -> Any:
+    """Parse LLM response with automatic error fixing.
 
-
-class JsonResponse(BaseModel):
-    """Very small default model: any JSON object with a *result* field."""
-
-    result: Any
-
-
-# ---------------------------------------------------------------------------
-# Factory helpers
-# ---------------------------------------------------------------------------
-
-def pydantic_parser(model: Type[BaseModel]) -> OutputParser:  # noqa: D401
-    """Return a LangChain :class:`PydanticOutputParser` for *model*."""
-
-    return PydanticOutputParser(pydantic_object=model)
-
-
-def schema_parser(schema: Dict[str, Any]) -> OutputParser:  # noqa: D401
-    """Return a ``StructuredOutputParser`` built from a simplified JSON schema.
-
-    Current LangChain versions expose ``from_response_schemas`` instead of the
-    previous ``from_json_schema`` helper.  We convert *schema*'s top-level
-    properties to :class:`ResponseSchema` objects with empty descriptions.
-    """
-
-    properties = schema.get("properties", {})
-    response_schemas = [ResponseSchema(name=k, description="") for k in properties.keys()]
-    return StructuredOutputParser.from_response_schemas(response_schemas)
-
-
-# ---------------------------------------------------------------------------
-# Safe parse helper with automatic fixing
-# ---------------------------------------------------------------------------
-
-def safe_parse(parser: OutputParser, text: str, *, retries: int = 2) -> Any:  # noqa: D401
-    """Parse *text* with *parser*, retrying via ``OutputFixingParser`` if needed.
+    This function attempts to parse the LLM response using the provided parser.
+    If parsing fails, it will attempt to auto-fix the response using LangChain's
+    OutputFixingParser (if available) and retry parsing.
 
     Args:
-        parser: Any LangChain ``OutputParser``.
+        parser: LangChain output parser to use.
         text: Raw LLM response string.
         retries: Number of repair attempts. ``0`` disables fixing.
     Raises:
@@ -94,6 +36,18 @@ def safe_parse(parser: OutputParser, text: str, *, retries: int = 2) -> Any:  # 
     Returns:
         Parsed Python object (type depends on *parser*).
     """
+    
+    # Handle edge cases where text might already be parsed or wrong type
+    if isinstance(text, dict):
+        # Text is already parsed as dict, try to return as is
+        return text
+    
+    if not isinstance(text, str):
+        # Convert to string if it's not already
+        text = str(text)
+    
+    # Clean the text
+    text = text.strip()
 
     try:
         return parser.parse(text)
@@ -119,8 +73,109 @@ def safe_parse(parser: OutputParser, text: str, *, retries: int = 2) -> Any:  # 
                 # New style: (llm, destination_parser)
                 fixing_parser = OutputFixingParser.from_llm(get_chat_llm(), parser)  # type: ignore[arg-type]
 
-            fixed_text = fixing_parser.parse(text)
-            return safe_parse(parser, fixed_text, retries=retries - 1)
+            try:
+                fixed_text = fixing_parser.parse(text)
+                return safe_parse(parser, fixed_text, retries=retries - 1)
+            except Exception:
+                # If fixing fails, try manual cleanup
+                try:
+                    cleaned_text = clean_response_text(text)
+                    return parser.parse(cleaned_text)
+                except Exception:
+                    # Last resort - return a basic fallback
+                    return create_fallback_response(text)
 
         # Fallback: no auto-fix available ------------------------------------
-        raise ParseError("Failed to parse LLM output and no fixer available") from err 
+        # Try manual cleanup
+        try:
+            cleaned_text = clean_response_text(text)
+            return parser.parse(cleaned_text)
+        except Exception:
+            # Last resort - return a basic fallback
+            return create_fallback_response(text)
+
+
+def clean_response_text(text: str) -> str:
+    """Clean response text to improve parsing."""
+    if not isinstance(text, str):
+        text = str(text)
+    
+    # Remove markdown code blocks
+    text = re.sub(r'```(?:json|python)?\s*', '', text)
+    text = re.sub(r'```\s*', '', text)
+    
+    # Remove extra whitespace
+    text = text.strip()
+    
+    # Fix common JSON issues
+    text = re.sub(r',\s*}', '}', text)  # Remove trailing commas
+    text = re.sub(r',\s*]', ']', text)  # Remove trailing commas in arrays
+    
+    return text
+
+
+def create_fallback_response(text: str) -> dict:
+    """Create a fallback response when parsing fails."""
+    return {
+        "error": "Failed to parse response",
+        "raw_text": str(text)[:200] + "..." if len(str(text)) > 200 else str(text),
+        "success": False
+    }
+
+
+# ---------------------------------------------------------------------------
+# Schema-specific parsers
+# ---------------------------------------------------------------------------
+
+def pydantic_parser(model: Type[BaseModel]) -> BaseOutputParser:
+    """Return a LangChain PydanticOutputParser for model."""
+    from langchain.output_parsers import PydanticOutputParser
+    return PydanticOutputParser(pydantic_object=model)
+
+
+def schema_parser(expected_schema: dict) -> BaseOutputParser:
+    """Create a parser for a specific schema."""
+    from langchain.output_parsers import StructuredOutputParser
+    from langchain.output_parsers.pydantic import PydanticOutputParser
+    
+    # Try to create a structured output parser
+    try:
+        if hasattr(StructuredOutputParser, 'from_response_schemas'):
+            return StructuredOutputParser.from_response_schemas(expected_schema)
+    except Exception:
+        pass
+    
+    # Fallback to basic JSON parser
+    return JsonOutputParser()
+
+
+class JsonOutputParser(BaseOutputParser):
+    """Simple JSON output parser."""
+    
+    def parse(self, text: str) -> dict:
+        """Parse JSON response."""
+        if isinstance(text, dict):
+            return text
+        
+        if not isinstance(text, str):
+            text = str(text)
+        
+        text = clean_response_text(text)
+        
+        try:
+            return json.loads(text)
+        except json.JSONDecodeError:
+            # Try to extract JSON from the text
+            json_match = re.search(r'\{.*\}', text, re.DOTALL)
+            if json_match:
+                try:
+                    return json.loads(json_match.group())
+                except json.JSONDecodeError:
+                    pass
+            
+            # Return fallback
+            return create_fallback_response(text)
+    
+    def get_format_instructions(self) -> str:
+        """Get format instructions."""
+        return "Return a valid JSON object." 

@@ -53,127 +53,130 @@ class WordCountValidator:
     
     def validate(self, text: str, target: int) -> Dict[str, Any]:
         """
-        Validate word count within tolerance.
+        Validate word count against target.
         
         Args:
             text: The essay text to validate
             target: Target word count
             
         Returns:
-            Dict with validation results
+            Dictionary with validation results
         """
         if not text or not text.strip():
             return {
                 "passed": False,
-                "word_count": 0,
-                "target": target,
-                "error": "Empty or whitespace-only text"
+                "actual_count": 0,
+                "target_count": target,
+                "percentage": 0.0,
+                "error": "Empty essay text"
             }
         
-        # Count words (split by whitespace and filter empty strings)
-        words = [word for word in text.split() if word.strip()]
-        actual_count = len(words)
+        # Simple word count - split by whitespace
+        actual_count = len(text.split())
+        percentage = actual_count / target if target > 0 else 0.0
         
-        # Calculate tolerance range
-        min_count = int(target * (1 - self.tolerance))
-        max_count = int(target * (1 + self.tolerance))
-        
-        passed = min_count <= actual_count <= max_count
+        # Check if within tolerance
+        lower_bound = target * (1 - self.tolerance)
+        upper_bound = target * (1 + self.tolerance)
+        passed = lower_bound <= actual_count <= upper_bound
         
         return {
             "passed": passed,
-            "word_count": actual_count,
-            "target": target,
-            "min_allowed": min_count,
-            "max_allowed": max_count,
-            "deviation": actual_count - target,
-            "deviation_percent": ((actual_count - target) / target) * 100
+            "actual_count": actual_count,
+            "target_count": target,
+            "percentage": percentage,
+            "tolerance": self.tolerance,
+            "bounds": {"lower": int(lower_bound), "upper": int(upper_bound)},
+            "error": None if passed else f"Word count {actual_count} outside tolerance range {int(lower_bound)}-{int(upper_bound)}"
         }
 
 
 class JSONSchemaValidator:
-    """Validates JSON structure of agent outputs."""
+    """Validates JSON structure and required fields."""
     
     def validate_stories(self, stories: Optional[List[Dict[str, Any]]]) -> Dict[str, Any]:
-        """Validate brainstorm stories structure."""
-        if stories is None:
+        """
+        Validate brainstorm stories structure.
+        
+        Args:
+            stories: List of story dictionaries
+            
+        Returns:
+            Dictionary with validation results
+        """
+        if not stories:
             return {
                 "passed": False,
-                "error": "Stories is None"
+                "error": "No stories provided"
             }
         
         if not isinstance(stories, list):
             return {
                 "passed": False,
-                "error": f"Stories must be a list, got {type(stories)}"
-            }
-        
-        if len(stories) == 0:
-            return {
-                "passed": False,
-                "error": "Stories list is empty"
+                "error": "Stories must be a list"
             }
         
         # Check each story has required fields
-        required_fields = ["title", "description"]
+        required_fields = ["title", "description", "prompt_fit", "insights"]
+        errors = []
+        
         for i, story in enumerate(stories):
             if not isinstance(story, dict):
-                return {
-                    "passed": False,
-                    "error": f"Story {i} is not a dict: {type(story)}"
-                }
+                errors.append(f"Story {i} is not a dictionary")
+                continue
             
             for field in required_fields:
                 if field not in story:
-                    return {
-                        "passed": False,
-                        "error": f"Story {i} missing required field: {field}"
-                    }
-                
-                if not isinstance(story[field], str) or not story[field].strip():
-                    return {
-                        "passed": False,
-                        "error": f"Story {i} field '{field}' is empty or not a string"
-                    }
+                    errors.append(f"Story {i} missing required field: {field}")
+                elif not story[field]:
+                    errors.append(f"Story {i} has empty {field}")
         
+        passed = len(errors) == 0
         return {
-            "passed": True,
+            "passed": passed,
             "story_count": len(stories),
-            "fields_validated": required_fields
+            "errors": errors,
+            "error": None if passed else f"Schema validation failed: {errors}"
         }
     
     def validate_outline(self, outline: Optional[Dict[str, Any]]) -> Dict[str, Any]:
-        """Validate outline structure."""
-        if outline is None:
+        """
+        Validate outline structure.
+        
+        Args:
+            outline: Outline dictionary
+            
+        Returns:
+            Dictionary with validation results
+        """
+        if not outline:
             return {
                 "passed": False,
-                "error": "Outline is None"
+                "error": "No outline provided"
             }
         
         if not isinstance(outline, dict):
             return {
                 "passed": False,
-                "error": f"Outline must be a dict, got {type(outline)}"
+                "error": "Outline must be a dictionary"
             }
         
-        # Check for required outline sections
+        # Check required sections
         required_sections = ["hook", "context", "conflict", "growth", "reflection"]
+        errors = []
+        
         for section in required_sections:
             if section not in outline:
-                return {
-                    "passed": False,
-                    "error": f"Outline missing required section: {section}"
-                }
-            
-            if not isinstance(outline[section], str) or not outline[section].strip():
-                return {
-                    "passed": False,
-                    "error": f"Outline section '{section}' is empty or not a string"
-                }
+                errors.append(f"Missing required section: {section}")
+            elif not outline[section] or not isinstance(outline[section], str):
+                errors.append(f"Section {section} is empty or not a string")
         
+        passed = len(errors) == 0
         return {
-            "passed": True,
-            "sections_validated": required_sections
+            "passed": passed,
+            "sections": list(outline.keys()),
+            "errors": errors,
+            "error": None if passed else f"Outline validation failed: {errors}"
         }
 
 
@@ -238,6 +241,195 @@ class KeywordSimilarityScorer:
                 matches += 0.5
         
         return min(matches / total_keywords, 1.0) if total_keywords > 0 else 0.0
+    
+    def keyword_similarity_debug(self, essay_text: str, prompt_keywords: List[str]) -> Dict[str, Any]:
+        """
+        Detailed keyword similarity analysis for debugging.
+        
+        Args:
+            essay_text: The essay text to analyze
+            prompt_keywords: List of expected keywords
+            
+        Returns:
+            Dictionary with detailed analysis including:
+            - matched_keywords: List of keywords found in essay
+            - missing_keywords: List of keywords not found
+            - partial_matches: List of partial keyword matches
+            - similarity_score: Overall similarity score
+            - recommendations: Suggestions for improvement
+        """
+        if not essay_text or not essay_text.strip():
+            return {
+                "matched_keywords": [],
+                "missing_keywords": prompt_keywords,
+                "partial_matches": [],
+                "similarity_score": 0.0,
+                "recommendations": ["Essay text is empty - cannot analyze keywords"]
+            }
+        
+        if not prompt_keywords:
+            return {
+                "matched_keywords": [],
+                "missing_keywords": [],
+                "partial_matches": [],
+                "similarity_score": 1.0,
+                "recommendations": ["No keywords specified for this prompt"]
+            }
+        
+        # Tokenize essay and keywords
+        essay_tokens = self._tokenize(essay_text)
+        keyword_tokens = [kw.lower() for kw in prompt_keywords]
+        
+        if not essay_tokens:
+            return {
+                "matched_keywords": [],
+                "missing_keywords": prompt_keywords,
+                "partial_matches": [],
+                "similarity_score": 0.0,
+                "recommendations": ["Essay contains no analyzable words"]
+            }
+        
+        # Analyze keyword matches
+        matched_keywords = []
+        missing_keywords = []
+        partial_matches = []
+        
+        for keyword in keyword_tokens:
+            # Direct match
+            if keyword in essay_tokens:
+                matched_keywords.append(keyword)
+            # Partial match (keyword appears in a compound word)
+            elif any(keyword in token for token in essay_tokens):
+                partial_token = next(token for token in essay_tokens if keyword in token)
+                partial_matches.append(f"{keyword} (found in '{partial_token}')")
+            else:
+                missing_keywords.append(keyword)
+        
+        # Calculate similarity score
+        full_match_score = len(matched_keywords)
+        partial_match_score = len(partial_matches) * 0.5
+        total_score = full_match_score + partial_match_score
+        similarity_score = min(total_score / len(keyword_tokens), 1.0)
+        
+        # Generate recommendations
+        recommendations = []
+        if missing_keywords:
+            recommendations.append(f"Consider incorporating these missing keywords: {', '.join(missing_keywords)}")
+        if similarity_score < 0.3:
+            recommendations.append("Essay needs stronger connection to prompt keywords")
+        if len(matched_keywords) < len(keyword_tokens) * 0.5:
+            recommendations.append("Try to use more prompt-specific terminology")
+        if not recommendations:
+            recommendations.append("Good keyword coverage - essay addresses prompt effectively")
+        
+        return {
+            "matched_keywords": matched_keywords,
+            "missing_keywords": missing_keywords,
+            "partial_matches": partial_matches,
+            "similarity_score": similarity_score,
+            "recommendations": recommendations,
+            "analysis_details": {
+                "total_keywords": len(keyword_tokens),
+                "essay_word_count": len(essay_tokens),
+                "full_matches": len(matched_keywords),
+                "partial_matches": len(partial_matches)
+            }
+        }
+    
+    def prompt_alignment_detailed(self, selected_story: Dict[str, Any], prompt_type: str) -> Dict[str, Any]:
+        """
+        Detailed prompt-story alignment analysis.
+        
+        Args:
+            selected_story: Dictionary containing story information
+            prompt_type: Type of prompt (identity, passion, challenge, etc.)
+            
+        Returns:
+            Dictionary with detailed alignment analysis
+        """
+        if not selected_story:
+            return {
+                "prompt_category": prompt_type,
+                "story_themes": [],
+                "alignment_score": 0.0,
+                "alignment_reasons": ["No story provided"],
+                "improvement_suggestions": ["Select a story that matches the prompt type"]
+            }
+        
+        # Extract story information
+        story_title = selected_story.get("title", "")
+        story_description = selected_story.get("description", "")
+        story_themes = selected_story.get("themes", [])
+        story_insights = selected_story.get("insights", [])
+        
+        # Define expected themes for each prompt type
+        prompt_theme_mapping = {
+            "identity": ["heritage", "background", "culture", "family", "identity", "personal"],
+            "passion": ["creative", "academic", "intellectual", "hobby", "interest", "curiosity"],
+            "challenge": ["obstacle", "difficulty", "problem", "adversity", "failure", "conflict"],
+            "achievement": ["accomplishment", "success", "growth", "realization", "milestone"],
+            "community": ["service", "impact", "leadership", "volunteering", "helping", "community"]
+        }
+        
+        expected_themes = prompt_theme_mapping.get(prompt_type, [])
+        
+        # Calculate alignment score
+        alignment_score = 0.0
+        alignment_reasons = []
+        
+        # Check story themes against expected themes
+        if story_themes:
+            theme_matches = [theme for theme in story_themes if any(expected in theme.lower() for expected in expected_themes)]
+            if theme_matches:
+                alignment_score += 0.4
+                alignment_reasons.append(f"Story themes match prompt type: {', '.join(theme_matches)}")
+        
+        # Check story title and description for prompt-relevant keywords
+        combined_text = f"{story_title} {story_description}".lower()
+        keyword_matches = [theme for theme in expected_themes if theme in combined_text]
+        if keyword_matches:
+            alignment_score += 0.3
+            alignment_reasons.append(f"Story content contains relevant keywords: {', '.join(keyword_matches)}")
+        
+        # Check insights for growth/reflection elements
+        if story_insights:
+            growth_indicators = ["learned", "grew", "realized", "understood", "changed", "developed"]
+            insight_text = " ".join(story_insights).lower()
+            if any(indicator in insight_text for indicator in growth_indicators):
+                alignment_score += 0.3
+                alignment_reasons.append("Story includes growth and reflection elements")
+        
+        # Ensure score doesn't exceed 1.0
+        alignment_score = min(alignment_score, 1.0)
+        
+        # Generate improvement suggestions
+        improvement_suggestions = []
+        if alignment_score < 0.3:
+            improvement_suggestions.append(f"Consider selecting a story that better matches {prompt_type} prompts")
+        if not theme_matches and story_themes:
+            improvement_suggestions.append(f"Story themes don't align with {prompt_type} expectations")
+        if not keyword_matches:
+            improvement_suggestions.append(f"Story lacks keywords typical of {prompt_type} prompts")
+        if not story_insights:
+            improvement_suggestions.append("Add insights about personal growth or lessons learned")
+        
+        if not improvement_suggestions:
+            improvement_suggestions.append("Good alignment - story matches prompt type well")
+        
+        return {
+            "prompt_category": prompt_type,
+            "story_themes": story_themes,
+            "alignment_score": alignment_score,
+            "alignment_reasons": alignment_reasons,
+            "improvement_suggestions": improvement_suggestions,
+            "analysis_details": {
+                "expected_themes": expected_themes,
+                "theme_matches": theme_matches if 'theme_matches' in locals() else [],
+                "keyword_matches": keyword_matches if 'keyword_matches' in locals() else [],
+                "story_title": story_title,
+                "has_insights": bool(story_insights)
+            }
+        }
 
 
 class ErrorValidator:
