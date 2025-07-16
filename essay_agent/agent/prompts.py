@@ -441,6 +441,10 @@ def select_reasoning_template(task_type: str, context: Dict[str, Any]) -> str:
     conversation_length = len(context.get('conversation_history', []))
     has_errors = context.get('recent_errors', False)
     
+    # CRITICAL FIX: During reasoning phase, ALWAYS use JSON-expecting prompts
+    # The ENHANCED_CONVERSATION_PROMPT should only be used for final response generation,
+    # never for reasoning about what action to take
+    
     # Select based on context patterns
     if task_type == 'tool_selection':
         if has_errors or user_experience == 'beginner':
@@ -451,7 +455,9 @@ def select_reasoning_template(task_type: str, context: Dict[str, Any]) -> str:
             return ADVANCED_REASONING_PROMPT
     
     elif task_type == 'conversation':
-        return ENHANCED_CONVERSATION_PROMPT
+        # CRITICAL FIX: Even for "conversation" task type during reasoning,
+        # we still need JSON format to decide if we should use tools or respond conversationally
+        return ADVANCED_REASONING_PROMPT
     
     elif task_type == 'error_recovery':
         return ERROR_RECOVERY_STRATEGIES.get('tool_failure', ADVANCED_REASONING_PROMPT)

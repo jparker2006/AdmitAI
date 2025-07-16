@@ -122,9 +122,21 @@ class ContextRetriever:
             return elements
         
         try:
-            # Get recent conversation turns
-            history = self.conversation_memory.buffer
-            recent_messages = history.messages[-10:]  # Last 10 messages
+            # Get recent conversation turns with proper interface compatibility
+            if hasattr(self.conversation_memory, 'buffer_memory'):
+                # JSONConversationMemory interface
+                recent_messages = self.conversation_memory.buffer_memory.chat_memory.messages[-10:]
+            elif hasattr(self.conversation_memory, 'buffer'):
+                # Standard ConversationBufferMemory interface
+                recent_messages = self.conversation_memory.buffer.messages[-10:]
+            else:
+                # Fallback: try to get messages through memory variables
+                memory_vars = self.conversation_memory.load_memory_variables({})
+                chat_history = memory_vars.get('chat_history', [])
+                if isinstance(chat_history, list):
+                    recent_messages = chat_history[-10:]
+                else:
+                    recent_messages = []
             
             for i, message in enumerate(recent_messages):
                 content = f"{message.type}: {message.content}"

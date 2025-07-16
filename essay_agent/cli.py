@@ -25,6 +25,7 @@ from essay_agent.eval.real_profiles import (
     ALL_PROFILES, get_profile_by_id, get_profiles_by_category, get_profiles_summary
 )
 from essay_agent.eval.conversation_runner import ConversationRunner, run_evaluation_batch, save_evaluation_results
+from essay_agent.eval.integrated_conversation_runner import IntegratedConversationRunner, list_evaluation_memory_files
 # from essay_agent.eval.autonomy_tester import AutonomyTester, run_comprehensive_autonomy_test  # DEPRECATED
 from essay_agent.eval.memory_scenarios import MemoryScenarioTester, run_comprehensive_memory_test
 
@@ -370,7 +371,7 @@ def _cmd_eval_list(args: argparse.Namespace) -> None:
                         "category": s.category.value,
                         "school": s.school,
                         "difficulty": s.difficulty,
-                        "autonomy_level": s.autonomy_level.value,
+
                         "estimated_duration": s.estimated_duration_minutes,
                         "description": s.description
                     }
@@ -401,7 +402,7 @@ def _cmd_eval_list(args: argparse.Namespace) -> None:
                     print(f"  📝 {scenario.eval_id}")
                     print(f"     {scenario.name}")
                     print(f"     School: {scenario.school} | Difficulty: {scenario.difficulty}")
-                    print(f"     Autonomy: {scenario.autonomy_level.value} | Duration: ~{scenario.estimated_duration_minutes}min")
+                    print(f"     Duration: ~{scenario.estimated_duration_minutes}min")
                     print(f"     {scenario.description}")
                     print()
                     
@@ -456,10 +457,17 @@ def _cmd_eval_conversation(args: argparse.Namespace) -> None:
         print(f"   School: {scenario.school}")
         print(f"   Profile: {profile.name if profile else 'Auto-selected'}")
         print(f"   Expected duration: ~{scenario.estimated_duration_minutes} minutes")
+        
+        # Choose runner based on memory integration flag
+        if args.use_integrated_memory:
+            print(f"   Memory: Integrated (saves to memory_store)")
+            runner = IntegratedConversationRunner(verbose=args.verbose)
+        else:
+            print(f"   Memory: Standard evaluation (no persistence)")
+            runner = ConversationRunner(verbose=args.verbose)
         print()
         
         # Execute conversation
-        runner = ConversationRunner(verbose=args.verbose)
         result = asyncio.run(runner.execute_evaluation(scenario, profile))
         
         # Save conversation if requested
@@ -468,6 +476,10 @@ def _cmd_eval_conversation(args: argparse.Namespace) -> None:
             with open(filename, 'w') as f:
                 json.dump(result.to_dict(), f, indent=2, default=str)
             print(f"💾 Conversation saved to: {filename}")
+        
+        # Display memory integration summary if using integrated memory
+        if args.use_integrated_memory and isinstance(runner, IntegratedConversationRunner):
+            runner.print_integration_summary()
         
         # Display results
         if args.json:
@@ -724,6 +736,78 @@ def _cmd_eval_memory(args: argparse.Namespace) -> None:
     except Exception as e:
         print(f"❌ Error running memory test: {e}", file=sys.stderr)
         if args.debug:
+            import traceback
+            traceback.print_exc()
+        sys.exit(1)
+
+
+def _cmd_eval_memory_list(args: argparse.Namespace) -> None:
+    """List evaluation conversations saved in memory_store."""
+    
+    try:
+        # Get list of evaluation memory files
+        eval_files = list_evaluation_memory_files(args.prefix)
+        
+        if not eval_files:
+            print(f"📭 No evaluation memory files found with prefix '{args.prefix}'")
+            print(f"   Check: memory_store/{args.prefix}_*")
+            print(f"   Use --use-integrated-memory flag when running evaluations to save to memory_store")
+            return
+        
+        if args.json:
+            # Output JSON format
+            import os
+            file_info = []
+            for file_path in eval_files:
+                stat = os.stat(file_path)
+                file_info.append({
+                    "path": file_path,
+                    "size": stat.st_size,
+                    "modified": datetime.fromtimestamp(stat.st_mtime).isoformat(),
+                    "user_id": os.path.basename(file_path).split('.')[0]
+                })
+            
+            print(json.dumps({
+                "prefix": args.prefix,
+                "total_files": len(eval_files),
+                "files": file_info
+            }, indent=2))
+        else:
+            # Human-readable format
+            print(f"📁 Evaluation Memory Files (prefix: {args.prefix})")
+            print(f"{'='*60}")
+            print(f"Found {len(eval_files)} files in memory_store/")
+            print()
+            
+            import os
+            for file_path in eval_files:
+                file_name = os.path.basename(file_path)
+                user_id = file_name.split('.')[0]
+                file_type = "conversation" if file_name.endswith('.conv.json') else "profile"
+                
+                stat = os.stat(file_path)
+                size_kb = stat.st_size / 1024
+                modified = datetime.fromtimestamp(stat.st_mtime).strftime('%Y-%m-%d %H:%M:%S')
+                
+                print(f"  📄 {file_name}")
+                print(f"     User ID: {user_id}")
+                print(f"     Type: {file_type}")
+                print(f"     Size: {size_kb:.1f} KB")
+                print(f"     Modified: {modified}")
+                print()
+            
+            print(f"🔍 Usage Examples:")
+            print(f"  # Chat with evaluation user (shows conversation history)")
+            for file_path in eval_files[:3]:  # Show first 3 examples
+                user_id = os.path.basename(file_path).split('.')[0]
+                print(f"  python -m essay_agent chat --user-id {user_id}")
+            print()
+            print(f"  # View conversation file directly")
+            print(f"  cat memory_store/{args.prefix}_*.conv.json | jq .")
+    
+    except Exception as e:
+        print(f"❌ Error listing evaluation memory files: {e}", file=sys.stderr)
+        if hasattr(args, 'debug') and args.debug:
             import traceback
             traceback.print_exc()
         sys.exit(1)
@@ -1582,6 +1666,235 @@ def _cmd_agent_debug(args: argparse.Namespace) -> None:  # noqa: D401
 
 
 # ---------------------------------------------------------------------------
+# Quality Assurance and Debugging Commands  
+# ---------------------------------------------------------------------------
+
+def cmd_eval_quality_check(args):
+    """Check quality of specific evaluation conversations."""
+    try:
+        from essay_agent.eval.conversation_quality_evaluator import ConversationQualityEvaluator, analyze_conversation_file
+        from pathlib import Path
+        import json
+        
+        print(f"🔍 Checking quality for scenario: {args.scenario}")
+        
+        # Find conversation file for scenario
+        memory_files = Path("memory_store").glob("eval_*.conv.json")
+        found_file = None
+        
+        for file_path in memory_files:
+            try:
+                with open(file_path, 'r') as f:
+                    data = json.load(f)
+                    # Check if this conversation is from the requested scenario
+                    # This is a simple check - in practice you'd want better scenario tracking
+                    if args.scenario.lower() in str(data).lower():
+                        found_file = file_path
+                        break
+            except Exception:
+                continue
+        
+        if not found_file:
+            print(f"❌ No conversation file found for scenario {args.scenario}")
+            print(f"Available files: {list(memory_files)}")
+            return
+        
+        # Analyze the conversation
+        analysis_result = analyze_conversation_file(str(found_file))
+        
+        if 'error' in analysis_result:
+            print(f"❌ Analysis failed: {analysis_result['error']}")
+            return
+        
+        # Display results
+        results = analysis_result['analysis_results']
+        print(f"\n📊 QUALITY ANALYSIS RESULTS:")
+        print(f"Response Coverage: {results.get('response_coverage', 0):.2%}")
+        print(f"Missing Responses: {results.get('missing_responses', 0)}")
+        print(f"Tool Diversity: {results.get('tool_diversity', 0)}")
+        print(f"Average Response Length: {results.get('avg_response_length', 0):.0f} chars")
+        
+        critical_issues = results.get('critical_issues', [])
+        if critical_issues:
+            print(f"\n🚨 CRITICAL ISSUES:")
+            for issue in critical_issues:
+                print(f"  - {issue}")
+        else:
+            print(f"\n✅ No critical issues detected")
+        
+        if args.verbose:
+            print(f"\n📁 Analyzed file: {found_file}")
+            print(f"🔧 Tools used: {', '.join(results.get('tools_used', []))}")
+        
+    except Exception as e:
+        print(f"❌ Quality check failed: {e}")
+
+
+def cmd_memory_integration_test(args):
+    """Test memory integration between evaluation and manual chat modes."""
+    try:
+        from essay_agent.eval.conversation_quality_evaluator import ConversationQualityEvaluator
+        from essay_agent.agent.core.react_agent import EssayReActAgent
+        
+        print(f"🧪 Testing memory integration for user: {args.user_id}")
+        
+        evaluator = ConversationQualityEvaluator()
+        results = evaluator.test_memory_integration(args.user_id, args.test_message)
+        
+        if results.get('memory_integration_success'):
+            print(f"✅ Memory integration test PASSED")
+            print(f"📊 Found {results.get('conversation_turns_found', 0)} conversation turns")
+            print(f"💬 Memory preview: {results.get('memory_content_preview', '')[:200]}...")
+        else:
+            print(f"❌ Memory integration test FAILED")
+            print(f"🔍 Error: {results.get('error', 'Unknown error')}")
+            
+        print(f"\n📝 Test Status: {results.get('test_status', 'unknown').upper()}")
+        
+    except Exception as e:
+        print(f"❌ Memory integration test failed: {e}")
+
+
+def cmd_memory_verify(args):
+    """Verify memory store files and content."""
+    try:
+        from pathlib import Path
+        import json
+        
+        print("🔍 Verifying memory store files...")
+        
+        memory_dir = Path("memory_store")
+        if not memory_dir.exists():
+            print("❌ Memory store directory does not exist")
+            return
+        
+        if args.user_id:
+            # Check specific user
+            user_files = list(memory_dir.glob(f"{args.user_id}*"))
+            if not user_files:
+                print(f"❌ No files found for user {args.user_id}")
+                return
+            
+            files_to_check = user_files
+        elif args.all:
+            # Check all evaluation files
+            files_to_check = list(memory_dir.glob("eval_*"))
+        else:
+            print("❌ Please specify --user-id or --all")
+            return
+        
+        print(f"📁 Found {len(files_to_check)} files to verify")
+        
+        for file_path in files_to_check:
+            try:
+                if file_path.suffix == '.json':
+                    with open(file_path, 'r') as f:
+                        data = json.load(f)
+                    
+                    if 'conv.json' in file_path.name:
+                        # Verify conversation file
+                        chat_history = data.get('chat_history', [])
+                        user_msgs = sum(1 for msg in chat_history if msg.get('type') == 'human')
+                        ai_msgs = sum(1 for msg in chat_history if msg.get('type') == 'ai')
+                        
+                        status = "✅" if ai_msgs >= user_msgs * 0.8 else "⚠️"
+                        print(f"{status} {file_path.name}: {user_msgs} user → {ai_msgs} AI responses")
+                    else:
+                        print(f"✅ {file_path.name}: Valid JSON, {len(str(data))} chars")
+                else:
+                    print(f"📄 {file_path.name}: {file_path.stat().st_size} bytes")
+                    
+            except Exception as e:
+                print(f"❌ {file_path.name}: Error - {e}")
+        
+    except Exception as e:
+        print(f"❌ Memory verification failed: {e}")
+
+
+def cmd_profile_test(args):
+    """Test user profile loading and validation."""
+    try:
+        from essay_agent.eval.real_profiles import get_profile_by_id
+        from essay_agent.memory.simple_memory import SimpleMemory
+        
+        print(f"🧪 Testing profile: {args.profile_id}")
+        
+        # Test evaluation profile loading
+        eval_profile = get_profile_by_id(args.profile_id)
+        if eval_profile:
+            print(f"✅ Evaluation profile loaded successfully")
+            print(f"📊 Name: {eval_profile.name}")
+            print(f"📊 Activities: {len(eval_profile.activities)}")
+            print(f"📊 Core Values: {len(eval_profile.core_values)}")
+        else:
+            print(f"❌ Evaluation profile not found")
+            return
+        
+        # Test memory profile loading
+        try:
+            memory_profile = SimpleMemory.load(f"eval_{args.profile_id}")
+            print(f"✅ Memory profile loaded successfully")
+            
+            # Test profile structure
+            if hasattr(memory_profile, 'user_info'):
+                print(f"✅ Profile structure valid")
+            else:
+                print(f"⚠️ Profile structure may be incomplete")
+                
+        except Exception as e:
+            print(f"❌ Memory profile loading failed: {e}")
+        
+    except Exception as e:
+        print(f"❌ Profile test failed: {e}")
+
+
+def cmd_eval_debug(args):
+    """Debug specific evaluation conversation."""
+    try:
+        from essay_agent.eval.conversation_quality_evaluator import analyze_conversation_file
+        from pathlib import Path
+        
+        print(f"🔧 Debugging conversation: {args.conversation_id}")
+        
+        # Find conversation file
+        conv_file = Path(f"memory_store/{args.conversation_id}.conv.json")
+        if not conv_file.exists():
+            print(f"❌ Conversation file not found: {conv_file}")
+            return
+        
+        # Analyze conversation
+        analysis = analyze_conversation_file(str(conv_file))
+        
+        if 'error' in analysis:
+            print(f"❌ Analysis failed: {analysis['error']}")
+            return
+        
+        results = analysis['analysis_results']
+        
+        print(f"\n🔍 DEBUGGING RESULTS:")
+        print(f"File: {conv_file}")
+        print(f"Total Turns: {analysis['conversation_turns']}")
+        print(f"Missing Responses: {results.get('missing_responses', 0)}")
+        print(f"Tool Diversity: {results.get('tool_diversity', 0)}")
+        
+        critical_issues = results.get('critical_issues', [])
+        if critical_issues:
+            print(f"\n🚨 ISSUES FOUND:")
+            for i, issue in enumerate(critical_issues, 1):
+                print(f"{i}. {issue}")
+                
+            if args.fix_issues:
+                print(f"\n🔧 ATTEMPTING FIXES:")
+                print("Note: Automated fixes not implemented yet.")
+                print("Manual intervention required for conversation recording issues.")
+        else:
+            print(f"\n✅ No issues detected - conversation appears healthy")
+        
+    except Exception as e:
+        print(f"❌ Debug failed: {e}")
+
+
+# ---------------------------------------------------------------------------
 # CLI Entrypoint
 # ---------------------------------------------------------------------------
 
@@ -1648,6 +1961,7 @@ def build_parser() -> argparse.ArgumentParser:  # noqa: D401
     eval_conversation.add_argument("--profile", help="User profile ID to use for evaluation")
     eval_conversation.add_argument("--verbose", action="store_true", help="Show detailed conversation flow")
     eval_conversation.add_argument("--save-conversation", action="store_true", help="Save conversation to JSON file")
+    eval_conversation.add_argument("--use-integrated-memory", action="store_true", help="Save evaluation conversations to memory_store (like manual chats)")
     eval_conversation.add_argument("--json", action="store_true", help="Output JSON format")
     eval_conversation.set_defaults(func=_cmd_eval_conversation)
 
@@ -1676,6 +1990,12 @@ def build_parser() -> argparse.ArgumentParser:  # noqa: D401
     eval_memory.add_argument("--output", help="Output file for detailed results")
     eval_memory.add_argument("--json", action="store_true", help="Output JSON format")
     eval_memory.set_defaults(func=_cmd_eval_memory)
+
+    # --------------------------- eval-memory-list ------------------------
+    eval_memory_list = sub.add_parser("eval-memory-list", help="List evaluation conversations saved in memory_store")
+    eval_memory_list.add_argument("--prefix", default="eval", help="Memory prefix to filter by (default: eval)")
+    eval_memory_list.add_argument("--json", action="store_true", help="Output JSON format")
+    eval_memory_list.set_defaults(func=_cmd_eval_memory_list)
 
     # ============================================================================
     # Enhanced LLM-Powered Evaluation Commands
@@ -1760,6 +2080,50 @@ def build_parser() -> argparse.ArgumentParser:  # noqa: D401
     agent_debug.add_argument("--reasoning-chain", action="store_true", help="Show reasoning chain")
     agent_debug.add_argument("--json", action="store_true", help="Output JSON format")
     agent_debug.set_defaults(func=_cmd_agent_debug)
+
+    # Quality Assurance Commands
+    qa_parser = sub.add_parser(
+        'eval-quality-check',
+        help='Check quality of specific evaluation conversations'
+    )
+    qa_parser.add_argument('--scenario', required=True, help='Scenario ID to analyze')
+    qa_parser.add_argument('--verbose', action='store_true', help='Show detailed analysis')
+    qa_parser.set_defaults(func=cmd_eval_quality_check)
+    
+    # Memory Integration Testing
+    memory_test_parser = sub.add_parser(
+        'memory-integration-test',
+        help='Test memory integration between evaluation and manual chat modes'
+    )
+    memory_test_parser.add_argument('--user-id', required=True, help='User ID to test')
+    memory_test_parser.add_argument('--test-message', default="Can you remind me what we discussed about my essay?", help='Test message to send')
+    memory_test_parser.set_defaults(func=cmd_memory_integration_test)
+    
+    # Memory verification
+    memory_verify_parser = sub.add_parser(
+        'memory-verify',
+        help='Verify memory store files and content for evaluation users'
+    )
+    memory_verify_parser.add_argument('--user-id', help='Specific user ID to verify')
+    memory_verify_parser.add_argument('--all', action='store_true', help='Check all evaluation memory files')
+    memory_verify_parser.set_defaults(func=cmd_memory_verify)
+    
+    # Profile testing
+    profile_test_parser = sub.add_parser(
+        'profile-test',
+        help='Test user profile loading and validation'
+    )
+    profile_test_parser.add_argument('--profile-id', required=True, help='Profile ID to test')
+    profile_test_parser.set_defaults(func=cmd_profile_test)
+    
+    # Evaluation debugging
+    eval_debug_parser = sub.add_parser(
+        'eval-debug',
+        help='Debug specific evaluation conversation and analyze issues'
+    )
+    eval_debug_parser.add_argument('--conversation-id', required=True, help='Conversation ID to debug')
+    eval_debug_parser.add_argument('--fix-issues', action='store_true', help='Attempt to fix detected issues')
+    eval_debug_parser.set_defaults(func=cmd_eval_debug)
 
     return parser
 

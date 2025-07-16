@@ -567,11 +567,84 @@ class ActionExecutor:
         """
         # Parameter mappings for specific tools
         param_mappings = {
+            # Outline and structure tools
             'outline': {
                 'user_input': 'story',
                 'chosen_story': 'story',
                 'essay_prompt': 'prompt',
                 'target_word_count': 'word_count'
+            },
+            'outline_generator': {
+                'user_input': 'story',
+                'chosen_story': 'story',
+                'essay_prompt': 'prompt',
+                'target_word_count': 'word_count'
+            },
+            'structure_validator': {
+                'essay_text': 'essay',
+                'user_input': 'essay',
+                'draft': 'essay'
+            },
+            'transition_suggestion': {
+                'essay_text': 'essay',
+                'user_input': 'essay',
+                'draft': 'essay'
+            },
+            'length_optimizer': {
+                'essay_text': 'essay',
+                'user_input': 'essay',
+                'draft': 'essay',
+                'target_word_count': 'word_count'
+            },
+            
+            # Brainstorming and story tools
+            'brainstorm': {
+                'user_input': 'topic',
+                'essay_prompt': 'prompt'
+            },
+            'brainstorm_specific': {
+                'user_input': 'topic',
+                'chosen_story': 'topic',
+                'topic': 'topic'
+            },
+            'suggest_stories': {
+                'user_input': 'topic',
+                'essay_prompt': 'prompt'
+            },
+            'match_story': {
+                'user_input': 'story',
+                'chosen_story': 'story',
+                'user_story': 'story',
+                'essay_prompt': 'essay_prompt',
+                'prompt': 'essay_prompt'
+            },
+            'expand_story': {
+                'user_input': 'story_seed',
+                'story': 'story_seed',
+                'chosen_story': 'story_seed'
+            },
+            'story_development': {
+                'user_input': 'story',
+                'chosen_story': 'story',
+                'user_story': 'story'
+            },
+            'story_themes': {
+                'user_input': 'story',
+                'chosen_story': 'story',
+                'user_story': 'story'
+            },
+            'validate_uniqueness': {
+                'user_input': 'story',
+                'chosen_story': 'story',
+                'essay_prompt': 'prompt'
+            },
+            
+            # Drafting and writing tools
+            'draft': {
+                'outline_dict': 'outline',
+                'essay_prompt': 'prompt',
+                'user_stories': 'stories',
+                'voice': 'voice_profile'
             },
             'rewrite_paragraph': {
                 'user_input': 'paragraph',
@@ -580,30 +653,149 @@ class ActionExecutor:
                 'style_instruction': 'style_instruction',
                 'voice_profile': 'voice_profile'
             },
-            'outline_generator': {
-                'user_input': 'story',
-                'chosen_story': 'story',
-                'essay_prompt': 'prompt',
-                'target_word_count': 'word_count'
-            },
-            'draft': {
-                'outline_dict': 'outline',
-                'essay_prompt': 'prompt',
-                'user_stories': 'stories'
-            },
-            'polish': {
-                'draft_text': 'draft',
-                'essay_prompt': 'prompt'
-            },
             'improve_opening': {
                 'opening_text': 'opening_sentence',
+                'user_input': 'opening_sentence',
+                'context': 'essay_context',
+                'voice': 'voice_profile'
+            },
+            'strengthen_voice': {
+                'essay_text': 'essay',
+                'user_input': 'essay',
+                'draft': 'essay',
+                'voice': 'voice_profile'
+            },
+            'expand_outline_section': {
+                'section_text': 'section',
+                'user_input': 'section',
                 'context': 'essay_context',
                 'voice': 'voice_profile'
             },
             'expand_paragraph': {
                 'paragraph_text': 'paragraph',
+                'user_input': 'paragraph',
                 'context': 'essay_context',
                 'voice': 'voice_profile'
+            },
+            
+            # Polish and refinement tools
+            'polish': {
+                'draft_text': 'draft',
+                'essay_text': 'draft',
+                'user_input': 'draft',
+                'target_word_count': 'word_count'
+            },
+            'revise': {
+                'essay_text': 'essay',
+                'user_input': 'essay',
+                'draft': 'essay',
+                'instruction': 'revision_instruction'
+            },
+            'fix_grammar': {
+                'essay_text': 'text',
+                'user_input': 'text',
+                'draft': 'text'
+            },
+            'enhance_vocabulary': {
+                'essay_text': 'text',
+                'user_input': 'text',
+                'draft': 'text'
+            },
+            'check_consistency': {
+                'essay_text': 'text',
+                'user_input': 'text',
+                'draft': 'text'
+            },
+            'optimize_word_count': {
+                'essay_text': 'text',
+                'user_input': 'text',
+                'draft': 'text',
+                'target_word_count': 'target_count'
+            },
+            'final_polish': {
+                'essay_text': 'essay',
+                'user_input': 'essay',
+                'draft': 'essay'
+            },
+            
+            # Evaluation and analysis tools
+            'essay_scoring': {
+                'essay_text': 'essay_text',
+                'user_input': 'essay_text',
+                'draft': 'essay_text',
+                'essay_prompt': 'essay_prompt',
+                'prompt': 'essay_prompt'
+            },
+            'weakness_highlight': {
+                'essay_text': 'essay',
+                'user_input': 'essay',
+                'draft': 'essay'
+            },
+            'cliche_detection': {
+                'essay_text': 'text',
+                'user_input': 'text',
+                'draft': 'text'
+            },
+            'alignment_check': {
+                'essay_text': 'essay',
+                'user_input': 'essay',
+                'draft': 'essay',
+                'essay_prompt': 'prompt',
+                'prompt': 'prompt'
+            },
+            'plagiarism_check': {
+                'essay_text': 'text',
+                'user_input': 'text',
+                'draft': 'text'
+            },
+            'outline_alignment': {
+                'essay_text': 'essay',
+                'user_input': 'essay',
+                'draft': 'essay',
+                'outline_dict': 'outline'
+            },
+            'comprehensive_validation': {
+                'essay_text': 'essay',
+                'user_input': 'essay',
+                'draft': 'essay',
+                'essay_prompt': 'prompt'
+            },
+            
+            # Prompt analysis tools
+            'classify_prompt': {
+                'essay_prompt': 'prompt',
+                'prompt': 'prompt',
+                'user_input': 'prompt'
+            },
+            'extract_requirements': {
+                'essay_prompt': 'prompt',
+                'prompt': 'prompt',
+                'user_input': 'prompt'
+            },
+            'suggest_strategy': {
+                'essay_prompt': 'prompt',
+                'prompt': 'prompt',
+                'user_input': 'prompt'
+            },
+            'detect_overlap': {
+                'essay_prompt': 'prompt',
+                'prompt': 'prompt',
+                'user_input': 'prompt'
+            },
+            
+            # Utility tools
+            'word_count': {
+                'essay_text': 'text',
+                'user_input': 'text',
+                'draft': 'text'
+            },
+            'clarify': {
+                'user_input': 'input',
+                'context': 'context'
+            },
+            'echo': {
+                'user_input': 'message',
+                'message': 'message'
             }
         }
         
@@ -647,6 +839,175 @@ class ActionExecutor:
             if 'word_count' not in result:
                 result['word_count'] = 650
                 
+        elif tool_name == 'match_story':
+            if 'story' not in result and 'user_input' in result:
+                result['story'] = result['user_input']
+            if 'story' not in result and 'chosen_story' in result:
+                result['story'] = result['chosen_story']
+            if 'story' not in result:
+                result['story'] = "User's personal story"
+            if 'essay_prompt' not in result and 'prompt' in result:
+                result['essay_prompt'] = result['prompt']
+            if 'essay_prompt' not in result:
+                result['essay_prompt'] = "College application essay prompt"
+                
+        elif tool_name == 'brainstorm_specific':
+            if 'topic' not in result and 'user_input' in result:
+                result['topic'] = result['user_input']
+            if 'topic' not in result:
+                result['topic'] = "your experiences"
+                
+        elif tool_name in ['story_development', 'story_themes']:
+            if 'story' not in result and 'user_input' in result:
+                result['story'] = result['user_input']
+            if 'story' not in result and 'chosen_story' in result:
+                result['story'] = result['chosen_story']
+            if 'story' not in result:
+                result['story'] = "your personal story"
+                
+        elif tool_name in ['structure_validator', 'transition_suggestion', 'length_optimizer', 'weakness_highlight', 'alignment_check', 'outline_alignment', 'comprehensive_validation']:
+            if 'essay' not in result and 'user_input' in result:
+                result['essay'] = result['user_input']
+            if 'essay' not in result and 'draft' in result:
+                result['essay'] = result['draft']
+            if 'essay' not in result and 'essay_text' in result:
+                result['essay'] = result['essay_text']
+            if 'essay' not in result:
+                result['essay'] = "Sample essay content for analysis"
+            if tool_name == 'length_optimizer' and 'word_count' not in result:
+                result['word_count'] = 650
+            if tool_name in ['alignment_check', 'comprehensive_validation'] and 'prompt' not in result:
+                result['prompt'] = "College application essay prompt"
+                
+        elif tool_name in ['brainstorm', 'suggest_stories']:
+            if 'topic' not in result and 'user_input' in result:
+                result['topic'] = result['user_input']
+            if 'topic' not in result:
+                result['topic'] = "your experiences and interests"
+            if 'prompt' not in result and 'essay_prompt' in result:
+                result['prompt'] = result['essay_prompt']
+            if 'prompt' not in result:
+                result['prompt'] = "College application essay prompt"
+                
+        elif tool_name == 'expand_story':
+            if 'story_seed' not in result and 'user_input' in result:
+                result['story_seed'] = result['user_input']
+            if 'story_seed' not in result and 'story' in result:
+                result['story_seed'] = result['story']
+            if 'story_seed' not in result:
+                result['story_seed'] = "A meaningful experience from your life"
+                
+        elif tool_name == 'validate_uniqueness':
+            if 'story' not in result and 'user_input' in result:
+                result['story'] = result['user_input']
+            if 'story' not in result:
+                result['story'] = "Your personal story"
+            if 'prompt' not in result and 'essay_prompt' in result:
+                result['prompt'] = result['essay_prompt']
+            if 'prompt' not in result:
+                result['prompt'] = "College application essay prompt"
+                
+        elif tool_name == 'draft':
+            if 'outline' not in result and 'outline_dict' in result:
+                result['outline'] = result['outline_dict']
+            if 'outline' not in result and 'user_input' in result:
+                result['outline'] = result['user_input']
+            if 'outline' not in result:
+                result['outline'] = {"introduction": "Opening paragraph", "body": "Main content", "conclusion": "Closing thoughts"}
+            if 'voice_profile' not in result and 'voice' in result:
+                result['voice_profile'] = result['voice']
+            if 'voice_profile' not in result:
+                result['voice_profile'] = "Authentic, reflective high school student voice"
+            if 'word_count' not in result:
+                result['word_count'] = 650
+                
+        elif tool_name in ['polish', 'revise', 'strengthen_voice', 'final_polish']:
+            if 'draft' not in result and 'user_input' in result:
+                result['draft'] = result['user_input']
+            if 'draft' not in result and 'essay_text' in result:
+                result['draft'] = result['essay_text']
+            if 'draft' not in result and 'essay' in result:
+                result['draft'] = result['essay']
+            if 'draft' not in result:
+                result['draft'] = "Sample essay draft for polishing"
+            if tool_name == 'polish' and 'word_count' not in result:
+                result['word_count'] = 650
+            if tool_name == 'revise' and 'revision_instruction' not in result:
+                result['revision_instruction'] = "Improve clarity and flow"
+            if tool_name in ['strengthen_voice', 'final_polish'] and 'voice_profile' not in result:
+                result['voice_profile'] = "Authentic, reflective high school student voice"
+                
+        elif tool_name in ['fix_grammar', 'enhance_vocabulary', 'check_consistency', 'optimize_word_count', 'cliche_detection', 'plagiarism_check']:
+            if 'text' not in result and 'user_input' in result:
+                result['text'] = result['user_input']
+            if 'text' not in result and 'essay_text' in result:
+                result['text'] = result['essay_text']
+            if 'text' not in result and 'draft' in result:
+                result['text'] = result['draft']
+            if 'text' not in result:
+                result['text'] = "Sample text for processing"
+            if tool_name == 'optimize_word_count' and 'target_count' not in result:
+                result['target_count'] = 650
+                
+        elif tool_name == 'essay_scoring':
+            if 'essay_text' not in result and 'user_input' in result:
+                result['essay_text'] = result['user_input']
+            if 'essay_text' not in result and 'draft' in result:
+                result['essay_text'] = result['draft']
+            if 'essay_text' not in result:
+                result['essay_text'] = "Sample essay for scoring"
+            if 'essay_prompt' not in result and 'prompt' in result:
+                result['essay_prompt'] = result['prompt']
+            if 'essay_prompt' not in result:
+                result['essay_prompt'] = "College application essay prompt"
+                
+        elif tool_name in ['classify_prompt', 'extract_requirements', 'suggest_strategy', 'detect_overlap']:
+            if 'prompt' not in result and 'user_input' in result:
+                result['prompt'] = result['user_input']
+            if 'prompt' not in result and 'essay_prompt' in result:
+                result['prompt'] = result['essay_prompt']
+            if 'prompt' not in result:
+                result['prompt'] = "College application essay prompt"
+                
+        elif tool_name == 'word_count':
+            if 'text' not in result and 'user_input' in result:
+                result['text'] = result['user_input']
+            if 'text' not in result and 'essay_text' in result:
+                result['text'] = result['essay_text']
+            if 'text' not in result and 'draft' in result:
+                result['text'] = result['draft']
+            if 'text' not in result:
+                result['text'] = "Sample text for counting"
+                
+        elif tool_name == 'clarify':
+            if 'input' not in result and 'user_input' in result:
+                result['input'] = result['user_input']
+            if 'input' not in result:
+                result['input'] = "User needs clarification"
+            if 'context' not in result:
+                result['context'] = "Essay writing assistance"
+                
+        elif tool_name == 'echo':
+            if 'message' not in result and 'user_input' in result:
+                result['message'] = result['user_input']
+            if 'message' not in result:
+                result['message'] = "Hello"
+                
+        elif tool_name in ['expand_outline_section', 'expand_paragraph']:
+            section_param = 'section' if tool_name == 'expand_outline_section' else 'paragraph'
+            if section_param not in result and 'user_input' in result:
+                result[section_param] = result['user_input']
+            if section_param not in result:
+                result[section_param] = f"Sample {section_param} for expansion"
+            if 'essay_context' not in result and 'context' in result:
+                result['essay_context'] = result['context']
+            if 'essay_context' not in result:
+                result['essay_context'] = "College application essay"
+            if 'voice_profile' not in result and 'voice' in result:
+                result['voice_profile'] = result['voice']
+            if 'voice_profile' not in result:
+                result['voice_profile'] = "Authentic, reflective high school student voice"
+                
         elif tool_name == 'rewrite_paragraph':
             if 'paragraph' not in result and 'user_input' in result:
                 result['paragraph'] = result['user_input']
@@ -654,22 +1015,24 @@ class ActionExecutor:
                 result['style_instruction'] = result['instruction']
             if 'style_instruction' not in result:
                 result['style_instruction'] = "Make this paragraph more engaging and vivid"
+            if 'voice_profile' not in result and 'voice' in result:
+                result['voice_profile'] = result['voice']
             if 'voice_profile' not in result:
                 result['voice_profile'] = "Authentic, reflective high school student voice"
                 
         elif tool_name == 'improve_opening':
             if 'opening_sentence' not in result and 'user_input' in result:
                 result['opening_sentence'] = result['user_input']
+            if 'opening_sentence' not in result and 'opening_text' in result:
+                result['opening_sentence'] = result['opening_text']
+            if 'opening_sentence' not in result:
+                result['opening_sentence'] = "Sample opening sentence for improvement"
+            if 'essay_context' not in result and 'context' in result:
+                result['essay_context'] = result['context']
             if 'essay_context' not in result:
                 result['essay_context'] = "College application essay"
-            if 'voice_profile' not in result:
-                result['voice_profile'] = "Authentic, reflective high school student voice"
-                
-        elif tool_name == 'expand_paragraph':
-            if 'paragraph' not in result and 'user_input' in result:
-                result['paragraph'] = result['user_input']
-            if 'essay_context' not in result:
-                result['essay_context'] = "College application essay"
+            if 'voice_profile' not in result and 'voice' in result:
+                result['voice_profile'] = result['voice']
             if 'voice_profile' not in result:
                 result['voice_profile'] = "Authentic, reflective high school student voice"
         

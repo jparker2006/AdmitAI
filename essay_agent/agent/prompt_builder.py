@@ -268,32 +268,81 @@ Execute the {tool_name} tool with enhanced context awareness.
     def _determine_task_type(self, user_input: str, context: Dict[str, Any]) -> str:
         """Determine the type of task based on user input and context.
         
+        ENHANCED VERSION: Promotes tool diversity by analyzing conversation flow
+        and preventing over-reliance on any single tool.
+        
         Args:
             user_input: User's input message
             context: Context dictionary
             
         Returns:
-            Task type string
+            Task type string that encourages appropriate tool progression
         """
-        # Simple heuristics for task classification
         lower_input = user_input.lower()
         
+        # Check conversation history for tool diversity analysis
+        recent_tools = self._get_recent_tools_used(context)
+        brainstorm_count = recent_tools.count('brainstorm')
+        
+        # CRITICAL FIX: Prevent brainstorm over-usage by promoting progression
+        if brainstorm_count >= 2:
+            # Force progression to next logical step
+            if any(word in lower_input for word in ['outline', 'structure', 'organize']):
+                return 'outlining'
+            elif any(word in lower_input for word in ['write', 'draft', 'create']):
+                return 'drafting'
+            elif 'story' in lower_input or 'experience' in lower_input:
+                return 'story_development'  # Use story development instead of more brainstorming
+            else:
+                return 'tool_selection'  # Force intelligent tool selection
+        
+        # Original classification logic with enhancements
         if any(word in lower_input for word in ['help', 'stuck', 'confused', 'don\'t know']):
             return 'support_needed'
-        elif any(word in lower_input for word in ['brainstorm', 'ideas', 'story', 'topic']):
-            return 'brainstorming'
         elif any(word in lower_input for word in ['outline', 'structure', 'organize']):
             return 'outlining'
-        elif any(word in lower_input for word in ['write', 'draft', 'paragraph']):
+        elif any(word in lower_input for word in ['write', 'draft', 'paragraph', 'essay']):
             return 'drafting'
         elif any(word in lower_input for word in ['revise', 'improve', 'fix', 'better']):
             return 'revision'
         elif any(word in lower_input for word in ['polish', 'final', 'ready', 'submit']):
             return 'polishing'
+        elif any(word in lower_input for word in ['story', 'experience', 'moment', 'develop']):
+            return 'story_development'
+        elif any(word in lower_input for word in ['brainstorm', 'ideas', 'topics']) and brainstorm_count == 0:
+            return 'brainstorming'  # Only allow if no recent brainstorming
         elif '?' in user_input:
             return 'conversation'
         else:
             return 'tool_selection'
+    
+    def _get_recent_tools_used(self, context: Dict[str, Any]) -> List[str]:
+        """Extract recently used tools from context for diversity analysis."""
+        tools = []
+        
+        # Check conversation history for tool usage
+        conversation_history = context.get('conversation_history', [])
+        if isinstance(conversation_history, list):
+            for turn in conversation_history[-5:]:  # Last 5 turns
+                if isinstance(turn, dict) and turn.get('type') == 'ai':
+                    tool_calls = turn.get('tool_calls', [])
+                    for tool_call in tool_calls:
+                        if isinstance(tool_call, dict) and 'function' in tool_call:
+                            tools.append(tool_call['function'].get('name', ''))
+        
+        # Also check memory for recent tool executions
+        if self.memory and hasattr(self.memory, 'recent_tool_executions'):
+            try:
+                recent_executions = self.memory.recent_tool_executions[-5:]  # Last 5
+                for execution in recent_executions:
+                    if hasattr(execution, 'tool_name'):
+                        tools.append(execution.tool_name)
+                    elif isinstance(execution, dict):
+                        tools.append(execution.get('tool_name', ''))
+            except Exception:
+                pass
+        
+        return tools
     
     async def _get_conversation_context(self, context: Dict[str, Any]) -> str:
         """Get formatted conversation context."""

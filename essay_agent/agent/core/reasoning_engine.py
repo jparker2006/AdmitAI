@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import logging
 import time
+import asyncio
 from typing import Any, Dict, List, Optional, Tuple
 from dataclasses import dataclass
 from datetime import datetime
@@ -65,6 +66,11 @@ class ReasoningEngine:
         self.total_reasoning_time = 0.0
         self.success_count = 0
         
+        # Simple caching for performance
+        self.prompt_cache = {}
+        self.response_cache = {}
+        self.cache_max_size = 50
+        
     async def reason_about_action(
         self, 
         user_input: str, 
@@ -89,15 +95,31 @@ class ReasoningEngine:
         self.reasoning_count += 1
         
         try:
-            # Build optimized reasoning prompt
+            # Check for fast-path simple requests
+            simple_response = self._try_simple_reasoning(user_input, context)
+            if simple_response:
+                return simple_response
+            
+            # Build optimized reasoning prompt with context optimization
             prompt_data = await self.prompt_builder.build_reasoning_prompt(
                 user_input=user_input,
-                context=context,
+                context=self._optimize_context_size(context),
                 prompt_type="action_reasoning"
             )
             
+            # Check cache first
+            cache_key = self._generate_cache_key(prompt_data["prompt"])
+            if cache_key in self.response_cache:
+                cached_response = self.response_cache[cache_key]
+                logger.debug("Using cached reasoning response")
+                reasoning_time = time.time() - start_time
+                return self._create_cached_result(cached_response, reasoning_time, prompt_data.get("version", "default"))
+            
             # Get LLM reasoning response
             llm_response = await self._call_llm_with_retry(prompt_data["prompt"])
+            
+            # Cache the response
+            self._cache_response(cache_key, llm_response)
             
             # Parse and validate response
             reasoning_dict = self._parse_reasoning_response(llm_response)
@@ -253,6 +275,22 @@ class ReasoningEngine:
         except Exception as e:
             logger.error(f"Failed to parse reasoning response: {e}")
             logger.debug(f"Raw response: {llm_response}")
+            
+            # Fallback: If LLM returned a conversational response instead of JSON,
+            # create a valid reasoning structure for conversation mode
+            if llm_response and llm_response.strip():
+                logger.info("LLM returned conversational response instead of JSON - creating fallback structure")
+                return {
+                    "context_understanding": "Understanding user's essay writing needs",
+                    "reasoning": "Providing conversational support for essay development",
+                    "response_type": "conversation", 
+                    "confidence": 0.7,
+                    "tool_name": None,
+                    "tool_args": {},
+                    "context_flags": [],
+                    "conversation_response": llm_response.strip()
+                }
+            
             raise ReasoningError(f"Invalid reasoning response format: {e}") from e
     
     async def _call_llm_with_retry(self, prompt: str, max_retries: int = 3) -> str:
@@ -333,6 +371,137 @@ class ReasoningEngine:
         else:
             return "Thank you for your message! I'm here to help you with your essay writing. What would you like to work on?"
     
+    def _try_simple_reasoning(self, user_input: str, context: Dict[str, Any]) -> Optional[ReasoningResult]:
+        """Fast-path for simple requests that don't need full LLM reasoning.
+        
+        Args:
+            user_input: User's message
+            context: Current context
+            
+        Returns:
+            ReasoningResult if simple case detected, None otherwise
+        """
+        user_lower = user_input.lower().strip()
+        
+        # Simple brainstorming requests
+        if any(word in user_lower for word in ["brainstorm", "ideas", "think of"]) and len(user_input) < 100:
+            return ReasoningResult(
+                context_understanding="User wants brainstorming help",
+                reasoning="Simple brainstorming request - using brainstorm tool",
+                chosen_tool="brainstorm",
+                tool_args={"user_input": user_input},
+                confidence=0.9,
+                response_type="tool_execution",
+                anticipated_follow_up="User will want to explore ideas further",
+                context_flags=["simple_request"],
+                reasoning_time=0.1,
+                prompt_version="fast_path"
+            )
+        
+        # Simple help requests
+        if user_lower in ["help", "help me", "what can you do", "what now"]:
+            return ReasoningResult(
+                context_understanding="User needs general guidance",
+                reasoning="Simple help request - providing conversational guidance",
+                chosen_tool=None,
+                tool_args={},
+                confidence=0.8,
+                response_type="conversation",
+                anticipated_follow_up="User will specify what they need help with",
+                context_flags=["simple_request"],
+                reasoning_time=0.1,
+                prompt_version="fast_path"
+            )
+        
+        return None
+    
+    def _optimize_context_size(self, context: Dict[str, Any]) -> Dict[str, Any]:
+        """Optimize context size for faster LLM processing.
+        
+        Args:
+            context: Original context dictionary
+            
+        Returns:
+            Optimized context with reduced size
+        """
+        optimized = context.copy()
+        
+        # Truncate conversation history to last 5 turns
+        if "conversation_history" in optimized and isinstance(optimized["conversation_history"], list):
+            optimized["conversation_history"] = optimized["conversation_history"][-5:]
+        
+        # Simplify user profile to essential info
+        if "user_profile" in optimized and isinstance(optimized["user_profile"], dict):
+            profile = optimized["user_profile"]
+            essential_profile = {
+                "name": profile.get("name", ""),
+                "experience_level": profile.get("experience_level", "intermediate"),
+                "core_values": profile.get("core_values", [])[:3],  # Keep only first 3
+                "defining_moments": profile.get("defining_moments", [])[:2]  # Keep only first 2
+            }
+            optimized["user_profile"] = essential_profile
+        
+        # Remove large tool histories
+        if "tool_history" in optimized:
+            del optimized["tool_history"]
+        
+        return optimized
+    
+    def _generate_cache_key(self, prompt: str) -> str:
+        """Generate cache key for prompt.
+        
+        Args:
+            prompt: The prompt string
+            
+        Returns:
+            Cache key string
+        """
+        # Use a hash of the first 500 chars to create manageable cache keys
+        import hashlib
+        prompt_sample = prompt[:500]
+        return hashlib.md5(prompt_sample.encode()).hexdigest()
+    
+    def _cache_response(self, cache_key: str, response: str) -> None:
+        """Cache LLM response.
+        
+        Args:
+            cache_key: Cache key
+            response: LLM response to cache
+        """
+        if len(self.response_cache) >= self.cache_max_size:
+            # Remove oldest entries
+            keys_to_remove = list(self.response_cache.keys())[:10]
+            for key in keys_to_remove:
+                del self.response_cache[key]
+        
+        self.response_cache[cache_key] = response
+    
+    def _create_cached_result(self, cached_response: str, reasoning_time: float, prompt_version: str) -> ReasoningResult:
+        """Create ReasoningResult from cached response.
+        
+        Args:
+            cached_response: Previously cached LLM response
+            reasoning_time: Time taken for this call
+            prompt_version: Version of prompt used
+            
+        Returns:
+            ReasoningResult with cached data
+        """
+        reasoning_dict = self._parse_reasoning_response(cached_response)
+        
+        return ReasoningResult(
+            context_understanding=reasoning_dict.get("context_understanding", ""),
+            reasoning=reasoning_dict.get("reasoning", ""),
+            chosen_tool=reasoning_dict.get("chosen_tool"),
+            tool_args=reasoning_dict.get("tool_args", {}),
+            confidence=reasoning_dict.get("confidence", 0.5),
+            response_type=reasoning_dict.get("response_type", "conversation"),
+            anticipated_follow_up=reasoning_dict.get("anticipated_follow_up", ""),
+            context_flags=reasoning_dict.get("context_flags", []) + ["cached"],
+            reasoning_time=reasoning_time,
+            prompt_version=prompt_version
+        )
+
     def get_performance_metrics(self) -> Dict[str, Any]:
         """Get reasoning engine performance metrics.
         
@@ -347,5 +516,7 @@ class ReasoningEngine:
             "successful_requests": self.success_count,
             "success_rate": success_rate,
             "average_reasoning_time": avg_time,
-            "total_reasoning_time": self.total_reasoning_time
+            "total_reasoning_time": self.total_reasoning_time,
+            "cache_hit_ratio": len(self.response_cache) / max(self.reasoning_count, 1),
+            "cache_size": len(self.response_cache)
         } 

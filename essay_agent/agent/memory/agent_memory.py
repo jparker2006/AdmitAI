@@ -453,7 +453,22 @@ class AgentMemory:
             if not self.conversation_memory:
                 return []
             
-            messages = self.conversation_memory.buffer.messages[-turns * 2:]  # User + AI pairs
+            # Fix: JSONConversationMemory uses ._buffer_memory.chat_memory.messages
+            # instead of .buffer.messages
+            if hasattr(self.conversation_memory, '_buffer_memory'):
+                # JSONConversationMemory interface
+                messages = self.conversation_memory._buffer_memory.chat_memory.messages[-turns * 2:]
+            elif hasattr(self.conversation_memory, 'buffer') and hasattr(self.conversation_memory.buffer, 'messages'):
+                # Standard ConversationBufferMemory interface
+                messages = self.conversation_memory.buffer.messages[-turns * 2:]
+            else:
+                # Fallback: try to get messages through memory variables
+                memory_vars = self.conversation_memory.load_memory_variables({})
+                chat_history = memory_vars.get('chat_history', [])
+                if isinstance(chat_history, list):
+                    messages = chat_history[-turns * 2:]
+                else:
+                    return []
             
             history = []
             for i in range(0, len(messages), 2):

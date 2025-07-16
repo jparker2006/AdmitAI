@@ -29,8 +29,9 @@ class AcademicProfile(BaseModel):
 class CoreValue(BaseModel):
     value: str
     description: str
-    evidence: List[str]
-    used_in_essays: List[str]
+    evidence: List[str] = Field(default_factory=list)
+    used_in_essays: List[str] = Field(default_factory=list)
+    importance_level: int = Field(default=8, ge=1, le=10)
 
 
 class UserInfo(BaseModel):

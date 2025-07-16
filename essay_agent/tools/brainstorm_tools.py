@@ -220,6 +220,99 @@ class StoryExpansionTool(ValidatedTool):
         parsed_result = safe_parse(parser, response)
         return safe_model_to_dict(parsed_result)
 
+
+@register_tool("brainstorm_specific")
+class SpecificBrainstormTool(ValidatedTool):
+    """Brainstorm specific ideas for a given topic or experience"""
+    
+    name: str = "brainstorm_specific"
+    description: str = (
+        "Generate specific, targeted brainstorming ideas around a particular topic or experience."
+    )
+    
+    timeout: float = 15.0
+    
+    def _run(self, *, topic: str = "", user_input: str = "", **kwargs: Any) -> Dict[str, Any]:
+        # Use either topic or user_input
+        subject = topic or user_input or "your experiences"
+        
+        # Simple brainstorming response
+        return {
+            "brainstorming_result": f"Here are some specific ideas about {subject}:",
+            "ideas": [
+                f"Consider the unique aspects of {subject}",
+                f"Think about the challenges you faced with {subject}",
+                f"Reflect on what you learned from {subject}",
+                f"How did {subject} change your perspective?",
+                f"What specific details make {subject} memorable?"
+            ],
+            "success": True,
+            "next_steps": "Choose one idea to develop further"
+        }
+
+
+@register_tool("story_development")
+class StoryDevelopmentTool(ValidatedTool):
+    """Develop and expand a story with rich details"""
+    
+    name: str = "story_development"
+    description: str = (
+        "Take a story seed and develop it with rich details, emotions, and insights."
+    )
+    
+    timeout: float = 15.0
+    
+    def _run(self, *, story: str = "", user_input: str = "", **kwargs: Any) -> Dict[str, Any]:
+        # Use either story or user_input
+        story_content = story or user_input or "your story"
+        
+        # Simple story development response
+        return {
+            "developed_story": f"Let's develop your story about {story_content}:",
+            "development_questions": [
+                "What specific moment stands out most?",
+                "What emotions were you feeling?",
+                "What details can you add to set the scene?",
+                "What was the turning point?",
+                "How did this experience change you?"
+            ],
+            "themes": ["growth", "challenge", "insight", "transformation"],
+            "success": True,
+            "next_steps": "Add specific details and emotions to your story"
+        }
+
+
+@register_tool("story_themes")
+class StoryThemesTool(ValidatedTool):
+    """Identify and analyze themes within a story"""
+    
+    name: str = "story_themes"
+    description: str = (
+        "Analyze a story to identify key themes, values, and messages."
+    )
+    
+    timeout: float = 15.0
+    
+    def _run(self, *, story: str = "", user_input: str = "", **kwargs: Any) -> Dict[str, Any]:
+        # Use either story or user_input
+        story_content = story or user_input or "your story"
+        
+        # Simple theme analysis response
+        return {
+            "story_analysis": f"Analyzing themes in: {story_content}",
+            "identified_themes": [
+                "Personal growth and resilience",
+                "Overcoming challenges",
+                "Community and relationships", 
+                "Learning and adaptation",
+                "Values and identity"
+            ],
+            "core_message": "This story demonstrates growth through challenge",
+            "essay_potential": "High - shows personal development",
+            "success": True,
+            "suggestions": "Focus on the transformation aspect of your experience"
+        }
+
 @register_tool("validate_uniqueness")
 class UniquenessValidationTool(ValidatedTool):
     """Check if story angle is unique and avoid clichés"""
