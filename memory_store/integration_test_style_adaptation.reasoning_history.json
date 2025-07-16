@@ -1,0 +1,28 @@
+[
+  {
+    "id": "f234b2f0-4612-45ad-a710-da0ffd61a274",
+    "timestamp": "2025-07-15T22:09:57.547657",
+    "user_input": "Test Adjust essay for different school cultures",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.3,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "conversation",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  }
+]

@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-096",
+  "test_id": "integration_error_recovery",
+  "severity": "MEDIUM",
+  "category": "Integration",
+  "description": "Integration test error_recovery failed",
+  "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+  "reproduction_steps": [
+    "Run integration test: Error recovery",
+    "Description: Graceful handling of various failure modes",
+    "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+  ],
+  "timestamp": "2025-07-15T22:06:37.822487",
+  "tools_involved": [],
+  "conversation_context": ""
+}

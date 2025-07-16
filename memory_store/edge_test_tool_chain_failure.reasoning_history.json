@@ -1,0 +1,28 @@
+[
+  {
+    "id": "6faf97e9-7570-4e54-8d52-b6b15f47e4f1",
+    "timestamp": "2025-07-15T22:09:57.388152",
+    "user_input": "complex workflow with intentional failures",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.3,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "conversation",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  }
+]

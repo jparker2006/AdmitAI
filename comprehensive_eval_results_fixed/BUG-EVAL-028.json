@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-028",
+  "test_id": "tool_check_word_count",
+  "severity": "HIGH",
+  "category": "Tool Execution",
+  "description": "Tool check_word_count failed with exception",
+  "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+  "reproduction_steps": [
+    "Call tool check_word_count",
+    "With input: Check if my essay meets 650-word requirement",
+    "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+  ],
+  "timestamp": "2025-07-15T22:06:37.723653",
+  "tools_involved": [],
+  "conversation_context": ""
+}

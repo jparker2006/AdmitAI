@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-014",
+  "test_id": "tool_draft_essay",
+  "severity": "HIGH",
+  "category": "Tool Execution",
+  "description": "Tool draft_essay failed with exception",
+  "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+  "reproduction_steps": [
+    "Call tool draft_essay",
+    "With input: Draft full essay about my identity as first-gen student",
+    "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+  ],
+  "timestamp": "2025-07-15T22:06:37.699480",
+  "tools_involved": [],
+  "conversation_context": ""
+}

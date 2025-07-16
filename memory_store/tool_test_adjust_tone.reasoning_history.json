@@ -1,0 +1,80 @@
+[
+  {
+    "id": "6d601eca-945a-4822-8753-886550ea9170",
+    "timestamp": "2025-07-15T22:08:30.225637",
+    "user_input": "Adjust tone to be more reflective and mature",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.3,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "conversation",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  },
+  {
+    "id": "55408acd-fc60-4c6a-9d66-91d00c440e3a",
+    "timestamp": "2025-07-15T22:08:45.250608",
+    "user_input": "Adjust tone to be more reflective and mature",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.3,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "conversation",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  },
+  {
+    "id": "f261386a-c6c1-44bf-b214-dfa80b4041c5",
+    "timestamp": "2025-07-15T22:09:56.999062",
+    "user_input": "Adjust tone to be more reflective and mature",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.3,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "conversation",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  }
+]

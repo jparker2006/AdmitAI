@@ -1,0 +1,15 @@
+{
+  "bug_id": "BUG-EVAL-075",
+  "test_id": "edge_frustration",
+  "severity": "MEDIUM",
+  "category": "Edge Case Handling",
+  "description": "Edge case frustration not handled properly",
+  "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+  "reproduction_steps": [
+    "Send edge case input: This is confusing and not working",
+    "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+  ],
+  "timestamp": "2025-07-15T22:06:37.799840",
+  "tools_involved": [],
+  "conversation_context": ""
+}

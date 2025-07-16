@@ -1,0 +1,80 @@
+[
+  {
+    "id": "18eefcc2-b3d9-4c0f-b61f-30f1af7c03bb",
+    "timestamp": "2025-07-15T22:08:30.172452",
+    "user_input": "Write conclusion tying together my growth themes",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.3,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "conversation",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  },
+  {
+    "id": "1d15e36f-8c29-43b7-8b32-47c0b46a73c7",
+    "timestamp": "2025-07-15T22:08:45.200485",
+    "user_input": "Write conclusion tying together my growth themes",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.3,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "conversation",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  },
+  {
+    "id": "8245fd9f-8b5a-43b2-adeb-e8f86ec0fe34",
+    "timestamp": "2025-07-15T22:09:56.942102",
+    "user_input": "Write conclusion tying together my growth themes",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.3,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "conversation",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  }
+]

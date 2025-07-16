@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-051",
+  "test_id": "journey_profile_driven_brainstorm",
+  "severity": "HIGH",
+  "category": "User Journey",
+  "description": "User journey profile_driven_brainstorm failed",
+  "error_details": "3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing",
+  "reproduction_steps": [
+    "Start profile_driven_brainstorm user journey",
+    "School: MIT, Type: passion",
+    "Exception: 3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing"
+  ],
+  "timestamp": "2025-07-15T22:06:37.768270",
+  "tools_involved": [],
+  "conversation_context": ""
+}

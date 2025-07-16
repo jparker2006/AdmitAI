@@ -13,7 +13,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from typing import Dict, Any
 
 from essay_agent.executor import EssayExecutor
-from essay_agent.planner import EssayPlan, Phase
+from essay_agent.models import EssayPlan, Phase
 from essay_agent.workflows.essay_workflow import AdvancedEssayWorkflow
 
 

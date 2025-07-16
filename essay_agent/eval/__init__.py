@@ -88,7 +88,7 @@ def quick_eval(user_id: str = "quick_eval_user", debug: bool = False):
     }
 
 
-def validate_single_result(result, prompt_id: str, target_word_count: int, keywords: list[str]):
+def validate_single_result(result, prompt_id: str, target_word_count: int, keywords: list[str], use_legacy_metrics: bool = False):
     """
     Validate a single essay result with comprehensive metrics.
     
@@ -97,6 +97,7 @@ def validate_single_result(result, prompt_id: str, target_word_count: int, keywo
         prompt_id: ID of the prompt used
         target_word_count: Target word count for validation
         keywords: Expected keywords for similarity scoring
+        use_legacy_metrics: Whether to use legacy heuristic evaluation
         
     Returns:
         EvaluationReport with validation results
@@ -106,7 +107,8 @@ def validate_single_result(result, prompt_id: str, target_word_count: int, keywo
         prompt_keywords=keywords,
         target_word_count=target_word_count,
         execution_time=0.0,  # Not timed for single validation
-        prompt_id=prompt_id
+        prompt_id=prompt_id,
+        use_legacy_metrics=use_legacy_metrics
     )
 
 
@@ -131,13 +133,14 @@ def get_evaluation_config():
     } 
 
 
-def run_real_evaluation(user_id: str = "real_eval_user", debug: bool = False):
+def run_real_evaluation(user_id: str = "real_eval_user", debug: bool = False, use_legacy_metrics: bool = False):
     """
     Run evaluation with real GPT calls (no mocks).
     
     Args:
         user_id: User ID for the evaluation
         debug: Whether to enable debug mode
+        use_legacy_metrics: Whether to use legacy heuristic evaluation
         
     Returns:
         List of evaluation reports
@@ -171,7 +174,8 @@ def run_real_evaluation(user_id: str = "real_eval_user", debug: bool = False):
                 prompt_keywords=keywords,
                 target_word_count=prompt.word_limit,
                 execution_time=execution_time,
-                prompt_id=prompt_id
+                prompt_id=prompt_id,
+                use_legacy_metrics=use_legacy_metrics
             )
             results.append(report)
             

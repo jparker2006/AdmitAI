@@ -18,7 +18,7 @@ from essay_agent.workflows.revision_loops import (
     execute_intelligent_revision_loop,
 )
 from essay_agent.workflows.base import WorkflowState
-from essay_agent.planner import EssayPlan, Phase
+from essay_agent.models import EssayPlan, Phase
 from essay_agent.executor import EssayExecutor
 
 

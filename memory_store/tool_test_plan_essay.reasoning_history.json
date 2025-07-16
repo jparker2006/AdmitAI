@@ -1,0 +1,80 @@
+[
+  {
+    "id": "7784c7a7-9099-42d0-acf8-c18d9a6ccbc5",
+    "timestamp": "2025-07-15T22:08:30.150903",
+    "user_input": "Plan my essay about academic passion for computer science",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.3,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "conversation",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  },
+  {
+    "id": "70f94e2c-b8ba-4da2-9168-2e7e1fd4c6f4",
+    "timestamp": "2025-07-15T22:08:45.182476",
+    "user_input": "Plan my essay about academic passion for computer science",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.3,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "conversation",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  },
+  {
+    "id": "19e529a4-3bdc-4c68-b27d-5b5d53acbd21",
+    "timestamp": "2025-07-15T22:09:56.923671",
+    "user_input": "Plan my essay about academic passion for computer science",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.3,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "conversation",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  }
+]

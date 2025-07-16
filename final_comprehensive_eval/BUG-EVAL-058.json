@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-058",
+  "test_id": "integration_memory_conflict",
+  "severity": "MEDIUM",
+  "category": "Integration",
+  "description": "Integration test memory_conflict failed",
+  "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+  "reproduction_steps": [
+    "Run integration test: Memory conflict resolution",
+    "Description: Handle contradictory user information",
+    "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+  ],
+  "timestamp": "2025-07-15T22:08:45.559491",
+  "tools_involved": [],
+  "conversation_context": ""
+}

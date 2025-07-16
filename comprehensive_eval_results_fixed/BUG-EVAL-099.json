@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-099",
+  "test_id": "integration_resource_usage",
+  "severity": "MEDIUM",
+  "category": "Integration",
+  "description": "Integration test resource_usage failed",
+  "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+  "reproduction_steps": [
+    "Run integration test: Resource usage",
+    "Description: Monitor memory and CPU consumption",
+    "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+  ],
+  "timestamp": "2025-07-15T22:06:37.825699",
+  "tools_involved": [],
+  "conversation_context": ""
+}

@@ -1,6 +1,7 @@
 """essay_agent.eval.metrics
 
 Comprehensive metrics and validators for evaluating essay agent output.
+Enhanced with LLM-powered evaluation for nuanced conversation quality assessment.
 Includes word count validation, JSON schema validation, similarity scoring, and quality metrics.
 """
 
@@ -11,8 +12,10 @@ from collections import Counter
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Set
 import math
+import asyncio
 
 from essay_agent.agent_legacy import EssayResult
+from .llm_evaluator import LLMEvaluator, ConversationEvaluation, TurnEvaluation
 
 
 @dataclass
@@ -455,7 +458,172 @@ class ErrorValidator:
 
 
 class QualityMetrics:
-    """Additional quality metrics for essay evaluation."""
+    """Enhanced quality metrics for essay evaluation with LLM integration.
+    
+    This class provides both sophisticated LLM-powered text analysis and legacy
+    heuristic-based evaluation as a fallback option.
+    """
+    
+    def __init__(self, use_legacy: bool = False):
+        """Initialize quality metrics evaluator.
+        
+        Args:
+            use_legacy: If True, use heuristic evaluation. If False, use LLM evaluation.
+        """
+        self.use_legacy = use_legacy
+        if not use_legacy:
+            # Import here to avoid circular imports
+            from .llm_evaluator import LLMEvaluator
+            self.llm_evaluator = LLMEvaluator()
+        else:
+            self.llm_evaluator = None
+    
+    async def evaluate_text_quality(
+        self, 
+        text: str, 
+        context: Optional[Dict[str, Any]] = None,
+        essay_prompt: Optional[str] = None
+    ) -> Dict[str, float]:
+        """Evaluate text quality using LLM or legacy heuristics.
+        
+        Args:
+            text: Text to analyze
+            context: Additional context for evaluation
+            essay_prompt: Original essay prompt for context
+            
+        Returns:
+            Dictionary with quality scores (0-1 range)
+        """
+        if self.use_legacy:
+            return self._legacy_text_evaluation(text)
+        return await self._llm_text_evaluation(text, context, essay_prompt)
+    
+    async def _llm_text_evaluation(
+        self, 
+        text: str, 
+        context: Optional[Dict[str, Any]] = None,
+        essay_prompt: Optional[str] = None
+    ) -> Dict[str, float]:
+        """Use LLMEvaluator for sophisticated text quality assessment."""
+        try:
+            # Create a simplified conversation turn for text evaluation
+            from .conversation_runner import ConversationTurn
+            from .conversational_scenarios import ConversationScenario
+            from datetime import datetime
+            
+            # Create mock turn for text evaluation
+            turn = ConversationTurn(
+                turn_number=1,
+                timestamp=datetime.now(),
+                user_input=f"Please evaluate this essay: {essay_prompt or 'Essay evaluation request'}",
+                agent_response=text,
+                tools_used=["draft_essay"],
+                memory_accessed=[],
+                phase_name="evaluation",
+                success_indicators_met=["essay_completed"],
+                expected_behavior_match=1.0,
+                response_time_seconds=0.0,
+                word_count=len(text.split())
+            )
+            
+            # Create mock scenario for evaluation context
+            from .conversational_scenarios import ScenarioCategory, SuccessCriteria
+            scenario = ConversationScenario(
+                eval_id="text_quality_eval",
+                name="Text Quality Evaluation",
+                category=ScenarioCategory.NEW_USER,
+                description="Text quality evaluation scenario",
+                school="Generic",
+                prompt=essay_prompt or "Evaluate essay quality",
+                word_limit=len(text.split()),
+                user_profile="evaluation_user",
+                conversation_flow=[],
+                success_criteria=SuccessCriteria(
+                    conversation_turns={"min": 1, "max": 1},
+                    tools_used={},
+                    final_word_count={},
+                    prompt_relevance={},
+                    conversation_quality={}
+                ),
+                difficulty="easy",
+                estimated_duration_minutes=1,
+                tags=["evaluation", "text_quality"]
+            )
+            
+            # Use default profile for evaluation
+            from ..memory.user_profile_schema import UserProfile
+            profile = UserProfile(
+                user_id="evaluation_user",
+                name="Evaluation User",
+                email="eval@example.com"
+            )
+            
+            # Get LLM evaluation
+            evaluation = await self.llm_evaluator.evaluate_conversation_quality(
+                conversation_history=[turn],
+                user_profile=profile,
+                scenario=scenario,
+                context=context or {}
+            )
+            
+            # Map LLM evaluation to text quality metrics
+            return {
+                "readability_score": evaluation.conversation_flow_score,
+                "sentence_variety": evaluation.prompt_response_quality,
+                "vocabulary_richness": evaluation.overall_quality_score,
+                "overall_quality": evaluation.overall_quality_score,
+                "engagement_score": evaluation.user_satisfaction_prediction,
+                "coherence_score": evaluation.conversation_flow_score
+            }
+            
+        except Exception as e:
+            # Fallback to legacy evaluation on error
+            print(f"Warning: LLM evaluation failed ({e}), falling back to legacy metrics")
+            return self._legacy_text_evaluation(text)
+    
+    def _legacy_text_evaluation(self, text: str) -> Dict[str, float]:
+        """Fallback to existing heuristic methods."""
+        return {
+            "readability_score": self.calculate_readability_score(text),
+            "sentence_variety": self.calculate_sentence_variety(text),
+            "vocabulary_richness": self.calculate_vocabulary_richness(text),
+            "overall_quality": (
+                self.calculate_readability_score(text) + 
+                self.calculate_sentence_variety(text) + 
+                self.calculate_vocabulary_richness(text)
+            ) / 3.0,
+            "engagement_score": self.calculate_readability_score(text),  # Approximation
+            "coherence_score": self.calculate_sentence_variety(text)  # Approximation
+        }
+    
+    # Synchronous wrapper for backward compatibility
+    def score_conversation(self, turns: List, profile: Any = None, scenario: Any = None) -> Dict[str, float]:
+        """Synchronous wrapper for backward compatibility.
+        
+        Args:
+            turns: Conversation turns (legacy interface)
+            profile: User profile 
+            scenario: Conversation scenario
+            
+        Returns:
+            Quality scores dictionary
+        """
+        if not turns:
+            return {"overall_quality": 0.0}
+        
+        if self.use_legacy:
+            # Legacy heuristic scoring
+            return {"overall_quality": 0.5}  # Simple fallback
+        
+        # For synchronous calls, use asyncio.run with basic evaluation
+        import asyncio
+        try:
+            # Simple text extraction for sync evaluation
+            text = " ".join([getattr(turn, 'agent_response', str(turn)) for turn in turns])
+            return asyncio.run(self.evaluate_text_quality(text))
+        except Exception as e:
+            print(f"Warning: Sync evaluation failed ({e}), using fallback")
+            return {"overall_quality": 0.5}
     
     def calculate_readability_score(self, text: str) -> float:
         """
@@ -760,7 +928,8 @@ def evaluate_essay_result(
     execution_time: float,
     prompt_id: str,
     prompt_text: str = "",
-    additional_results: List[EssayResult] = None
+    additional_results: List[EssayResult] = None,
+    use_legacy_metrics: bool = False
 ) -> EvaluationReport:
     """
     Comprehensive evaluation of an essay generation result.
@@ -788,7 +957,7 @@ def evaluate_essay_result(
     schema_validator = JSONSchemaValidator()
     similarity_scorer = KeywordSimilarityScorer()
     error_validator = ErrorValidator()
-    quality_metrics = QualityMetrics()
+    quality_metrics = QualityMetrics(use_legacy=use_legacy_metrics)
     
     # Word count validation
     word_result = word_validator.validate(result.final_draft, target_word_count)
@@ -841,9 +1010,31 @@ def evaluate_essay_result(
     
     # Quality metrics
     if result.final_draft:
-        report.add_metric("readability_score", quality_metrics.calculate_readability_score(result.final_draft))
-        report.add_metric("sentence_variety", quality_metrics.calculate_sentence_variety(result.final_draft))
-        report.add_metric("vocabulary_richness", quality_metrics.calculate_vocabulary_richness(result.final_draft))
+        if use_legacy_metrics:
+            # Legacy heuristic evaluation
+            report.add_metric("readability_score", quality_metrics.calculate_readability_score(result.final_draft))
+            report.add_metric("sentence_variety", quality_metrics.calculate_sentence_variety(result.final_draft))
+            report.add_metric("vocabulary_richness", quality_metrics.calculate_vocabulary_richness(result.final_draft))
+        else:
+            # Enhanced LLM evaluation (synchronous wrapper)
+            try:
+                import asyncio
+                quality_scores = asyncio.run(quality_metrics.evaluate_text_quality(
+                    text=result.final_draft,
+                    context={"target_word_count": target_word_count},
+                    essay_prompt=prompt_text
+                ))
+                
+                # Add all LLM-derived scores
+                for metric_name, score in quality_scores.items():
+                    report.add_metric(metric_name, score)
+                    
+            except Exception as e:
+                # Fallback to legacy metrics if LLM evaluation fails
+                print(f"Warning: LLM quality evaluation failed ({e}), using legacy metrics")
+                report.add_metric("readability_score", quality_metrics.calculate_readability_score(result.final_draft))
+                report.add_metric("sentence_variety", quality_metrics.calculate_sentence_variety(result.final_draft))
+                report.add_metric("vocabulary_richness", quality_metrics.calculate_vocabulary_richness(result.final_draft))
     
     # Overall pass/fail
     report.add_metric("overall_passed", report.passed)

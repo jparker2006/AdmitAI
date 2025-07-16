@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-033",
+  "test_id": "tool_clarify",
+  "severity": "HIGH",
+  "category": "Tool Execution",
+  "description": "Tool clarify failed with exception",
+  "error_details": "__init__() got an unexpected keyword argument 'memory'",
+  "reproduction_steps": [
+    "Call tool clarify",
+    "With input: I'm confused about how to start my essay",
+    "Exception: __init__() got an unexpected keyword argument 'memory'"
+  ],
+  "timestamp": "2025-07-15T22:05:08.448522",
+  "tools_involved": [],
+  "conversation_context": ""
+}

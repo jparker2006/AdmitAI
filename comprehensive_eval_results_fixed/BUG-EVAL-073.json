@@ -1,0 +1,15 @@
+{
+  "bug_id": "BUG-EVAL-073",
+  "test_id": "edge_conversation_interrupt",
+  "severity": "MEDIUM",
+  "category": "Edge Case Handling",
+  "description": "Edge case conversation_interrupt not handled properly",
+  "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+  "reproduction_steps": [
+    "Send edge case input: start new topic without finishing",
+    "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+  ],
+  "timestamp": "2025-07-15T22:06:37.797386",
+  "tools_involved": [],
+  "conversation_context": ""
+}

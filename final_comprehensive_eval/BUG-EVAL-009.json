@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-009",
+  "test_id": "journey_cornell_problem",
+  "severity": "HIGH",
+  "category": "User Journey",
+  "description": "User journey cornell_problem failed",
+  "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+  "reproduction_steps": [
+    "Start cornell_problem user journey",
+    "School: Cornell, Type: achievement",
+    "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+  ],
+  "timestamp": "2025-07-15T22:08:45.389227",
+  "tools_involved": [],
+  "conversation_context": ""
+}

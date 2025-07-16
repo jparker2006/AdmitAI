@@ -19,7 +19,7 @@ from tenacity import AsyncRetrying, stop_after_attempt, wait_exponential
 from essay_agent.workflows.base import WorkflowState, WorkflowNode
 from essay_agent.workflows import register_workflow_node
 from essay_agent.tools import REGISTRY as TOOL_REGISTRY
-from essay_agent.planner import EssayPlan, Phase
+from essay_agent.models import EssayPlan, Phase
 from essay_agent.utils.logging import tool_trace
 
 

@@ -1,0 +1,15 @@
+{
+  "bug_id": "BUG-EVAL-040",
+  "test_id": "edge_non_essay_request",
+  "severity": "MEDIUM",
+  "category": "Edge Case Handling",
+  "description": "Edge case non_essay_request not handled properly",
+  "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+  "reproduction_steps": [
+    "Send edge case input: Help me with my resume",
+    "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+  ],
+  "timestamp": "2025-07-15T22:08:45.535370",
+  "tools_involved": [],
+  "conversation_context": ""
+}

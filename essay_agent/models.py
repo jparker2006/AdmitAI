@@ -10,7 +10,9 @@ LangGraph, FastAPI, etc.) without triggering extra dependencies.
 """
 
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
+from enum import Enum, auto
+from dataclasses import dataclass, field
 
 from pydantic import BaseModel, Field, ValidationError, field_validator, conint
 
@@ -24,11 +26,68 @@ from essay_agent.memory.user_profile_schema import (
 # Simple alias works; subclassing would duplicate schema metadata.
 UserProfile = _UserProfile  # type: ignore[assignment]
 
+
+# ---------------------------------------------------------------------------
+# Legacy compatibility - Minimal Phase enum and EssayPlan for agent_legacy
+# ---------------------------------------------------------------------------
+
+class Phase(Enum):
+    """Writing phases for essay workflow (legacy compatibility)."""
+    
+    BRAINSTORMING = auto()
+    OUTLINING = auto()
+    DRAFTING = auto()
+    REVISING = auto()
+    POLISHING = auto()
+    CONVERSATION = auto()
+
+
+@dataclass
+class EssayPlan:
+    """State container for legacy agent workflow (minimal implementation)."""
+    
+    phase: Phase = Phase.BRAINSTORMING
+    data: Dict[str, Any] = field(default_factory=dict)
+    errors: List[str] = field(default_factory=list)
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+
+class EssayPlanner:
+    """Minimal planner for legacy compatibility (no-op implementation)."""
+    
+    def __init__(self):
+        """Initialize minimal planner."""
+        pass
+    
+    def decide_next_action(self, user_input: str, context: Dict[str, Any]) -> EssayPlan:
+        """Legacy method - returns minimal plan."""
+        return EssayPlan(phase=Phase.BRAINSTORMING, data=context)
+
+
+def _phase_from_tool(tool: str) -> Phase:
+    """Map tool name to corresponding workflow phase (legacy compatibility)."""
+    mapping = {
+        "brainstorm": Phase.BRAINSTORMING,
+        "outline": Phase.OUTLINING, 
+        "draft": Phase.DRAFTING,
+        "revise": Phase.REVISING,
+        "polish": Phase.POLISHING,
+        "essay_scoring": Phase.REVISING,  # Evaluation tools map to current phase
+        "weakness_highlight": Phase.REVISING,
+        "cliche_detection": Phase.REVISING,
+        "alignment_check": Phase.REVISING,
+    }
+    return mapping.get(tool, Phase.BRAINSTORMING)
+
 __all__ = [
     "EssayPrompt",
-    "EssayDraft",
+    "EssayDraft", 
     "EssayFeedback",
     "UserProfile",
+    "Phase",
+    "EssayPlan", 
+    "EssayPlanner",
+    "_phase_from_tool",
 ]
 
 

@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-034",
+  "test_id": "tool_provide_feedback",
+  "severity": "HIGH",
+  "category": "Tool Execution",
+  "description": "Tool provide_feedback failed with exception",
+  "error_details": "__init__() got an unexpected keyword argument 'memory'",
+  "reproduction_steps": [
+    "Call tool provide_feedback",
+    "With input: Give feedback on my latest draft",
+    "Exception: __init__() got an unexpected keyword argument 'memory'"
+  ],
+  "timestamp": "2025-07-15T22:05:08.449688",
+  "tools_involved": [],
+  "conversation_context": ""
+}

@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-100",
+  "test_id": "integration_stress_testing",
+  "severity": "MEDIUM",
+  "category": "Integration",
+  "description": "Integration test stress_testing failed",
+  "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+  "reproduction_steps": [
+    "Run integration test: Stress testing",
+    "Description: Push system to operational limits",
+    "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+  ],
+  "timestamp": "2025-07-15T22:06:37.827078",
+  "tools_involved": [],
+  "conversation_context": ""
+}

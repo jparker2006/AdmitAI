@@ -1,0 +1,15 @@
+{
+  "bug_id": "BUG-EVAL-042",
+  "test_id": "edge_invalid_prompt",
+  "severity": "MEDIUM",
+  "category": "Edge Case Handling",
+  "description": "Edge case invalid_prompt not handled properly",
+  "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+  "reproduction_steps": [
+    "Send edge case input: Write about nothing in particular",
+    "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+  ],
+  "timestamp": "2025-07-15T22:08:45.537396",
+  "tools_involved": [],
+  "conversation_context": ""
+}

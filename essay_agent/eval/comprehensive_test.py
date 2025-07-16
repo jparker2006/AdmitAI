@@ -304,7 +304,7 @@ class ComprehensiveTestRunner:
             agent = await self._create_test_agent(f"tool_test_{test_id}")
             
             # Run conversation
-            response = await agent.chat(user_input)
+            response = await agent.handle_message(user_input)
             
             # Check if tool was actually used
             if hasattr(agent, '_last_tool_executions'):
@@ -374,34 +374,34 @@ class ComprehensiveTestRunner:
             
             # Step 1: Initial request
             initial_request = f"I need to write a {prompt_type} essay for {school}. The prompt is: {essay_prompt}"
-            response = await agent.chat(initial_request)
+            response = await agent.handle_message(initial_request)
             responses.append(response)
             
             # Step 2: Follow conversation flow
             if is_new_user:
                 # New user - brainstorming phase
                 brainstorm_request = "Help me brainstorm ideas for this essay"
-                response = await agent.chat(brainstorm_request)
+                response = await agent.handle_message(brainstorm_request)
                 responses.append(response)
             else:
                 # Existing user - leverage profile
                 profile_request = "Can you suggest ideas based on my background?"
-                response = await agent.chat(profile_request)
+                response = await agent.handle_message(profile_request)
                 responses.append(response)
             
             # Step 3: Outline phase
             outline_request = "Create an outline for my essay"
-            response = await agent.chat(outline_request)
+            response = await agent.handle_message(outline_request)
             responses.append(response)
             
             # Step 4: Draft phase
             draft_request = "Write a first draft of my essay"
-            response = await agent.chat(draft_request)
+            response = await agent.handle_message(draft_request)
             responses.append(response)
             
             # Step 5: Revision phase
             revision_request = "Please review and improve my essay"
-            response = await agent.chat(revision_request)
+            response = await agent.handle_message(revision_request)
             responses.append(response)
             
             # Evaluate journey success
@@ -450,7 +450,7 @@ class ComprehensiveTestRunner:
         
         try:
             agent = await self._create_test_agent(f"edge_test_{test_id}")
-            response = await agent.chat(test_input)
+            response = await agent.handle_message(test_input)
             
             # Edge cases should be handled gracefully
             if response and "error" not in response.lower():
@@ -511,7 +511,7 @@ class ComprehensiveTestRunner:
                 responses = await self._test_performance_features(agent)
             else:
                 # Generic integration test
-                response = await agent.chat(f"Test {description}")
+                response = await agent.handle_message(f"Test {description}")
                 responses = [response]
             
             if responses and all(r for r in responses):
@@ -545,10 +545,11 @@ class ComprehensiveTestRunner:
 
     async def _create_test_agent(self, user_id: str, is_new_user: bool = True) -> EssayReActAgent:
         """Create a test agent with appropriate configuration"""
-        memory = AgentMemory(user_id)
+        # Create agent - it will create its own memory internally
+        agent = EssayReActAgent(user_id=user_id)
         
         if not is_new_user:
-            # Create sample profile for existing user
+            # Create sample profile for existing user and store it in agent's memory
             profile = UserProfile(
                 name="Test User",
                 grade="12",
@@ -559,9 +560,8 @@ class ComprehensiveTestRunner:
                 interests=["Computer Science", "Community Service"],
                 essays_written=["identity", "challenge"]
             )
-            memory.store_user_profile(profile)
+            agent.memory.store_user_profile(profile)
         
-        agent = EssayReActAgent(user_id=user_id, memory=memory)
         return agent
 
     async def _test_complete_essay_workflow(self, agent) -> List[str]:
@@ -569,19 +569,19 @@ class ComprehensiveTestRunner:
         responses = []
         
         # Brainstorm
-        response = await agent.chat("Help me brainstorm for Stanford identity essay")
+        response = await agent.handle_message("Help me brainstorm for Stanford identity essay")
         responses.append(response)
         
         # Outline
-        response = await agent.chat("Create an outline")
+        response = await agent.handle_message("Create an outline")
         responses.append(response)
         
         # Draft
-        response = await agent.chat("Write a first draft")
+        response = await agent.handle_message("Write a first draft")
         responses.append(response)
         
         # Revise
-        response = await agent.chat("Revise and improve")
+        response = await agent.handle_message("Revise and improve")
         responses.append(response)
         
         return responses
@@ -591,15 +591,15 @@ class ComprehensiveTestRunner:
         responses = []
         
         # Build context
-        response = await agent.chat("I'm applying to Stanford for computer science")
+        response = await agent.handle_message("I'm applying to Stanford for computer science")
         responses.append(response)
         
         # Test context retention
-        response = await agent.chat("What did I just tell you about my application?")
+        response = await agent.handle_message("What did I just tell you about my application?")
         responses.append(response)
         
         # Test profile building
-        response = await agent.chat("I'm also interested in robotics and volunteer work")
+        response = await agent.handle_message("I'm also interested in robotics and volunteer work")
         responses.append(response)
         
         return responses
@@ -611,7 +611,7 @@ class ComprehensiveTestRunner:
         # Test rapid requests
         start_time = time.time()
         for i in range(5):
-            response = await agent.chat(f"Quick test {i}")
+            response = await agent.handle_message(f"Quick test {i}")
             responses.append(response)
         
         execution_time = time.time() - start_time

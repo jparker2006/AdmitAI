@@ -8,7 +8,7 @@ from __future__ import annotations
 import asyncio
 from typing import Any, Dict, List, Optional, Callable
 
-from essay_agent.planner import EssayPlan
+from essay_agent.models import EssayPlan
 from essay_agent.workflows.base import WorkflowNode, ConditionalNode, WorkflowState
 from essay_agent.workflows import register_workflow_node
 

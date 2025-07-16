@@ -1,0 +1,28 @@
+[
+  {
+    "id": "65d6a97a-de55-4b4a-968d-0e8f421b50eb",
+    "timestamp": "2025-07-15T22:09:57.746350",
+    "user_input": "Test Ensure stable output quality",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.3,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "conversation",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  }
+]

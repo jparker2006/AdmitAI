@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-006",
+  "test_id": "tool_story_analysis",
+  "severity": "HIGH",
+  "category": "Tool Execution",
+  "description": "Tool story_analysis failed with exception",
+  "error_details": "__init__() got an unexpected keyword argument 'memory'",
+  "reproduction_steps": [
+    "Call tool story_analysis",
+    "With input: Analyze why my debate tournament story is compelling",
+    "Exception: __init__() got an unexpected keyword argument 'memory'"
+  ],
+  "timestamp": "2025-07-15T22:05:08.362317",
+  "tools_involved": [],
+  "conversation_context": ""
+}

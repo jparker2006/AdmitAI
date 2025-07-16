@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-091",
+  "test_id": "integration_profile_evolution",
+  "severity": "MEDIUM",
+  "category": "Integration",
+  "description": "Integration test profile_evolution failed",
+  "error_details": "__init__() got an unexpected keyword argument 'memory'",
+  "reproduction_steps": [
+    "Run integration test: Profile evolution",
+    "Description: User data updates affecting recommendations",
+    "Exception: __init__() got an unexpected keyword argument 'memory'"
+  ],
+  "timestamp": "2025-07-15T22:05:08.517106",
+  "tools_involved": [],
+  "conversation_context": ""
+}

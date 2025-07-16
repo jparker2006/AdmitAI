@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-007",
+  "test_id": "journey_upenn_intellectual",
+  "severity": "HIGH",
+  "category": "User Journey",
+  "description": "User journey upenn_intellectual failed",
+  "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+  "reproduction_steps": [
+    "Start upenn_intellectual user journey",
+    "School: UPenn, Type: passion",
+    "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+  ],
+  "timestamp": "2025-07-15T22:08:45.369870",
+  "tools_involved": [],
+  "conversation_context": ""
+}

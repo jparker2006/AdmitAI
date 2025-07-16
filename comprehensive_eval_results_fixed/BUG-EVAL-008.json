@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-008",
+  "test_id": "tool_structure_essay",
+  "severity": "HIGH",
+  "category": "Tool Execution",
+  "description": "Tool structure_essay failed with exception",
+  "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+  "reproduction_steps": [
+    "Call tool structure_essay",
+    "With input: Structure my essay about cultural identity",
+    "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+  ],
+  "timestamp": "2025-07-15T22:06:37.688651",
+  "tools_involved": [],
+  "conversation_context": ""
+}

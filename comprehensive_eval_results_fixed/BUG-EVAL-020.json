@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-020",
+  "test_id": "tool_revise_for_impact",
+  "severity": "HIGH",
+  "category": "Tool Execution",
+  "description": "Tool revise_for_impact failed with exception",
+  "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+  "reproduction_steps": [
+    "Call tool revise_for_impact",
+    "With input: Increase emotional impact of my conclusion",
+    "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+  ],
+  "timestamp": "2025-07-15T22:06:37.712859",
+  "tools_involved": [],
+  "conversation_context": ""
+}

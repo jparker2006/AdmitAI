@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-045",
+  "test_id": "journey_cornell_problem",
+  "severity": "HIGH",
+  "category": "User Journey",
+  "description": "User journey cornell_problem failed",
+  "error_details": "__init__() got an unexpected keyword argument 'memory'",
+  "reproduction_steps": [
+    "Start cornell_problem user journey",
+    "School: Cornell, Type: achievement",
+    "Exception: __init__() got an unexpected keyword argument 'memory'"
+  ],
+  "timestamp": "2025-07-15T22:05:08.462456",
+  "tools_involved": [],
+  "conversation_context": ""
+}

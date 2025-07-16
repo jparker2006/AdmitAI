@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-036",
+  "test_id": "tool_generate_alternatives",
+  "severity": "HIGH",
+  "category": "Tool Execution",
+  "description": "Tool generate_alternatives failed with exception",
+  "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+  "reproduction_steps": [
+    "Call tool generate_alternatives",
+    "With input: Generate alternative approaches to this topic",
+    "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+  ],
+  "timestamp": "2025-07-15T22:06:37.733798",
+  "tools_involved": [],
+  "conversation_context": ""
+}

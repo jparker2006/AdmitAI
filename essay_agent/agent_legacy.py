@@ -13,7 +13,7 @@ from typing import Any, Dict, List
 from essay_agent.memory.simple_memory import SimpleMemory
 from essay_agent.models import EssayPrompt
 from essay_agent.memory.user_profile_schema import UserProfile
-from essay_agent.planner import Phase, EssayPlan, EssayPlanner
+from essay_agent.models import Phase, EssayPlan, EssayPlanner
 from essay_agent.executor import EssayExecutor
 from dataclasses import dataclass, field
 from essay_agent.utils.logging import debug_print

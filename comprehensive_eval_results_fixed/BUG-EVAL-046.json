@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-046",
+  "test_id": "journey_duke_leadership",
+  "severity": "HIGH",
+  "category": "User Journey",
+  "description": "User journey duke_leadership failed",
+  "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+  "reproduction_steps": [
+    "Start duke_leadership user journey",
+    "School: Duke, Type: community",
+    "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+  ],
+  "timestamp": "2025-07-15T22:06:37.755848",
+  "tools_involved": [],
+  "conversation_context": ""
+}

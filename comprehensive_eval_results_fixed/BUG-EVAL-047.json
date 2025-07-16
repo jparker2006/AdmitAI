@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-047",
+  "test_id": "journey_northwestern_why",
+  "severity": "HIGH",
+  "category": "User Journey",
+  "description": "User journey northwestern_why failed",
+  "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+  "reproduction_steps": [
+    "Start northwestern_why user journey",
+    "School: Northwestern, Type: identity",
+    "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+  ],
+  "timestamp": "2025-07-15T22:06:37.760166",
+  "tools_involved": [],
+  "conversation_context": ""
+}

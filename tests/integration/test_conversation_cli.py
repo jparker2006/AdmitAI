@@ -16,7 +16,7 @@ from essay_agent.conversation import ConversationManager, ExecutionStatus, ToolE
 from essay_agent.memory.simple_memory import SimpleMemory
 from essay_agent.memory.user_profile_schema import UserProfile, UserInfo, AcademicProfile, CoreValue, Activity
 from essay_agent.tools import REGISTRY as TOOL_REGISTRY
-from essay_agent.planner import Phase
+from essay_agent.models import Phase
 
 
 @pytest.fixture

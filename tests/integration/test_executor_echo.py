@@ -1,5 +1,5 @@
 from essay_agent.executor import EssayExecutor
-from essay_agent.planner import EssayPlan, Phase
+from essay_agent.models import EssayPlan, Phase
 
 
 def test_executor_graph_success(monkeypatch):

@@ -9,7 +9,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
-from essay_agent.planner import EssayPlan
+from essay_agent.models import EssayPlan
 
 
 # ---------------------------------------------------------------------------

@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-002",
+  "test_id": "tool_brainstorm_specific",
+  "severity": "HIGH",
+  "category": "Tool Execution",
+  "description": "Tool brainstorm_specific failed with exception",
+  "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+  "reproduction_steps": [
+    "Call tool brainstorm_specific",
+    "With input: Brainstorm ideas about my robotics club experience",
+    "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+  ],
+  "timestamp": "2025-07-15T22:06:37.678440",
+  "tools_involved": [],
+  "conversation_context": ""
+}

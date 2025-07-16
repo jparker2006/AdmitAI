@@ -100,4 +100,16 @@ _current_pkg = Path(__file__).parent
 for mod_info in pkgutil.iter_modules([str(_current_pkg)]):
     if mod_info.name == "__init__":
         continue
-    importlib.import_module(f"{__name__}.{mod_info.name}") 
+    importlib.import_module(f"{__name__}.{mod_info.name}")
+
+# ---------------------------------------------------------------------------
+# Tool access functions
+# ---------------------------------------------------------------------------
+
+def get_available_tools() -> Dict[str, BaseTool]:
+    """Get all registered tools.
+    
+    Returns:
+        Dictionary mapping tool names to tool instances
+    """
+    return dict(REGISTRY) 

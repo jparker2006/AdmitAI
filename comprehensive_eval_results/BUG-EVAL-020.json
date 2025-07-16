@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-020",
+  "test_id": "tool_revise_for_impact",
+  "severity": "HIGH",
+  "category": "Tool Execution",
+  "description": "Tool revise_for_impact failed with exception",
+  "error_details": "__init__() got an unexpected keyword argument 'memory'",
+  "reproduction_steps": [
+    "Call tool revise_for_impact",
+    "With input: Increase emotional impact of my conclusion",
+    "Exception: __init__() got an unexpected keyword argument 'memory'"
+  ],
+  "timestamp": "2025-07-15T22:05:08.380347",
+  "tools_involved": [],
+  "conversation_context": ""
+}

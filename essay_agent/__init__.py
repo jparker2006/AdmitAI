@@ -1,7 +1,8 @@
 """
 Essay Agent package initialization.
 
-Exposes convenience factories for quickly instantiating the Planner → Executor loop.
+Modern ReAct agent system for intelligent essay writing assistance.
+Exposes the core EssayReActAgent and essential utilities.
 Nothing heavy should happen at import time – keep side-effects minimal.
 """
 
@@ -33,23 +34,35 @@ if os.getenv("ESSAY_AGENT_DEBUG_WARNINGS", "0") != "1":
     # Fallback: blanket-ignore generic DeprecationWarnings from langchain
     warnings.filterwarnings("ignore", category=DeprecationWarning, module="langchain")
 
-# Public symbols
-# TEMPORARILY COMMENTED FOR TASK-001 VALIDATION
-# from .agent import EssayAgent  # noqa: E402
-
+# Public symbols - Modern ReAct Agent System
 __all__ = [
-    "EssayPlanner",
-    "EssayExecutor",
-    # "EssayAgent",  # Temporarily commented
+    # ReAct Agent System
+    "EssayReActAgent",
+    "AgentMemory",
+    "TOOL_DESCRIPTIONS",
+    
+    # Legacy compatibility (minimal)
+    "EssayExecutor", 
     "load_user_profile",
     "save_user_profile",
 ]
 
-# Core imports
-from .planner import EssayPlanner  # noqa: F401
+# Core ReAct Agent System imports
+try:
+    from .agent.core.react_agent import EssayReActAgent  # noqa: F401
+    from .agent.memory.agent_memory import AgentMemory  # noqa: F401
+    from .agent.tools.tool_descriptions import TOOL_DESCRIPTIONS  # noqa: F401
+except ImportError as e:  # pragma: no cover
+    # Graceful degradation if ReAct agent components not available
+    warnings.warn(f"ReAct agent system not available: {e}")
+    EssayReActAgent = None  # type: ignore
+    AgentMemory = None  # type: ignore
+    TOOL_DESCRIPTIONS = {}  # type: ignore
+
+# Legacy compatibility - keep essential components
 from .executor import EssayExecutor  # noqa: F401
 
-# LLM client convenience exports ---------------------------------------------------
+# LLM client convenience exports
 try:
     from .llm_client import get_chat_llm, track_cost  # noqa: F401
 except ModuleNotFoundError:  # pragma: no cover
@@ -57,10 +70,15 @@ except ModuleNotFoundError:  # pragma: no cover
     get_chat_llm = None  # type: ignore
     track_cost = None  # type: ignore
 
-# Optional – state_manager requires heavy deps not yet installed
+# Memory system utilities
 try:
-    from .state_manager import ConversationStateManager  # noqa: F401
-    __all__.append("ConversationStateManager")
-except ModuleNotFoundError:  # pragma: no cover
-    # Gracefully degrade until dependencies (e.g., tiktoken) are available
-    ConversationStateManager = None  # type: ignore 
+    from .memory import load_user_profile, save_user_profile  # noqa: F401
+except ImportError:  # pragma: no cover
+    # Fallback if memory system not available
+    def load_user_profile(user_id: str) -> dict:
+        """Fallback user profile loader."""
+        return {"user_id": user_id, "preferences": {}}
+    
+    def save_user_profile(user_id: str, profile: dict) -> None:
+        """Fallback user profile saver."""
+        pass 

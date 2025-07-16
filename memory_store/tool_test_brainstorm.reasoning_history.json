@@ -1,0 +1,80 @@
+[
+  {
+    "id": "8ecf055e-1bd3-44dc-b137-34eb214be707",
+    "timestamp": "2025-07-15T22:08:30.106104",
+    "user_input": "Help me brainstorm for Stanford identity essay",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.3,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "conversation",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  },
+  {
+    "id": "8c8d8629-87c7-4ad0-ab1b-811907cdc5b7",
+    "timestamp": "2025-07-15T22:08:45.146682",
+    "user_input": "Help me brainstorm for Stanford identity essay",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.3,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "conversation",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  },
+  {
+    "id": "ed75e3dd-54fe-49e0-8da1-907eb6e9f479",
+    "timestamp": "2025-07-15T22:09:56.885222",
+    "user_input": "Help me brainstorm for Stanford identity essay",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.3,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "conversation",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  }
+]

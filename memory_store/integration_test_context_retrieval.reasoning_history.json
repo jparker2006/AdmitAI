@@ -1,0 +1,28 @@
+[
+  {
+    "id": "0dcd27bf-bb49-46eb-9590-49da4528700b",
+    "timestamp": "2025-07-15T22:09:57.684843",
+    "user_input": "Test Access relevant past conversations",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.3,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "conversation",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  }
+]

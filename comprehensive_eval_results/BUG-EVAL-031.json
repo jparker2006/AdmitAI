@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-031",
+  "test_id": "tool_review_coherence",
+  "severity": "HIGH",
+  "category": "Tool Execution",
+  "description": "Tool review_coherence failed with exception",
+  "error_details": "__init__() got an unexpected keyword argument 'memory'",
+  "reproduction_steps": [
+    "Call tool review_coherence",
+    "With input: Review coherence and logical flow",
+    "Exception: __init__() got an unexpected keyword argument 'memory'"
+  ],
+  "timestamp": "2025-07-15T22:05:08.446473",
+  "tools_involved": [],
+  "conversation_context": ""
+}

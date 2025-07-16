@@ -1,0 +1,25 @@
+{
+  "chat_history": [
+    {
+      "content": "Score my essay using college admissions rubric",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "I'm here to support you with your essay! Whether you need help with ideas, structure, or writing, we can tackle this together. What would you like to focus on?",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "ai",
+      "name": null,
+      "id": null,
+      "example": false,
+      "tool_calls": [],
+      "invalid_tool_calls": []
+    }
+  ],
+  "summary": "Score my essay using college admissions rubric \nI'm here to support you with your essay! Whether you need help with ideas, structure, or writing, we can tackle this together. What would you like to focus on? \nScore my essay using college admissions rubric \nI'm here to support you with your essay! Whether you need help with ideas, structure, or writing, we can tackle this together. What would you like to focus on?"
+}

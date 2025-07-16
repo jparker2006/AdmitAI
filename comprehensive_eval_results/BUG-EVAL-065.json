@@ -1,0 +1,15 @@
+{
+  "bug_id": "BUG-EVAL-065",
+  "test_id": "edge_technical_input",
+  "severity": "MEDIUM",
+  "category": "Edge Case Handling",
+  "description": "Edge case technical_input not handled properly",
+  "error_details": "__init__() got an unexpected keyword argument 'memory'",
+  "reproduction_steps": [
+    "Send edge case input: def fibonacci(n): return n if n <= 1 else fibonacci(n-1) + fibonacci(n-2)",
+    "Exception: __init__() got an unexpected keyword argument 'memory'"
+  ],
+  "timestamp": "2025-07-15T22:05:08.486742",
+  "tools_involved": [],
+  "conversation_context": ""
+}

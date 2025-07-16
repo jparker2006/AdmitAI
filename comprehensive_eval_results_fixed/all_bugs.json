@@ -1,0 +1,1582 @@
+[
+  {
+    "bug_id": "BUG-EVAL-001",
+    "test_id": "tool_brainstorm",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool brainstorm failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool brainstorm",
+      "With input: Help me brainstorm for Stanford identity essay",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.676860",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-002",
+    "test_id": "tool_brainstorm_specific",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool brainstorm_specific failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool brainstorm_specific",
+      "With input: Brainstorm ideas about my robotics club experience",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.678440",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-003",
+    "test_id": "tool_generate_story_ideas",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool generate_story_ideas failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool generate_story_ideas",
+      "With input: Generate story ideas for overcoming challenges",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.679875",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-004",
+    "test_id": "tool_story_development",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool story_development failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool story_development",
+      "With input: Develop my story about learning to code",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.681390",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-005",
+    "test_id": "tool_story_themes",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool story_themes failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool story_themes",
+      "With input: What themes emerge from my volunteer work?",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.684326",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-006",
+    "test_id": "tool_story_analysis",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool story_analysis failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool story_analysis",
+      "With input: Analyze why my debate tournament story is compelling",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.686000",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-007",
+    "test_id": "tool_outline",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool outline failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool outline",
+      "With input: Create outline for my Harvard leadership essay",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.687191",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-008",
+    "test_id": "tool_structure_essay",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool structure_essay failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool structure_essay",
+      "With input: Structure my essay about cultural identity",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.688651",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-009",
+    "test_id": "tool_plan_essay",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool plan_essay failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool plan_essay",
+      "With input: Plan my essay about academic passion for computer science",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.690378",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-010",
+    "test_id": "tool_organize_content",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool organize_content failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool organize_content",
+      "With input: Organize my ideas about community service impact",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.692572",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-011",
+    "test_id": "tool_write_introduction",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool write_introduction failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool write_introduction",
+      "With input: Write compelling intro for my challenge essay",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.695240",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-012",
+    "test_id": "tool_write_body_paragraph",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool write_body_paragraph failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool write_body_paragraph",
+      "With input: Write body paragraph about my research experience",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.696582",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-013",
+    "test_id": "tool_write_conclusion",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool write_conclusion failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool write_conclusion",
+      "With input: Write conclusion tying together my growth themes",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.698139",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-014",
+    "test_id": "tool_draft_essay",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool draft_essay failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool draft_essay",
+      "With input: Draft full essay about my identity as first-gen student",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.699480",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-015",
+    "test_id": "tool_rewrite_paragraph",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool rewrite_paragraph failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool rewrite_paragraph",
+      "With input: Rewrite this paragraph to be more compelling",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.700900",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-016",
+    "test_id": "tool_improve_transitions",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool improve_transitions failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool improve_transitions",
+      "With input: Improve transitions between these paragraphs",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.704161",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-017",
+    "test_id": "tool_add_details",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool add_details failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool add_details",
+      "With input: Add vivid details to my story about moving to America",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.705745",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-018",
+    "test_id": "tool_enhance_voice",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool enhance_voice failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool enhance_voice",
+      "With input: Make my voice stronger in this personal statement",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.707120",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-019",
+    "test_id": "tool_revise_for_clarity",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool revise_for_clarity failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool revise_for_clarity",
+      "With input: Make this paragraph clearer and more direct",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.709829",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-020",
+    "test_id": "tool_revise_for_impact",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool revise_for_impact failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool revise_for_impact",
+      "With input: Increase emotional impact of my conclusion",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.712859",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-021",
+    "test_id": "tool_strengthen_opening",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool strengthen_opening failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool strengthen_opening",
+      "With input: Strengthen the opening of my diversity essay",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.714902",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-022",
+    "test_id": "tool_improve_flow",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool improve_flow failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool improve_flow",
+      "With input: Improve flow between my intro and first body paragraph",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.716713",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-023",
+    "test_id": "tool_polish_language",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool polish_language failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool polish_language",
+      "With input: Polish the language in my final draft",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.718057",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-024",
+    "test_id": "tool_adjust_tone",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool adjust_tone failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool adjust_tone",
+      "With input: Adjust tone to be more reflective and mature",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.719350",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-025",
+    "test_id": "tool_refine_word_choice",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool refine_word_choice failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool refine_word_choice",
+      "With input: Refine word choice to avoid repetition",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.720653",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-026",
+    "test_id": "tool_final_edit",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool final_edit failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool final_edit",
+      "With input: Do final edit pass on my completed essay",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.721775",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-027",
+    "test_id": "tool_analyze_essay",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool analyze_essay failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool analyze_essay",
+      "With input: Analyze strengths and weaknesses of my draft",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.722739",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-028",
+    "test_id": "tool_check_word_count",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool check_word_count failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool check_word_count",
+      "With input: Check if my essay meets 650-word requirement",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.723653",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-029",
+    "test_id": "tool_evaluate_prompt_response",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool evaluate_prompt_response failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool evaluate_prompt_response",
+      "With input: Evaluate how well I addressed the prompt",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.724648",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-030",
+    "test_id": "tool_assess_narrative_structure",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool assess_narrative_structure failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool assess_narrative_structure",
+      "With input: Assess the narrative structure of my story",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.726708",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-031",
+    "test_id": "tool_review_coherence",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool review_coherence failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool review_coherence",
+      "With input: Review coherence and logical flow",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.728082",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-032",
+    "test_id": "tool_score_essay",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool score_essay failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool score_essay",
+      "With input: Score my essay using college admissions rubric",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.729295",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-033",
+    "test_id": "tool_clarify",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool clarify failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool clarify",
+      "With input: I'm confused about how to start my essay",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.730362",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-034",
+    "test_id": "tool_provide_feedback",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool provide_feedback failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool provide_feedback",
+      "With input: Give feedback on my latest draft",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.731526",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-035",
+    "test_id": "tool_suggest_improvements",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool suggest_improvements failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool suggest_improvements",
+      "With input: Suggest specific improvements for my essay",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.732672",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-036",
+    "test_id": "tool_generate_alternatives",
+    "severity": "HIGH",
+    "category": "Tool Execution",
+    "description": "Tool generate_alternatives failed with exception",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Call tool generate_alternatives",
+      "With input: Generate alternative approaches to this topic",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.733798",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-037",
+    "test_id": "journey_stanford_identity",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey stanford_identity failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Start stanford_identity user journey",
+      "School: Stanford, Type: identity",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.735093",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-038",
+    "test_id": "journey_harvard_challenge",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey harvard_challenge failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Start harvard_challenge user journey",
+      "School: Harvard, Type: challenge",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.737010",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-039",
+    "test_id": "journey_mit_stem_passion",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey mit_stem_passion failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Start mit_stem_passion user journey",
+      "School: MIT, Type: passion",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.738660",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-040",
+    "test_id": "journey_yale_community",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey yale_community failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Start yale_community user journey",
+      "School: Yale, Type: community",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.740235",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-041",
+    "test_id": "journey_princeton_growth",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey princeton_growth failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Start princeton_growth user journey",
+      "School: Princeton, Type: achievement",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.741538",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-042",
+    "test_id": "journey_columbia_diversity",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey columbia_diversity failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Start columbia_diversity user journey",
+      "School: Columbia, Type: identity",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.743925",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-043",
+    "test_id": "journey_upenn_intellectual",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey upenn_intellectual failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Start upenn_intellectual user journey",
+      "School: UPenn, Type: passion",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.745999",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-044",
+    "test_id": "journey_brown_open",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey brown_open failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Start brown_open user journey",
+      "School: Brown, Type: identity",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.750662",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-045",
+    "test_id": "journey_cornell_problem",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey cornell_problem failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Start cornell_problem user journey",
+      "School: Cornell, Type: achievement",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.753252",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-046",
+    "test_id": "journey_duke_leadership",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey duke_leadership failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Start duke_leadership user journey",
+      "School: Duke, Type: community",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.755848",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-047",
+    "test_id": "journey_northwestern_why",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey northwestern_why failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Start northwestern_why user journey",
+      "School: Northwestern, Type: identity",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.760166",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-048",
+    "test_id": "journey_uc_personal",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey uc_personal failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Start uc_personal user journey",
+      "School: UC Berkeley, Type: challenge",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.762239",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-049",
+    "test_id": "journey_returning_similar",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey returning_similar failed",
+    "error_details": "3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing",
+    "reproduction_steps": [
+      "Start returning_similar user journey",
+      "School: Stanford, Type: identity",
+      "Exception: 3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing"
+    ],
+    "timestamp": "2025-07-15T22:06:37.764288",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-050",
+    "test_id": "journey_multi_essay_portfolio",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey multi_essay_portfolio failed",
+    "error_details": "3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing",
+    "reproduction_steps": [
+      "Start multi_essay_portfolio user journey",
+      "School: Harvard, Type: challenge",
+      "Exception: 3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing"
+    ],
+    "timestamp": "2025-07-15T22:06:37.766039",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-051",
+    "test_id": "journey_profile_driven_brainstorm",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey profile_driven_brainstorm failed",
+    "error_details": "3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing",
+    "reproduction_steps": [
+      "Start profile_driven_brainstorm user journey",
+      "School: MIT, Type: passion",
+      "Exception: 3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing"
+    ],
+    "timestamp": "2025-07-15T22:06:37.768270",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-052",
+    "test_id": "journey_revision_existing",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey revision_existing failed",
+    "error_details": "3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing",
+    "reproduction_steps": [
+      "Start revision_existing user journey",
+      "School: Yale, Type: community",
+      "Exception: 3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing"
+    ],
+    "timestamp": "2025-07-15T22:06:37.769565",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-053",
+    "test_id": "journey_cross_prompt_reuse",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey cross_prompt_reuse failed",
+    "error_details": "3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing",
+    "reproduction_steps": [
+      "Start cross_prompt_reuse user journey",
+      "School: Princeton, Type: achievement",
+      "Exception: 3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing"
+    ],
+    "timestamp": "2025-07-15T22:06:37.771063",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-054",
+    "test_id": "journey_advanced_complex",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey advanced_complex failed",
+    "error_details": "3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing",
+    "reproduction_steps": [
+      "Start advanced_complex user journey",
+      "School: Columbia, Type: identity",
+      "Exception: 3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing"
+    ],
+    "timestamp": "2025-07-15T22:06:37.772301",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-055",
+    "test_id": "journey_rich_profile",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey rich_profile failed",
+    "error_details": "3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing",
+    "reproduction_steps": [
+      "Start rich_profile user journey",
+      "School: UPenn, Type: passion",
+      "Exception: 3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing"
+    ],
+    "timestamp": "2025-07-15T22:06:37.773630",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-056",
+    "test_id": "journey_time_constrained",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey time_constrained failed",
+    "error_details": "3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing",
+    "reproduction_steps": [
+      "Start time_constrained user journey",
+      "School: Brown, Type: challenge",
+      "Exception: 3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing"
+    ],
+    "timestamp": "2025-07-15T22:06:37.774979",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-057",
+    "test_id": "journey_perfectionist",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey perfectionist failed",
+    "error_details": "3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing",
+    "reproduction_steps": [
+      "Start perfectionist user journey",
+      "School: Cornell, Type: community",
+      "Exception: 3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing"
+    ],
+    "timestamp": "2025-07-15T22:06:37.777379",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-058",
+    "test_id": "journey_struggling_user",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey struggling_user failed",
+    "error_details": "3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing",
+    "reproduction_steps": [
+      "Start struggling_user user journey",
+      "School: Duke, Type: achievement",
+      "Exception: 3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing"
+    ],
+    "timestamp": "2025-07-15T22:06:37.778711",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-059",
+    "test_id": "journey_international_user",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey international_user failed",
+    "error_details": "3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing",
+    "reproduction_steps": [
+      "Start international_user user journey",
+      "School: Northwestern, Type: identity",
+      "Exception: 3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing"
+    ],
+    "timestamp": "2025-07-15T22:06:37.779983",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-060",
+    "test_id": "journey_non_traditional",
+    "severity": "HIGH",
+    "category": "User Journey",
+    "description": "User journey non_traditional failed",
+    "error_details": "3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing",
+    "reproduction_steps": [
+      "Start non_traditional user journey",
+      "School: UC Berkeley, Type: challenge",
+      "Exception: 3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing"
+    ],
+    "timestamp": "2025-07-15T22:06:37.781095",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-061",
+    "test_id": "edge_empty_input",
+    "severity": "MEDIUM",
+    "category": "Edge Case Handling",
+    "description": "Edge case empty_input not handled properly",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Send edge case input: Help me write",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.782374",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-062",
+    "test_id": "edge_long_input",
+    "severity": "MEDIUM",
+    "category": "Edge Case Handling",
+    "description": "Edge case long_input not handled properly",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Send edge case input: I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... I want to write about my life story which is very long... ",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.784159",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-063",
+    "test_id": "edge_nonsensical_input",
+    "severity": "MEDIUM",
+    "category": "Edge Case Handling",
+    "description": "Edge case nonsensical_input not handled properly",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Send edge case input: \ud83c\udf1f\u2728\ud83d\udcab asdf qwerty random text emoji test 123 @#$%",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.786352",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-064",
+    "test_id": "edge_inappropriate_content",
+    "severity": "MEDIUM",
+    "category": "Edge Case Handling",
+    "description": "Edge case inappropriate_content not handled properly",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Send edge case input: Write about illegal activities and violence",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.787420",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-065",
+    "test_id": "edge_technical_input",
+    "severity": "MEDIUM",
+    "category": "Edge Case Handling",
+    "description": "Edge case technical_input not handled properly",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Send edge case input: def fibonacci(n): return n if n <= 1 else fibonacci(n-1) + fibonacci(n-2)",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.788442",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-066",
+    "test_id": "edge_tool_param_mismatch",
+    "severity": "MEDIUM",
+    "category": "Edge Case Handling",
+    "description": "Edge case tool_param_mismatch not handled properly",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Send edge case input: brainstorm with wrong parameters",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.789326",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-067",
+    "test_id": "edge_missing_context",
+    "severity": "MEDIUM",
+    "category": "Edge Case Handling",
+    "description": "Edge case missing_context not handled properly",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Send edge case input: rewrite paragraph without providing text",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.790184",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-068",
+    "test_id": "edge_tool_chain_failure",
+    "severity": "MEDIUM",
+    "category": "Edge Case Handling",
+    "description": "Edge case tool_chain_failure not handled properly",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Send edge case input: complex workflow with intentional failures",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.791148",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-069",
+    "test_id": "edge_timeout_scenario",
+    "severity": "MEDIUM",
+    "category": "Edge Case Handling",
+    "description": "Edge case timeout_scenario not handled properly",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Send edge case input: extremely long processing request",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.792672",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-070",
+    "test_id": "edge_memory_corruption",
+    "severity": "MEDIUM",
+    "category": "Edge Case Handling",
+    "description": "Edge case memory_corruption not handled properly",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Send edge case input: invalid conversation state",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.794057",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-071",
+    "test_id": "edge_rapid_fire",
+    "severity": "MEDIUM",
+    "category": "Edge Case Handling",
+    "description": "Edge case rapid_fire not handled properly",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Send edge case input: multiple quick commands",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.795253",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-072",
+    "test_id": "edge_context_switching",
+    "severity": "MEDIUM",
+    "category": "Edge Case Handling",
+    "description": "Edge case context_switching not handled properly",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Send edge case input: jump between different essays",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.796307",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-073",
+    "test_id": "edge_conversation_interrupt",
+    "severity": "MEDIUM",
+    "category": "Edge Case Handling",
+    "description": "Edge case conversation_interrupt not handled properly",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Send edge case input: start new topic without finishing",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.797386",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-074",
+    "test_id": "edge_help_seeking",
+    "severity": "MEDIUM",
+    "category": "Edge Case Handling",
+    "description": "Edge case help_seeking not handled properly",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Send edge case input: I don't understand how this works",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.798855",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-075",
+    "test_id": "edge_frustration",
+    "severity": "MEDIUM",
+    "category": "Edge Case Handling",
+    "description": "Edge case frustration not handled properly",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Send edge case input: This is confusing and not working",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.799840",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-076",
+    "test_id": "edge_non_essay_request",
+    "severity": "MEDIUM",
+    "category": "Edge Case Handling",
+    "description": "Edge case non_essay_request not handled properly",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Send edge case input: Help me with my resume",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.800793",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-077",
+    "test_id": "edge_invalid_school",
+    "severity": "MEDIUM",
+    "category": "Edge Case Handling",
+    "description": "Edge case invalid_school not handled properly",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Send edge case input: University of Mars",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.801763",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-078",
+    "test_id": "edge_invalid_prompt",
+    "severity": "MEDIUM",
+    "category": "Edge Case Handling",
+    "description": "Edge case invalid_prompt not handled properly",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Send edge case input: Write about nothing in particular",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.802614",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-079",
+    "test_id": "edge_memory_limits",
+    "severity": "MEDIUM",
+    "category": "Edge Case Handling",
+    "description": "Edge case memory_limits not handled properly",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Send edge case input: extremely long conversation",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.803515",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-080",
+    "test_id": "edge_concurrent_usage",
+    "severity": "MEDIUM",
+    "category": "Edge Case Handling",
+    "description": "Edge case concurrent_usage not handled properly",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Send edge case input: multiple simultaneous conversations",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.804502",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-081",
+    "test_id": "integration_complete_essay_workflow",
+    "severity": "MEDIUM",
+    "category": "Integration",
+    "description": "Integration test complete_essay_workflow failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Run integration test: Complete essay from scratch",
+      "Description: Full tool chain execution",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.805399",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-082",
+    "test_id": "integration_iterative_refinement",
+    "severity": "MEDIUM",
+    "category": "Integration",
+    "description": "Integration test iterative_refinement failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Run integration test: Iterative refinement",
+      "Description: Multiple revision cycles using different tools",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.806277",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-083",
+    "test_id": "integration_comparative_analysis",
+    "severity": "MEDIUM",
+    "category": "Integration",
+    "description": "Integration test comparative_analysis failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Run integration test: Comparative analysis",
+      "Description: Generate multiple versions, compare quality",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.807246",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-084",
+    "test_id": "integration_complex_restructuring",
+    "severity": "MEDIUM",
+    "category": "Integration",
+    "description": "Integration test complex_restructuring failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Run integration test: Complex restructuring",
+      "Description: Major essay reorganization mid-process",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.808778",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-085",
+    "test_id": "integration_style_adaptation",
+    "severity": "MEDIUM",
+    "category": "Integration",
+    "description": "Integration test style_adaptation failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Run integration test: Style adaptation",
+      "Description: Adjust essay for different school cultures",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.810187",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-086",
+    "test_id": "integration_topic_pivoting",
+    "severity": "MEDIUM",
+    "category": "Integration",
+    "description": "Integration test topic_pivoting failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Run integration test: Topic pivoting",
+      "Description: Change essay focus while preserving content",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.811469",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-087",
+    "test_id": "integration_quality_improvement",
+    "severity": "MEDIUM",
+    "category": "Integration",
+    "description": "Integration test quality_improvement failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Run integration test: Quality improvement",
+      "Description: Systematic enhancement using analysis tools",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.812551",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-088",
+    "test_id": "integration_deadline_pressure",
+    "severity": "MEDIUM",
+    "category": "Integration",
+    "description": "Integration test deadline_pressure failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Run integration test: Deadline pressure",
+      "Description: Efficient completion under time constraints",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.813764",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-089",
+    "test_id": "integration_long_conversation",
+    "severity": "MEDIUM",
+    "category": "Integration",
+    "description": "Integration test long_conversation failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Run integration test: Long conversation persistence",
+      "Description: 50+ turn conversations",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.815491",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-090",
+    "test_id": "integration_cross_session",
+    "severity": "MEDIUM",
+    "category": "Integration",
+    "description": "Integration test cross_session failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Run integration test: Cross-session continuity",
+      "Description: Resume conversations after restart",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.816456",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-091",
+    "test_id": "integration_profile_evolution",
+    "severity": "MEDIUM",
+    "category": "Integration",
+    "description": "Integration test profile_evolution failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Run integration test: Profile evolution",
+      "Description: User data updates affecting recommendations",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.817343",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-092",
+    "test_id": "integration_multi_essay_context",
+    "severity": "MEDIUM",
+    "category": "Integration",
+    "description": "Integration test multi_essay_context failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Run integration test: Multi-essay context",
+      "Description: Track multiple essays simultaneously",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.818291",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-093",
+    "test_id": "integration_context_retrieval",
+    "severity": "MEDIUM",
+    "category": "Integration",
+    "description": "Integration test context_retrieval failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Run integration test: Context retrieval",
+      "Description: Access relevant past conversations",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.819325",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-094",
+    "test_id": "integration_memory_conflict",
+    "severity": "MEDIUM",
+    "category": "Integration",
+    "description": "Integration test memory_conflict failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Run integration test: Memory conflict resolution",
+      "Description: Handle contradictory user information",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.820536",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-095",
+    "test_id": "integration_high_load",
+    "severity": "MEDIUM",
+    "category": "Integration",
+    "description": "Integration test high_load failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Run integration test: High-load simulation",
+      "Description: Rapid successive tool calls",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.821588",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-096",
+    "test_id": "integration_error_recovery",
+    "severity": "MEDIUM",
+    "category": "Integration",
+    "description": "Integration test error_recovery failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Run integration test: Error recovery",
+      "Description: Graceful handling of various failure modes",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.822487",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-097",
+    "test_id": "integration_quality_consistency",
+    "severity": "MEDIUM",
+    "category": "Integration",
+    "description": "Integration test quality_consistency failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Run integration test: Response quality consistency",
+      "Description: Ensure stable output quality",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.823373",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-098",
+    "test_id": "integration_latency_measurement",
+    "severity": "MEDIUM",
+    "category": "Integration",
+    "description": "Integration test latency_measurement failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Run integration test: Latency measurement",
+      "Description: Track tool execution times",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.824323",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-099",
+    "test_id": "integration_resource_usage",
+    "severity": "MEDIUM",
+    "category": "Integration",
+    "description": "Integration test resource_usage failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Run integration test: Resource usage",
+      "Description: Monitor memory and CPU consumption",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.825699",
+    "tools_involved": [],
+    "conversation_context": ""
+  },
+  {
+    "bug_id": "BUG-EVAL-100",
+    "test_id": "integration_stress_testing",
+    "severity": "MEDIUM",
+    "category": "Integration",
+    "description": "Integration test stress_testing failed",
+    "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+    "reproduction_steps": [
+      "Run integration test: Stress testing",
+      "Description: Push system to operational limits",
+      "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+    ],
+    "timestamp": "2025-07-15T22:06:37.827078",
+    "tools_involved": [],
+    "conversation_context": ""
+  }
+]

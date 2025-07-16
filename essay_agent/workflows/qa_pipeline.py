@@ -16,7 +16,7 @@ from essay_agent.tools.validation_tools import (
     OutlineAlignmentValidator, FinalPolishValidator,
     ComprehensiveValidationResult, ValidationResult, ValidationSeverity, ValidationIssue
 )
-from essay_agent.planner import EssayPlan, Phase
+from essay_agent.models import EssayPlan, Phase
 from essay_agent.utils.logging import tool_trace
 
 

@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-048",
+  "test_id": "journey_uc_personal",
+  "severity": "HIGH",
+  "category": "User Journey",
+  "description": "User journey uc_personal failed",
+  "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+  "reproduction_steps": [
+    "Start uc_personal user journey",
+    "School: UC Berkeley, Type: challenge",
+    "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+  ],
+  "timestamp": "2025-07-15T22:06:37.762239",
+  "tools_involved": [],
+  "conversation_context": ""
+}

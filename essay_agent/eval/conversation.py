@@ -6,6 +6,7 @@ intent recognition accuracy, context tracking, and integration with essay workfl
 
 import json
 import time
+import warnings
 from collections import Counter, defaultdict
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Tuple
@@ -134,9 +135,22 @@ class ConversationEvaluationReport:
 
 
 class ConversationQualityEvaluator:
-    """Evaluates conversation quality across multiple dimensions"""
+    """Evaluates conversation quality across multiple dimensions
+    
+    .. deprecated:: 1.0
+        ConversationQualityEvaluator is deprecated. Use LLMEvaluator from 
+        essay_agent.eval.llm_evaluator for sophisticated conversation evaluation.
+        This class will be removed in a future version.
+    """
     
     def __init__(self, llm_evaluator=None):
+        warnings.warn(
+            "ConversationQualityEvaluator is deprecated and will be removed in a future version. "
+            "Use LLMEvaluator from essay_agent.eval.llm_evaluator instead for more sophisticated "
+            "conversation evaluation with better accuracy and context understanding.",
+            DeprecationWarning,
+            stacklevel=2
+        )
         self.llm_evaluator = llm_evaluator or get_chat_llm()
         self.relevance_threshold = 0.7
         self.helpfulness_threshold = 0.8

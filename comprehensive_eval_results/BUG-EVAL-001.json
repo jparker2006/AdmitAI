@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-001",
+  "test_id": "tool_brainstorm",
+  "severity": "HIGH",
+  "category": "Tool Execution",
+  "description": "Tool brainstorm failed with exception",
+  "error_details": "__init__() got an unexpected keyword argument 'memory'",
+  "reproduction_steps": [
+    "Call tool brainstorm",
+    "With input: Help me brainstorm for Stanford identity essay",
+    "Exception: __init__() got an unexpected keyword argument 'memory'"
+  ],
+  "timestamp": "2025-07-15T22:05:08.356065",
+  "tools_involved": [],
+  "conversation_context": ""
+}

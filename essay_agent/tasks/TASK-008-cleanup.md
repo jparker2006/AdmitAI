@@ -5,7 +5,7 @@
 ## Objective
 Remove legacy code, optimize the new ReAct agent system, and complete the transformation from conversation management to intelligent agent.
 
-## Files to Remove/Archive
+## Files to Archive
 - `essay_agent/conversation.py` (3,197 lines)
 - `essay_agent/tool_selector.py` (661 lines)
 - `essay_agent/planner.py` (457 lines)
@@ -20,7 +20,7 @@ Remove legacy code, optimize the new ReAct agent system, and complete the transf
 - Deployment preparation
 
 ## Success Criteria
-- [ ] Legacy code removed/archived
+- [ ] Legacy code archived
 - [ ] All imports updated
 - [ ] Performance optimized
 - [ ] Documentation complete

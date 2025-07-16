@@ -1,0 +1,28 @@
+[
+  {
+    "id": "40b8f1fc-5fc6-4913-a8d8-7a5d82be4d02",
+    "timestamp": "2025-07-15T22:09:57.581189",
+    "user_input": "Test Resume conversations after restart",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.3,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "conversation",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  }
+]

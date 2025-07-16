@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-022",
+  "test_id": "tool_improve_flow",
+  "severity": "HIGH",
+  "category": "Tool Execution",
+  "description": "Tool improve_flow failed with exception",
+  "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+  "reproduction_steps": [
+    "Call tool improve_flow",
+    "With input: Improve flow between my intro and first body paragraph",
+    "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+  ],
+  "timestamp": "2025-07-15T22:06:37.716713",
+  "tools_involved": [],
+  "conversation_context": ""
+}

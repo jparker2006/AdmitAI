@@ -1,0 +1,15 @@
+{
+  "bug_id": "BUG-EVAL-067",
+  "test_id": "edge_missing_context",
+  "severity": "MEDIUM",
+  "category": "Edge Case Handling",
+  "description": "Edge case missing_context not handled properly",
+  "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+  "reproduction_steps": [
+    "Send edge case input: rewrite paragraph without providing text",
+    "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+  ],
+  "timestamp": "2025-07-15T22:06:37.790184",
+  "tools_involved": [],
+  "conversation_context": ""
+}

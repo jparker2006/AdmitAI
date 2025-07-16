@@ -1,0 +1,28 @@
+[
+  {
+    "id": "14e66b9f-c729-4982-939f-dd0182408a8b",
+    "timestamp": "2025-07-15T22:09:57.422624",
+    "user_input": "I don't understand how this works",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.3,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "conversation",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  }
+]

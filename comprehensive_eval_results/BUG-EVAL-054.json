@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-054",
+  "test_id": "journey_advanced_complex",
+  "severity": "HIGH",
+  "category": "User Journey",
+  "description": "User journey advanced_complex failed",
+  "error_details": "3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing",
+  "reproduction_steps": [
+    "Start advanced_complex user journey",
+    "School: Columbia, Type: identity",
+    "Exception: 3 validation errors for UserProfile\nuser_info\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\nacademic_profile\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing\ncore_values\n  Field required [type=missing, input_value={'name': 'Test User', 'gr...identity', 'challenge']}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.11/v/missing"
+  ],
+  "timestamp": "2025-07-15T22:05:08.472079",
+  "tools_involved": [],
+  "conversation_context": ""
+}

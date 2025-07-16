@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-050",
+  "test_id": "integration_topic_pivoting",
+  "severity": "MEDIUM",
+  "category": "Integration",
+  "description": "Integration test topic_pivoting failed",
+  "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+  "reproduction_steps": [
+    "Run integration test: Topic pivoting",
+    "Description: Change essay focus while preserving content",
+    "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+  ],
+  "timestamp": "2025-07-15T22:08:45.549270",
+  "tools_involved": [],
+  "conversation_context": ""
+}

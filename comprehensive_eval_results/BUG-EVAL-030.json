@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-030",
+  "test_id": "tool_assess_narrative_structure",
+  "severity": "HIGH",
+  "category": "Tool Execution",
+  "description": "Tool assess_narrative_structure failed with exception",
+  "error_details": "__init__() got an unexpected keyword argument 'memory'",
+  "reproduction_steps": [
+    "Call tool assess_narrative_structure",
+    "With input: Assess the narrative structure of my story",
+    "Exception: __init__() got an unexpected keyword argument 'memory'"
+  ],
+  "timestamp": "2025-07-15T22:05:08.444640",
+  "tools_involved": [],
+  "conversation_context": ""
+}

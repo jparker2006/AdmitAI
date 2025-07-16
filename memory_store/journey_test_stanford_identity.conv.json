@@ -1,0 +1,61 @@
+{
+  "chat_history": [
+    {
+      "content": "I need to write a identity essay for Stanford. The prompt is: Some students have a background, identity, interest, or talent that is so meaningful they believe their application would be incomplete without it. If this sounds like you, then please share your story.",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "I'm here to support you with your essay! Whether you need help with ideas, structure, or writing, we can tackle this together. What would you like to focus on?",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "ai",
+      "name": null,
+      "id": null,
+      "example": false,
+      "tool_calls": [],
+      "invalid_tool_calls": []
+    },
+    {
+      "content": "Help me brainstorm ideas for this essay",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "Create an outline for my essay",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "Write a first draft of my essay",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "Please review and improve my essay",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    }
+  ],
+  "summary": "I'm here to support you with your essay! Whether you need help with ideas, structure, or writing, we can tackle this together. What would you like to focus on? \nHelp me brainstorm ideas for this essay \nCreate an outline for my essay \nWrite a first draft of my essay \nPlease review and improve my essay \nI'm here to support you with your essay! Whether you need help with ideas, structure, or writing, we can tackle this together. What would you like to focus on?"
+}

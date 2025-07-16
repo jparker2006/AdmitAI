@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-010",
+  "test_id": "tool_organize_content",
+  "severity": "HIGH",
+  "category": "Tool Execution",
+  "description": "Tool organize_content failed with exception",
+  "error_details": "__init__() got an unexpected keyword argument 'memory'",
+  "reproduction_steps": [
+    "Call tool organize_content",
+    "With input: Organize my ideas about community service impact",
+    "Exception: __init__() got an unexpected keyword argument 'memory'"
+  ],
+  "timestamp": "2025-07-15T22:05:08.367643",
+  "tools_involved": [],
+  "conversation_context": ""
+}

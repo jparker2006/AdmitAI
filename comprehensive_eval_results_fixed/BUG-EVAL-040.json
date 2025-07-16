@@ -1,0 +1,16 @@
+{
+  "bug_id": "BUG-EVAL-040",
+  "test_id": "journey_yale_community",
+  "severity": "HIGH",
+  "category": "User Journey",
+  "description": "User journey yale_community failed",
+  "error_details": "'EssayReActAgent' object has no attribute 'chat'",
+  "reproduction_steps": [
+    "Start yale_community user journey",
+    "School: Yale, Type: community",
+    "Exception: 'EssayReActAgent' object has no attribute 'chat'"
+  ],
+  "timestamp": "2025-07-15T22:06:37.740235",
+  "tools_involved": [],
+  "conversation_context": ""
+}
