@@ -96,6 +96,43 @@ Memory APIs expose: `load_user_profile()`, `save_essay_history()`, `get_conversa
 
 ---
 
+## 🎨 Response Formatting Layer
+
+The ReAct agent features an **intelligent LLM-powered formatting system** that dynamically transforms any tool output into beautiful, contextually appropriate responses.
+
+### 🧠 LLM-Based Dynamic Formatting (Primary)
+- **Context-Aware**: LLM understands user intent and adapts tone accordingly
+- **Universal Compatibility**: Works with any tool automatically without manual configuration
+- **Intelligent Presentation**: Creates engaging markdown with appropriate structure and next steps
+- **Self-Healing**: Gracefully handles any data structure or format
+- **Zero Maintenance**: No need to write tool-specific formatters
+
+### 🛡️ Robust Fallback System
+- **Smart Fallback**: When LLM formatting fails, intelligent fallback provides structured output
+- **Tool-Specific Logic**: Fallback recognizes common patterns (brainstorm, evaluation, etc.)
+- **Always Safe**: Guaranteed to return readable text even in edge cases
+- **Performance**: Fast fallback ensures responsive user experience
+
+### 🔧 Dual Output Modes
+- **Human Mode (Default)**: LLM-generated beautiful responses for interactive use
+- **JSON Mode**: Raw structured data for programmatic integration (via CLI `--json` flags)
+
+### 📝 LLM Formatting Process
+| Step | Process | Benefit |
+|------|---------|---------|
+| **Context Analysis** | LLM analyzes user intent and tool output | Contextually appropriate responses |
+| **Intelligent Structuring** | Dynamic organization with headers, lists, emoji | Easy to scan and understand |
+| **Next Steps Generation** | Suggests relevant follow-up actions | Guides user through essay process |
+| **Tone Adaptation** | Matches communication style to user needs | Engaging, professional interaction |
+
+### 🚀 Advantages Over Manual Formatting
+- **99% Less Code**: Single LLM formatter vs hundreds of lines of tool-specific code
+- **Infinite Adaptability**: Works with any current or future tool
+- **Better Quality**: LLM understands semantic meaning and creates appropriate responses
+- **Maintenance-Free**: No manual updates needed for new tools or data structures
+
+---
+
 ## 🖥️ CLI Commands (v2)
 
 | Command | Purpose | Key Flags |

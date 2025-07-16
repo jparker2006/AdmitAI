@@ -1,7 +1,7 @@
 """Unit tests for evaluation metrics including story diversity and prompt alignment."""
 
 import pytest
-from essay_agent.agent import EssayResult
+from essay_agent.agent_legacy import EssayResult
 from essay_agent.eval.metrics import (
     StoryDiversityScorer,
     story_diversity_score,

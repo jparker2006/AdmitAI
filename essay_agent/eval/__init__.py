@@ -143,7 +143,7 @@ def run_real_evaluation(user_id: str = "real_eval_user", debug: bool = False):
         List of evaluation reports
     """
     import time
-    from essay_agent.agent import EssayAgent
+    from essay_agent.agent_legacy import EssayAgent
     
     results = []
     profile = create_test_profile()

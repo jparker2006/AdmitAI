@@ -15,7 +15,7 @@ from pydantic import BaseModel, Field, field_validator
 from essay_agent.prompts.templates import render_template
 from essay_agent.response_parser import pydantic_parser, safe_parse
 from essay_agent.llm_client import get_chat_llm, call_llm
-from essay_agent.tools.base import ValidatedTool
+from essay_agent.tools.base import ValidatedTool, safe_model_to_dict
 from essay_agent.tools import register_tool
 from essay_agent.prompts.brainstorming import (
     STORY_SUGGESTION_PROMPT,
@@ -123,7 +123,7 @@ class StorySuggestionTool(ValidatedTool):
         # Parse response
         parser = pydantic_parser(StorySuggestionResult)
         parsed_result = safe_parse(parser, response)
-        return parsed_result.model_dump()
+        return safe_model_to_dict(parsed_result)
 
 @register_tool("match_story")
 class StoryMatchingTool(ValidatedTool):
@@ -173,7 +173,7 @@ class StoryMatchingTool(ValidatedTool):
         # Parse response
         parser = pydantic_parser(StoryMatchingResult)
         parsed_result = safe_parse(parser, response)
-        return parsed_result.model_dump()
+        return safe_model_to_dict(parsed_result)
 
 @register_tool("expand_story")
 class StoryExpansionTool(ValidatedTool):
@@ -218,7 +218,7 @@ class StoryExpansionTool(ValidatedTool):
         # Parse response
         parser = pydantic_parser(StoryExpansionResult)
         parsed_result = safe_parse(parser, response)
-        return parsed_result.model_dump()
+        return safe_model_to_dict(parsed_result)
 
 @register_tool("validate_uniqueness")
 class UniquenessValidationTool(ValidatedTool):
@@ -276,4 +276,4 @@ class UniquenessValidationTool(ValidatedTool):
         # Parse response
         parser = pydantic_parser(UniquenessValidationResult)
         parsed_result = safe_parse(parser, response)
-        return parsed_result.model_dump() 
+        return safe_model_to_dict(parsed_result) 

@@ -12,7 +12,7 @@ from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional, Set
 import math
 
-from essay_agent.agent import EssayResult
+from essay_agent.agent_legacy import EssayResult
 
 
 @dataclass

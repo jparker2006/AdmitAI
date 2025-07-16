@@ -1,0 +1,28 @@
+[
+  {
+    "id": "9daa6019-65b4-476d-a740-db789590ba4b",
+    "timestamp": "2025-07-15T21:44:27.055182",
+    "user_input": "I really like the public speaking anxiety story! I was terrified to give presentations but joined Model UN and eventually became our school delegate to state competition. How should I structure this story to make it compelling?",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.8,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "tool_execution",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  }
+]

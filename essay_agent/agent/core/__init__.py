@@ -1,4 +1,20 @@
-"""ReAct agent core module."""
-from .react_agent import EssayReActAgent
+"""ReAct agent core module with complete implementation."""
 
-__all__ = ["EssayReActAgent"] 
+from .react_agent import EssayReActAgent
+from .reasoning_engine import ReasoningEngine, ReasoningResult, ReasoningError
+from .action_executor import ActionExecutor, ActionResult, ActionExecutionError
+
+__all__ = [
+    # Main ReAct agent
+    "EssayReActAgent",
+    
+    # Reasoning components
+    "ReasoningEngine", 
+    "ReasoningResult", 
+    "ReasoningError",
+    
+    # Action execution components
+    "ActionExecutor", 
+    "ActionResult", 
+    "ActionExecutionError"
+] 
