@@ -18,10 +18,12 @@ The entrypoint is also used by integration tests.
 """
 
 import argparse
+import asyncio
 import json
+import os
 import sys
 import textwrap
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from essay_agent.models import EssayPrompt, UserProfile
 from essay_agent.tools import register_tool
@@ -85,6 +87,115 @@ def polish(revised_text: str) -> str:
 
 
 # ---------------------------------------------------------------------------
+# ReAct Agent Demo Integration -----------------------------------------------
+# ---------------------------------------------------------------------------
+
+async def _run_demo_with_agent(prompt: EssayPrompt, profile: UserProfile, as_json: bool) -> Union[str, Dict[str, str]]:
+    """Run demo using ReAct agent for enhanced capabilities."""
+    try:
+        from essay_agent.agent.core.react_agent import EssayReActAgent
+        
+        # Create ReAct agent
+        agent = EssayReActAgent(user_id="demo_user_react")
+        
+        print("🤖 Running Enhanced Demo with ReAct Agent...")
+        print("=" * 50)
+        
+        outputs: Dict[str, str] = {}
+        
+        # Phase 1: Brainstorming
+        print("[1/5] Brainstorming ideas...")
+        brainstorm_response = await agent.handle_message(
+            f"Help me brainstorm creative essay ideas for this prompt: {prompt.text}"
+        )
+        outputs["brainstorm"] = brainstorm_response
+        print("✅ Brainstorming complete")
+        
+        # Phase 2: Story Selection & Outlining
+        print("[2/5] Creating outline...")
+        outline_response = await agent.handle_message(
+            "I like the first idea you suggested. Help me create a detailed outline for that story."
+        )
+        outputs["outline"] = outline_response
+        print("✅ Outline complete")
+        
+        # Phase 3: Drafting
+        print("[3/5] Writing draft...")
+        draft_response = await agent.handle_message(
+            "Now help me write a draft essay based on that outline. Make it engaging and personal."
+        )
+        outputs["draft"] = draft_response
+        print("✅ Draft complete")
+        
+        # Phase 4: Revision
+        print("[4/5] Revising content...")
+        revision_response = await agent.handle_message(
+            "Please review my draft and suggest specific improvements for clarity, flow, and impact."
+        )
+        outputs["revision"] = revision_response
+        print("✅ Revision complete")
+        
+        # Phase 5: Final Polish
+        print("[5/5] Final polishing...")
+        polish_response = await agent.handle_message(
+            "Help me polish this essay for final submission. Check grammar, style, and overall impact."
+        )
+        outputs["final"] = polish_response
+        print("✅ Polishing complete")
+        
+        # Get agent performance metrics
+        metrics = agent.get_session_metrics()
+        outputs["agent_metrics"] = {
+            "total_interactions": metrics["interaction_count"],
+            "total_time": f"{metrics['session_duration']:.1f}s",
+            "avg_response_time": f"{metrics['average_response_time']:.2f}s",
+            "reasoning_success_rate": f"{metrics.get('reasoning_metrics', {}).get('success_rate', 0):.1%}",
+            "execution_success_rate": f"{metrics.get('execution_metrics', {}).get('success_rate', 0):.1%}"
+        }
+        
+        print("\n🎉 ReAct Agent Demo Complete!")
+        print(f"📊 Performance: {metrics['interaction_count']} interactions in {metrics['session_duration']:.1f}s")
+        print(f"⚡ Average response time: {metrics['average_response_time']:.2f}s")
+        
+        if as_json:
+            return outputs
+        else:
+            # Format human-readable output
+            result = "🤖 ENHANCED ESSAY AGENT DEMO (ReAct Intelligence)\n"
+            result += "=" * 55 + "\n\n"
+            
+            phase_names = {
+                "brainstorm": "💡 BRAINSTORMING",
+                "outline": "📋 OUTLINE", 
+                "draft": "✏️ DRAFT",
+                "revision": "🔄 REVISION",
+                "final": "✨ FINAL ESSAY"
+            }
+            
+            for key, name in phase_names.items():
+                if key in outputs:
+                    result += f"{name}\n{'-' * len(name)}\n"
+                    result += f"{outputs[key]}\n\n"
+            
+            # Add performance summary
+            if "agent_metrics" in outputs:
+                metrics_data = outputs["agent_metrics"]
+                result += "📊 PERFORMANCE METRICS\n"
+                result += "-" * 20 + "\n"
+                for metric, value in metrics_data.items():
+                    formatted_metric = metric.replace("_", " ").title()
+                    result += f"{formatted_metric}: {value}\n"
+            
+            return result
+            
+    except ImportError:
+        print("⚠️  ReAct agent not available, falling back to mock demo...")
+        return "ReAct agent not available - please ensure all dependencies are installed"
+    except Exception as e:
+        print(f"❌ Error running ReAct agent demo: {e}")
+        return f"Error running enhanced demo: {e}"
+
+# ---------------------------------------------------------------------------
 # CLI orchestration ----------------------------------------------------------
 # ---------------------------------------------------------------------------
 
@@ -93,11 +204,12 @@ def _validate_non_empty(name: str, value: str) -> None:
         raise RuntimeError(f"{name} returned an empty result.")
 
 
-def run_demo(*, as_json: bool = False) -> str | Dict[str, str]:
-    """Run the mock essay workflow.
+def run_demo(*, as_json: bool = False, use_agent: bool = False) -> Union[str, Dict[str, str]]:
+    """Run the essay workflow with optional ReAct agent integration.
 
     Args:
         as_json: if True, return JSON-serializable dict instead of printing.
+        use_agent: if True and API key available, use ReAct agent instead of mock tools.
     Returns:
         Either the final essay string (human mode) or dict with all phase outputs.
     """
@@ -143,6 +255,10 @@ def run_demo(*, as_json: bool = False) -> str | Dict[str, str]:
             }
         )
 
+    # Check if we should use ReAct agent
+    if use_agent and os.getenv("OPENAI_API_KEY"):
+        return asyncio.run(_run_demo_with_agent(prompt, profile, as_json))
+    
     outputs: Dict[str, str] = {}
 
     try:
@@ -196,10 +312,11 @@ def main(argv: List[str] | None = None) -> None:  # noqa: D401
     parser.add_argument("prompt", nargs="*", help="Essay prompt to answer. If omitted, uses a default.")
     parser.add_argument("--json", action="store_true", help="Output results as JSON instead of human-readable text.")
     parser.add_argument("--agent", action="store_true", help="Run full EssayAgent workflow (requires OPENAI_API_KEY and implemented tools).")
+    parser.add_argument("--use-react", action="store_true", help="Use ReAct agent for enhanced demo (requires OPENAI_API_KEY).")
     args = parser.parse_args(argv)
 
     if args.agent:
-        from essay_agent.agent import EssayAgent
+        from essay_agent.agent_legacy import EssayAgent
         from essay_agent.models import EssayPrompt
         from essay_agent.tools import REGISTRY as TOOL_REGISTRY
 
@@ -276,7 +393,7 @@ def main(argv: List[str] | None = None) -> None:  # noqa: D401
     register_tool("revise")(revise)
     register_tool("polish")(polish)
     
-    result = run_demo(as_json=args.json)
+    result = run_demo(as_json=args.json, use_agent=args.use_react)
 
     if args.json:
         print(json.dumps(result, indent=2))

@@ -50,7 +50,19 @@ def safe_parse(parser: BaseOutputParser, text: str, retries: int = 3) -> Any:
     text = text.strip()
 
     try:
-        return parser.parse(text)
+        result = parser.parse(text)
+        
+        # Only auto-convert to dict for schema parsers, not Pydantic parsers
+        if hasattr(parser, '__class__') and 'PydanticOutputParser' in str(parser.__class__):
+            # PydanticOutputParser - return the Pydantic model as-is
+            return result
+        elif hasattr(result, 'model_dump'):
+            # For other parsers, convert Pydantic models to dicts for consistency
+            return result.model_dump()
+        elif hasattr(result, 'dict'):
+            return result.dict()
+        else:
+            return result
     except Exception as err:  # noqa: BLE001
         if retries <= 0:
             raise ParseError("Failed to parse LLM output") from err
@@ -80,7 +92,15 @@ def safe_parse(parser: BaseOutputParser, text: str, retries: int = 3) -> Any:
                 # If fixing fails, try manual cleanup
                 try:
                     cleaned_text = clean_response_text(text)
-                    return parser.parse(cleaned_text)
+                    result = parser.parse(cleaned_text)
+                    
+                    # Auto-convert Pydantic models to dicts for consistency
+                    if hasattr(result, 'model_dump'):
+                        return result.model_dump()
+                    elif hasattr(result, 'dict'):
+                        return result.dict()
+                    else:
+                        return result
                 except Exception:
                     # Last resort - return a basic fallback
                     return create_fallback_response(text)
@@ -89,7 +109,15 @@ def safe_parse(parser: BaseOutputParser, text: str, retries: int = 3) -> Any:
         # Try manual cleanup
         try:
             cleaned_text = clean_response_text(text)
-            return parser.parse(cleaned_text)
+            result = parser.parse(cleaned_text)
+            
+            # Auto-convert Pydantic models to dicts for consistency
+            if hasattr(result, 'model_dump'):
+                return result.model_dump()
+            elif hasattr(result, 'dict'):
+                return result.dict()
+            else:
+                return result
         except Exception:
             # Last resort - return a basic fallback
             return create_fallback_response(text)

@@ -1,0 +1,135 @@
+{
+  "user_id": "test_HP-004_1752571097",
+  "profile": {
+    "user_info": {
+      "name": "Riley Patel",
+      "grade": 12,
+      "intended_major": "Psychology",
+      "college_list": [
+        "Brown",
+        "Wesleyan",
+        "Oberlin",
+        "Swarthmore"
+      ],
+      "platforms": [
+        "Common App",
+        "Coalition"
+      ]
+    },
+    "academic_profile": {
+      "gpa": 3.75,
+      "test_scores": {
+        "SAT": 1510,
+        "ACT": null
+      },
+      "courses": [
+        "AP Psychology",
+        "AP Literature",
+        "AP History",
+        "AP Math"
+      ],
+      "activities": [
+        {
+          "name": "Cultural Heritage Club",
+          "role": "Co-Founder & President",
+          "duration": "2 years",
+          "description": "Created space for multicultural students to share traditions",
+          "impact": "Grew from 5 to 40 members, hosted 8 cultural celebrations"
+        },
+        {
+          "name": "Mental Health Awareness",
+          "role": "Advocate & Speaker",
+          "duration": "1 year",
+          "description": "Spoke at assemblies about anxiety and depression",
+          "impact": "Reduced stigma, increased counseling center usage by 30%"
+        }
+      ]
+    },
+    "core_values": [
+      {
+        "value": "Authenticity",
+        "description": "Being true to all aspects of identity",
+        "evidence": [
+          "Cultural club",
+          "Mental health advocacy"
+        ],
+        "used_in_essays": []
+      },
+      {
+        "value": "Acceptance",
+        "description": "Creating space for all identities to thrive",
+        "evidence": [
+          "Cultural celebrations",
+          "Mental health talks"
+        ],
+        "used_in_essays": []
+      }
+    ],
+    "defining_moments": [
+      {
+        "title": "Coming Out Speech at Assembly",
+        "description": "Sharing personal mental health story with entire school",
+        "emotional_impact": "Vulnerability leading to authentic connection",
+        "lessons_learned": "Sharing struggles can empower others",
+        "used_in_essays": [],
+        "themes": [
+          "identity",
+          "vulnerability",
+          "authenticity",
+          "courage"
+        ],
+        "story_category": "heritage",
+        "story_weight": 1.0,
+        "college_usage": {}
+      }
+    ],
+    "writing_voice": null,
+    "essay_history": [],
+    "college_story_usage": {}
+  },
+  "history": [
+    {
+      "user_input": "I want to write about my mental health advocacy for Harvard's diversity prompt",
+      "agent_response": "Great! I've brainstormed some story ideas based on your essay prompt:\n\n**1. Cultural Heritage Club Evolution**\nAs Co-Founder of the Cultural Heritage Club, I transformed a small group into a thriving community of 40 members. Our cultural celebrations fostered understanding and acceptance, creating a vibrant space for multicultural students to share their traditions.\n\n**2. Mental Health Advocacy Journey**\nMy journey as a mental health advocate began with speaking at school assemblies about anxiety and depression. These talks reduced stigma and increased counseling center usage by 30%, highlighting my dedication to social impact and community service.\n\n**3. Coming Out Speech Transformation**\nSharing my personal mental health story during a school assembly was a vulnerable yet empowering moment. It taught me that embracing vulnerability can lead to authentic connections and inspire others to share their struggles.\n\nWhich story resonates with you? I can help you create an outline for whichever one you choose!",
+      "timestamp": "2025-07-15T02:18:18.308264",
+      "plan": null,
+      "tool_results": [
+        {
+          "tool_name": "brainstorm",
+          "status": "success",
+          "error": null,
+          "execution_time": 0.979144,
+          "progress_messages": [
+            "Starting brainstorm...",
+            "Executing brainstorm...",
+            "brainstorm completed successfully"
+          ]
+        }
+      ],
+      "execution_time": 0.9873
+    }
+  ],
+  "current_essay_context": {
+    "essay_type": null,
+    "college_target": "Harvard",
+    "current_section": null,
+    "word_count_target": null,
+    "deadline": null,
+    "progress_stage": "planning",
+    "last_updated": "2025-07-15T02:18:17.321200",
+    "extracted_prompt": "my mental health advocacy for Harvard's diversity prompt"
+  },
+  "user_preferences": {
+    "preferred_tone": null,
+    "writing_style": null,
+    "favorite_topics": [],
+    "revision_patterns": {},
+    "tool_usage_patterns": {
+      "brainstorm": 1
+    },
+    "last_updated": "2025-07-15T02:18:18.308301"
+  },
+  "essay_context_history": [],
+  "active": true,
+  "last_saved": "2025-07-15T02:18:18.308452"
+}

@@ -1,5 +1,5 @@
 import pytest
-from essay_agent.agent import EssayAgent
+from essay_agent.agent_legacy import EssayAgent
 from essay_agent.models import EssayPrompt
 from essay_agent.tools import REGISTRY
 

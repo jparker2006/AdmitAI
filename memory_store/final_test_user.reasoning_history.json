@@ -1,0 +1,28 @@
+[
+  {
+    "id": "e80837a3-a52f-43ef-ae93-58db492a8331",
+    "timestamp": "2025-07-15T21:45:18.745581",
+    "user_input": "Help me brainstorm ideas for my college essay. I need to write about a challenge I have overcome.",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.9,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "tool_execution",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  }
+]

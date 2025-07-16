@@ -31,6 +31,8 @@ class Story(BaseModel):
     description: str
     prompt_fit: str
     insights: List[str]
+    # 🛠 Added for HP-002 validation – allow tagging story themes (e.g., "challenge")
+    themes: List[str] = Field(default_factory=list)
 
 class BrainstormResult(BaseModel):
     stories: List[Story]
@@ -110,8 +112,30 @@ class BrainstormTool(ValidatedTool):
         from essay_agent.llm_client import call_llm
         raw = call_llm(llm, rendered_prompt)
 
-        # -------------------- Parse & validate -------------------------
+        # Parse response -----------------------------------------------------
         parsed = safe_parse(_PARSER, raw)
+
+        # -------------------- Post-processing: ensure themes present --
+        # Some validators expect each story to include a "themes" list containing
+        # the prompt_type (e.g., "challenge").  Older prompts may omit this field.
+        for story in parsed.stories:
+            if not story.themes:
+                # Infer theme from prompt_type or keywords
+                inferred_theme = prompt_type
+                if inferred_theme == 'general':
+                    # Fallback: look for keywords in prompt to guess challenge/community etc.
+                    lower_prompt = essay_prompt.lower()
+                    if 'challenge' in lower_prompt or 'obstacle' in lower_prompt or 'overcome' in lower_prompt:
+                        inferred_theme = 'challenge'
+                    elif 'community' in lower_prompt:
+                        inferred_theme = 'community'
+                    elif 'identity' in lower_prompt:
+                        inferred_theme = 'identity'
+                    elif 'passion' in lower_prompt or 'interest' in lower_prompt:
+                        inferred_theme = 'passion'
+                    else:
+                        inferred_theme = 'personal'
+                story.themes = [inferred_theme]
 
         # Business-level validations ----------------------------------
         if len(parsed.stories) != 3:

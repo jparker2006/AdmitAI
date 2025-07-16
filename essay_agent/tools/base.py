@@ -1,16 +1,50 @@
-"""Base classes for LangChain tools with validation & timeout wrappers."""
-
+"""Base classes and utilities for essay agent tools."""
 from __future__ import annotations
 
 import asyncio
+import functools
+import logging
+import time
 import traceback
 from abc import ABC
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, Union
 
 from langchain.tools import BaseTool
-from pydantic import ValidationError
-
+from pydantic import BaseModel, Field, ValidationError
+from essay_agent.llm_client import get_chat_llm
 from essay_agent.tools.errors import ToolError
+
+
+logger = logging.getLogger(__name__)
+
+
+def safe_model_to_dict(result: Any) -> Dict[str, Any]:
+    """Safely convert tool result to dictionary.
+    
+    Handles both Pydantic models and plain dictionaries returned by parsers.
+    
+    Args:
+        result: Result from LLM parsing (could be Pydantic model or dict)
+        
+    Returns:
+        Dictionary representation of the result
+    """
+    if hasattr(result, 'model_dump'):
+        # Pydantic model with model_dump method
+        return result.model_dump()
+    elif isinstance(result, dict):
+        # Already a dictionary
+        return result
+    elif hasattr(result, 'dict'):
+        # Older Pydantic model with dict method
+        return result.dict()
+    else:
+        # Fallback: try to convert to dict
+        try:
+            return dict(result)
+        except (TypeError, ValueError):
+            # Last resort: wrap in a dict
+            return {"result": result}
 
 
 class ValidatedTool(BaseTool, ABC):
@@ -43,10 +77,17 @@ class ValidatedTool(BaseTool, ABC):
         while attempt < self.max_attempts:
             try:
                 if self.timeout is not None:
-                    loop = asyncio.new_event_loop()
-                    result = loop.run_until_complete(
-                        asyncio.wait_for(self._arun_wrapper(*args, **kwargs), timeout=self.timeout)
-                    )
+                    # Check if we're already in an async context
+                    try:
+                        loop = asyncio.get_running_loop()
+                        # We're in an async context, just use sync version for now
+                        # TODO: Implement proper async tool execution
+                        result = self._run(*args, **kwargs)
+                    except RuntimeError:
+                        # No running loop, create new one
+                        result = asyncio.run(
+                            asyncio.wait_for(self._arun_wrapper(*args, **kwargs), timeout=self.timeout)
+                        )
                 else:
                     result = self._run(*args, **kwargs)
 
@@ -70,10 +111,15 @@ class ValidatedTool(BaseTool, ABC):
 
             # Exponential backoff with longer delays
             if attempt < self.max_attempts:
-                import time
-                print(f"🔄 Retrying in {delay:.1f}s...")
-                time.sleep(delay)
-                delay = min(delay * 2, 16.0)  # cap the wait to 16s, higher than before
+                import time, os
+                if os.getenv('ESSAY_AGENT_FAST_TEST', '0') == '1':
+                    # Skip real sleeping to keep tests fast
+                    print("🔄 Retrying immediately (FAST_TEST mode)...")
+                    time.sleep(0.01)
+                else:
+                    print(f"🔄 Retrying in {delay:.1f}s...")
+                    time.sleep(delay)
+                    delay = min(delay * 2, 16.0)  # cap the wait to 16s
 
         return {"ok": None, "error": _format_exc(last_error) if last_error else "Unknown error"}
 

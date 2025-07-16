@@ -1,0 +1,80 @@
+[
+  {
+    "id": "73225458-1dc8-4835-8877-91375cedf988",
+    "timestamp": "2025-07-15T21:30:20.166610",
+    "user_input": "Help me brainstorm ideas for my college essay. I need to write about a challenge I've overcome, but I'm not sure which experience to focus on.",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.9,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "tool_execution",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  },
+  {
+    "id": "628019b9-acaa-4e32-8b75-b245ae65c738",
+    "timestamp": "2025-07-15T21:40:22.198044",
+    "user_input": "Help me brainstorm ideas for my college essay. I need to write about a challenge I've overcome, but I'm not sure which experience to focus on.",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.9,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "tool_execution",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  },
+  {
+    "id": "b80ab668-5f0e-45ac-a101-a05120941a7a",
+    "timestamp": "2025-07-15T21:41:22.837433",
+    "user_input": "I really like the public speaking anxiety story! I was terrified to give presentations but joined Model UN and eventually became our school's delegate to state competition. How should I structure this story to make it compelling?",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.8,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "error",
+    "result": null,
+    "success": false,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  }
+]

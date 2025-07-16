@@ -11,7 +11,7 @@ import json
 from typing import Dict, List
 import tempfile
 
-from essay_agent.agent import EssayAgent
+from essay_agent.agent_legacy import EssayAgent
 from essay_agent.eval.sample_prompts import SAMPLE_PROMPTS, create_test_profile, get_prompt_keywords
 from essay_agent.eval.metrics import evaluate_essay_result, EvaluationReport, story_diversity_score, prompt_alignment_score, _categorize_prompt_type
 from essay_agent.tools import REGISTRY

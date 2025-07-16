@@ -1,0 +1,112 @@
+{
+  "user_id": "test_ER-002_1752571104",
+  "profile": {
+    "user_info": {
+      "name": "Maya Rodriguez",
+      "grade": 12,
+      "intended_major": "International Relations",
+      "college_list": [
+        "Harvard",
+        "Yale",
+        "Georgetown",
+        "Princeton"
+      ],
+      "platforms": [
+        "Common App",
+        "Coalition"
+      ]
+    },
+    "academic_profile": {
+      "gpa": 3.85,
+      "test_scores": {
+        "SAT": 1520,
+        "ACT": 34
+      },
+      "courses": [
+        "AP International Relations",
+        "AP Literature",
+        "AP History",
+        "AP Math"
+      ],
+      "activities": [
+        {
+          "name": "Model UN Secretary-General",
+          "role": "Secretary-General",
+          "duration": "2 years",
+          "description": "Organized international conferences with 200+ delegates",
+          "impact": "Increased participation by 40%, established scholarship fund"
+        },
+        {
+          "name": "Immigration Legal Aid",
+          "role": "Volunteer Translator",
+          "duration": "3 years",
+          "description": "Provided Spanish translation for legal consultations",
+          "impact": "Assisted 50+ families with asylum and citizenship applications"
+        }
+      ]
+    },
+    "core_values": [
+      {
+        "value": "Justice",
+        "description": "Fighting for equality and human rights",
+        "evidence": [
+          "Legal aid work",
+          "Model UN advocacy"
+        ],
+        "used_in_essays": []
+      },
+      {
+        "value": "Cultural Bridge-Building",
+        "description": "Connecting communities across cultural divides",
+        "evidence": [
+          "Translation work",
+          "International conferences"
+        ],
+        "used_in_essays": []
+      }
+    ],
+    "defining_moments": [
+      {
+        "title": "Family Immigration Struggle",
+        "description": "Helping parents navigate complex immigration system",
+        "emotional_impact": "Deep understanding of systemic barriers and injustice",
+        "lessons_learned": "Personal experience drives authentic advocacy",
+        "used_in_essays": [],
+        "themes": [
+          "challenge",
+          "family",
+          "justice",
+          "identity"
+        ],
+        "story_category": "obstacle",
+        "story_weight": 1.0,
+        "college_usage": {}
+      }
+    ],
+    "writing_voice": null,
+    "essay_history": [],
+    "college_story_usage": {}
+  },
+  "history": [
+    {
+      "user_input": "Write a 5000 word essay",
+      "agent_response": "Sure, I can help with that! Writing a 5000-word essay is quite the task, so let's break it down a bit. Do you have a specific topic or subject in mind, or are you starting from scratch? Also, do you have any guidelines or requirements from your teacher or professor that we should keep in mind? Once we have a clearer picture, we can start outlining and organizing your ideas. Don't worry, we'll take it step by step!",
+      "timestamp": "2025-07-15T02:18:24.344175",
+      "plan": null,
+      "tool_results": [],
+      "execution_time": 0.005605
+    }
+  ],
+  "current_essay_context": null,
+  "user_preferences": {
+    "preferred_tone": null,
+    "writing_style": null,
+    "favorite_topics": [],
+    "revision_patterns": {},
+    "tool_usage_patterns": {},
+    "last_updated": "2025-07-15T02:18:24.321757"
+  },
+  "essay_context_history": [],
+  "active": true,
+  "last_saved": "2025-07-15T02:18:24.344279"
+}

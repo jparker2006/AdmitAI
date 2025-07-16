@@ -1,0 +1,126 @@
+{
+  "user_id": "test_EC-005_1752570496",
+  "profile": {
+    "user_info": {
+      "name": "Sam Johnson",
+      "grade": 12,
+      "intended_major": "Social Work",
+      "college_list": [
+        "Columbia",
+        "UCLA",
+        "University of Michigan",
+        "Northwestern"
+      ],
+      "platforms": [
+        "Common App",
+        "Coalition"
+      ]
+    },
+    "academic_profile": {
+      "gpa": 3.8,
+      "test_scores": {
+        "SAT": 1480,
+        "ACT": null
+      },
+      "courses": [
+        "AP Social Work",
+        "AP Literature",
+        "AP History",
+        "AP Math"
+      ],
+      "activities": [
+        {
+          "name": "Homeless Shelter Coordinator",
+          "role": "Volunteer Coordinator",
+          "duration": "3 years",
+          "description": "Organized meal service and life skills workshops",
+          "impact": "Served 1000+ meals, helped 15 people find stable housing"
+        },
+        {
+          "name": "Peer Counseling Program",
+          "role": "Peer Counselor",
+          "duration": "2 years",
+          "description": "Provided emotional support to struggling classmates",
+          "impact": "Supported 25+ students through academic and personal challenges"
+        }
+      ]
+    },
+    "core_values": [
+      {
+        "value": "Service",
+        "description": "Dedicating life to helping others in need",
+        "evidence": [
+          "Shelter work",
+          "Peer counseling"
+        ],
+        "used_in_essays": []
+      },
+      {
+        "value": "Empathy",
+        "description": "Understanding and sharing others' experiences",
+        "evidence": [
+          "Counseling work",
+          "Homeless outreach"
+        ],
+        "used_in_essays": []
+      }
+    ],
+    "defining_moments": [
+      {
+        "title": "Helping Someone Find Housing",
+        "description": "Supporting a homeless individual through housing application",
+        "emotional_impact": "Witnessing transformation from despair to hope",
+        "lessons_learned": "Small actions can create profound change",
+        "used_in_essays": [],
+        "themes": [
+          "service",
+          "community",
+          "empathy",
+          "impact"
+        ],
+        "story_category": "service",
+        "story_weight": 1.0,
+        "college_usage": {}
+      }
+    ],
+    "writing_voice": null,
+    "essay_history": [],
+    "college_story_usage": {}
+  },
+  "history": [
+    {
+      "user_input": "Write a comprehensive 1000-word essay about my goals",
+      "agent_response": "Great! I've brainstormed some story ideas based on your essay prompt:\n\n**1. A Meal that Changed Lives**\nWhile coordinating a meal service at the homeless shelter, I witnessed a man's transformation from hopelessness to optimism. This experience taught me that providing basic needs can ignite hope and change lives profoundly.\n\n**2. The Power of Peer Support**\nAs a peer counselor, I helped a classmate navigate personal challenges, fostering a supportive environment. This role honed my empathy and reinforced my commitment to aiding others through understanding and shared experiences.\n\n**3. Finding Home for the Homeless**\nI assisted a homeless individual in successfully applying for housing, witnessing their journey from despair to hope. This experience reinforced my belief that small actions can lead to profound change in someone's life.\n\nWhich story resonates with you? I can help you create an outline for whichever one you choose!",
+      "timestamp": "2025-07-15T02:08:17.348093",
+      "plan": null,
+      "tool_results": [
+        {
+          "tool_name": "brainstorm",
+          "status": "success",
+          "error": null,
+          "execution_time": 0.98876,
+          "progress_messages": [
+            "Starting brainstorm...",
+            "Executing brainstorm...",
+            "brainstorm completed successfully"
+          ]
+        }
+      ],
+      "execution_time": 0.991746
+    }
+  ],
+  "current_essay_context": null,
+  "user_preferences": {
+    "preferred_tone": null,
+    "writing_style": null,
+    "favorite_topics": [],
+    "revision_patterns": {},
+    "tool_usage_patterns": {
+      "brainstorm": 1
+    },
+    "last_updated": "2025-07-15T02:08:17.348111"
+  },
+  "essay_context_history": [],
+  "active": true,
+  "last_saved": "2025-07-15T02:08:17.348182"
+}
