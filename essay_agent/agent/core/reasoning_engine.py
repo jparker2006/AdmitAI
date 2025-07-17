@@ -19,6 +19,9 @@ from essay_agent.response_parser import safe_parse
 from ..prompt_builder import PromptBuilder  
 from ..prompt_optimizer import PromptOptimizer
 
+# Import Phase 2 LLM-driven components
+from essay_agent.prompts.tool_selection import comprehensive_tool_selector
+
 logger = logging.getLogger(__name__)
 
 
@@ -60,6 +63,9 @@ class ReasoningEngine:
         self.prompt_builder = prompt_builder
         self.prompt_optimizer = prompt_optimizer
         self.llm = get_chat_llm()
+        
+        # Initialize Phase 2 LLM-driven components
+        self.tool_selector = comprehensive_tool_selector
         
         # Performance tracking
         self.reasoning_count = 0
@@ -108,7 +114,7 @@ class ReasoningEngine:
             )
             
             # Check cache first
-            cache_key = self._generate_cache_key(prompt_data["prompt"])
+            cache_key = self._generate_cache_key(prompt_data["prompt"], user_input, context)
             if cache_key in self.response_cache:
                 cached_response = self.response_cache[cache_key]
                 logger.debug("Using cached reasoning response")
@@ -124,17 +130,22 @@ class ReasoningEngine:
             # Parse and validate response
             reasoning_dict = self._parse_reasoning_response(llm_response)
             
+            # PHASE 2 ENHANCEMENT: Use context-aware tool selection for validation/enhancement
+            enhanced_reasoning = await self._enhance_with_context_aware_selection(
+                reasoning_dict, user_input, context
+            )
+            
             # Create structured result
             reasoning_time = time.time() - start_time
             result = ReasoningResult(
-                context_understanding=reasoning_dict.get("context_understanding", ""),
-                reasoning=reasoning_dict.get("reasoning", ""),
-                chosen_tool=reasoning_dict.get("chosen_tool"),
-                tool_args=reasoning_dict.get("tool_args", {}),
-                confidence=reasoning_dict.get("confidence", 0.5),
-                response_type=reasoning_dict.get("response_type", "conversation"),
-                anticipated_follow_up=reasoning_dict.get("anticipated_follow_up", ""),
-                context_flags=reasoning_dict.get("context_flags", []),
+                context_understanding=enhanced_reasoning.get("context_understanding", ""),
+                reasoning=enhanced_reasoning.get("reasoning", ""),
+                chosen_tool=enhanced_reasoning.get("chosen_tool"),
+                tool_args=enhanced_reasoning.get("tool_args", {}),
+                confidence=enhanced_reasoning.get("confidence", 0.5),
+                response_type=enhanced_reasoning.get("response_type", "conversation"),
+                anticipated_follow_up=enhanced_reasoning.get("anticipated_follow_up", ""),
+                context_flags=enhanced_reasoning.get("context_flags", []),
                 reasoning_time=reasoning_time,
                 prompt_version=prompt_data.get("version", "default")
             )
@@ -447,19 +458,40 @@ class ReasoningEngine:
         
         return optimized
     
-    def _generate_cache_key(self, prompt: str) -> str:
-        """Generate cache key for prompt.
+    def _generate_cache_key(self, prompt: str, user_input: str = "", context: Dict[str, Any] = None) -> str:
+        """Generate cache key for prompt including user context.
         
         Args:
-            prompt: The prompt string
+            prompt: LLM prompt text
+            user_input: User's input for context differentiation  
+            context: Context dictionary for additional differentiation
             
         Returns:
             Cache key string
         """
-        # Use a hash of the first 500 chars to create manageable cache keys
         import hashlib
-        prompt_sample = prompt[:500]
-        return hashlib.md5(prompt_sample.encode()).hexdigest()
+        
+        # BUGFIX: Include user input and context in cache key to prevent 
+        # identical responses for different user inputs
+        key_components = [
+            prompt[:500],  # First 500 chars of prompt
+            user_input[:200],  # First 200 chars of user input
+        ]
+        
+        # Add context hash if available
+        if context:
+            # Create a stable hash of relevant context keys
+            context_keys = ["user_profile", "conversation_history", "current_input"]
+            context_parts = []
+            for key in context_keys:
+                if key in context and context[key]:
+                    context_parts.append(f"{key}:{str(context[key])[:100]}")
+            if context_parts:
+                key_components.append(",".join(context_parts))
+        
+        # Create hash of combined components
+        combined = "|".join(key_components)
+        return hashlib.md5(combined.encode()).hexdigest()
     
     def _cache_response(self, cache_key: str, response: str) -> None:
         """Cache LLM response.
@@ -519,4 +551,101 @@ class ReasoningEngine:
             "total_reasoning_time": self.total_reasoning_time,
             "cache_hit_ratio": len(self.response_cache) / max(self.reasoning_count, 1),
             "cache_size": len(self.response_cache)
-        } 
+        }
+    
+    # =========================================================================
+    # Phase 2: Context-Aware Tool Selection Enhancement
+    # =========================================================================
+    
+    async def _enhance_with_context_aware_selection(
+        self,
+        reasoning_dict: Dict[str, Any],
+        user_input: str,
+        context: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Enhance reasoning with context-aware tool selection.
+        
+        This method validates and potentially improves tool selection using the
+        context-aware tool selector, solving Bug #2 (tool selection ignores user evolution).
+        
+        Args:
+            reasoning_dict: Original reasoning from LLM
+            user_input: User's input
+            context: Current context
+            
+        Returns:
+            Enhanced reasoning dictionary
+        """
+        try:
+            enhanced_reasoning = dict(reasoning_dict)  # Copy original
+            
+            # Extract context for tool selection
+            conversation_history = context.get('conversation_history', [])
+            user_profile = context.get('user_profile', {})
+            
+            # Get available tools (simplified for now)
+            available_tools = [
+                'brainstorm', 'outline', 'draft', 'revise', 'polish',
+                'suggest_stories', 'match_story', 'essay_scoring', 'word_count', 'clarify'
+            ]
+            
+            # Get completed tools from conversation history
+            completed_tools = self._extract_completed_tools(conversation_history)
+            
+            # Use comprehensive tool selector for validation/enhancement
+            selected_tools = await self.tool_selector.select_tools_intelligent(
+                user_input=user_input,
+                conversation_history=conversation_history,
+                user_profile=user_profile,
+                available_tools=available_tools,
+                max_tools=1  # Single tool for validation/enhancement
+            )
+            
+            # Validate and potentially improve tool selection
+            original_tool = reasoning_dict.get("chosen_tool")
+            suggested_tool = selected_tools[0] if selected_tools else None
+            
+            # If the comprehensive selector suggests a different tool
+            if (suggested_tool and 
+                suggested_tool != original_tool and 
+                suggested_tool in available_tools):
+                
+                logger.info(f"Comprehensive tool selector suggests '{suggested_tool}' instead of '{original_tool}'")
+                
+                # Update reasoning with better tool selection
+                enhanced_reasoning.update({
+                    "chosen_tool": suggested_tool,
+                    "reasoning": f"{reasoning_dict.get('reasoning', '')} Enhanced with comprehensive tool analysis.",
+                    "confidence": min(reasoning_dict.get("confidence", 0.5) + 0.1, 1.0),  # Slight confidence boost
+                    "context_flags": reasoning_dict.get("context_flags", []) + ["comprehensive_tool_selection"]
+                })
+            
+            # If no tool was originally selected but context suggests one
+            elif not original_tool and suggested_tool:
+                logger.info(f"Comprehensive tool selector suggests '{suggested_tool}' for conversation without tool")
+                
+                enhanced_reasoning.update({
+                    "chosen_tool": suggested_tool,
+                    "response_type": "tool_execution",
+                    "reasoning": f"{reasoning_dict.get('reasoning', '')} Comprehensive analysis suggests tool usage.",
+                    "confidence": 0.8,  # High confidence from comprehensive analysis
+                    "context_flags": reasoning_dict.get("context_flags", []) + ["comprehensive_suggested_tool"]
+                })
+            
+            return enhanced_reasoning
+            
+        except Exception as e:
+            logger.warning(f"Context-aware tool selection enhancement failed: {e}")
+            return reasoning_dict  # Return original reasoning on failure
+    
+    def _extract_completed_tools(self, conversation_history: List[Dict]) -> List[str]:
+        """Extract completed tools from conversation history."""
+        
+        completed_tools = []
+        
+        for turn in conversation_history:
+            tools_used = turn.get('tools_used', [])
+            if isinstance(tools_used, list):
+                completed_tools.extend(tools_used)
+        
+        return completed_tools 

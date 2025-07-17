@@ -15,6 +15,10 @@ from datetime import datetime
 from essay_agent.agent.tools.tool_registry import EnhancedToolRegistry, ENHANCED_REGISTRY
 from essay_agent.agent.memory.agent_memory import AgentMemory
 
+# Import Phase 2 LLM-driven components
+from essay_agent.prompts.tool_selection import comprehensive_tool_selector
+from essay_agent.memory.user_context_extractor import context_extractor
+
 logger = logging.getLogger(__name__)
 
 
@@ -53,6 +57,10 @@ class ActionExecutor:
         """
         self.tool_registry = tool_registry
         self.memory = memory
+        
+        # Initialize Phase 2 LLM-driven components
+        self.tool_selector = comprehensive_tool_selector
+        self.context_extractor = context_extractor
         
         # Performance tracking
         self.execution_count = 0
@@ -111,7 +119,7 @@ class ActionExecutor:
             )
     
     async def _execute_tool_action(self, reasoning: Dict[str, Any], start_time: float) -> ActionResult:
-        """Execute a tool-based action.
+        """Execute a tool-based action with user context integration.
         
         Args:
             reasoning: Reasoning result with tool selection
@@ -130,11 +138,14 @@ class ActionExecutor:
         if not self.tool_registry.has_tool(tool_name):
             raise ActionExecutionError(f"Tool '{tool_name}' not found in registry")
         
-        # Add missing required arguments for specific tools
-        tool_args = self._add_missing_tool_args(tool_name, tool_args)
+        # PHASE 2 ENHANCEMENT: Integrate user context into tool arguments
+        enhanced_tool_args = await self._enhance_tool_args_with_context(tool_name, tool_args, reasoning)
         
-        # Execute the tool
-        result = await self.execute_tool(tool_name, tool_args)
+        # Add missing required arguments for specific tools
+        final_tool_args = self._add_missing_tool_args(tool_name, enhanced_tool_args)
+        
+        # Execute the tool with enhanced arguments
+        result = await self.execute_tool(tool_name, final_tool_args)
         
         execution_time = time.time() - start_time
         self.success_count += 1
@@ -155,10 +166,10 @@ class ActionExecutor:
         stats["total_time"] += execution_time
         stats["avg_time"] = stats["total_time"] / stats["usage_count"]
         
-        # Store execution in memory
+        # Store execution in memory with enhanced arguments
         await self.memory.store_tool_execution(
             tool_name=tool_name,
-            args=tool_args,
+            args=final_tool_args,
             result=result,
             execution_time=execution_time,
             success=True
@@ -497,61 +508,312 @@ class ActionExecutor:
         # Create a copy to avoid modifying the original
         updated_args = tool_args.copy()
         
-        # Apply comprehensive parameter mapping
-        updated_args = self._map_tool_parameters(tool_name, updated_args)
+        # COMPREHENSIVE PARAMETER MAPPING FOR ALL 36+ TOOLS
+        # This mapping ensures every tool gets the correct parameter names and formats
+        tool_parameter_mapping = {
+            # ====================================================================
+            # CORE WORKFLOW TOOLS
+            # ====================================================================
+            'brainstorm': {
+                'user_input': 'essay_prompt',
+                'profile': 'profile',
+                'essay_prompt': 'essay_prompt',
+                'user_profile': 'profile'
+            },
+            'outline': {
+                'user_input': 'chosen_story',
+                'story': 'chosen_story',
+                'chosen_story': 'chosen_story',
+                'essay_prompt': 'essay_prompt',
+                'prompt': 'essay_prompt',
+                'word_count': 'word_count',
+                'word_limit': 'word_count'
+            },
+            'draft': {
+                'outline_dict': 'outline',
+                'outline': 'outline',
+                'essay_prompt': 'essay_prompt',
+                'prompt': 'essay_prompt',
+                'user_stories': 'stories',
+                'stories': 'stories',
+                'voice': 'voice_profile',
+                'voice_profile': 'voice_profile',
+                'word_limit': 'target_word_count',
+                'target_word_count': 'target_word_count'
+            },
+            'revise': {
+                'user_input': 'essay_draft',
+                'draft': 'essay_draft',
+                'essay_draft': 'essay_draft',
+                'essay': 'essay_draft',
+                'instruction': 'revision_focus',
+                'revision_focus': 'revision_focus',
+                'feedback': 'revision_focus'
+            },
+            'polish': {
+                'user_input': 'essay_draft',
+                'draft': 'essay_draft',
+                'essay_draft': 'essay_draft',
+                'essay': 'essay_draft',
+                'style_guide': 'style_preferences',
+                'target_word_count': 'word_limit'
+            },
+            
+            # ====================================================================
+            # BRAINSTORMING & STORY TOOLS
+            # ====================================================================
+            'brainstorm_specific': {
+                'user_input': 'topic',
+                'chosen_story': 'topic',
+                'topic': 'topic',
+                'essay_prompt': 'essay_prompt'
+            },
+            'suggest_stories': {
+                'user_input': 'essay_prompt',
+                'essay_prompt': 'essay_prompt',
+                'prompt': 'essay_prompt',
+                'profile': 'profile'
+            },
+            'match_story': {
+                'user_input': 'story',
+                'chosen_story': 'story',
+                'user_story': 'story',
+                'story': 'story',
+                'essay_prompt': 'essay_prompt',
+                'prompt': 'essay_prompt'
+            },
+            'expand_story': {
+                'user_input': 'story_seed',
+                'story': 'story_seed',
+                'chosen_story': 'story_seed',
+                'story_seed': 'story_seed'
+            },
+            'story_development': {
+                'user_input': 'story',
+                'chosen_story': 'story',
+                'user_story': 'story',
+                'story': 'story'
+            },
+            'story_themes': {
+                'user_input': 'story',
+                'chosen_story': 'story',
+                'user_story': 'story',
+                'story': 'story'
+            },
+            'validate_uniqueness': {
+                'user_input': 'story',
+                'chosen_story': 'story',
+                'story': 'story',
+                'essay_prompt': 'prompt',
+                'prompt': 'prompt'
+            },
+            'story_analysis': {
+                'user_input': 'story',
+                'story': 'story',
+                'chosen_story': 'story'
+            },
+            
+            # ====================================================================
+            # STRUCTURE & OUTLINE TOOLS
+            # ====================================================================
+            'structure_validator': {
+                'user_input': 'outline',
+                'outline': 'outline',
+                'essay_prompt': 'essay_prompt'
+            },
+            'improve_transitions': {
+                'user_input': 'essay_content',
+                'essay': 'essay_content',
+                'content': 'essay_content'
+            },
+            'organize_content': {
+                'user_input': 'content',
+                'content': 'content',
+                'structure_type': 'organization_method'
+            },
+            
+            # ====================================================================
+            # WRITING & DRAFTING TOOLS
+            # ====================================================================
+            'write_introduction': {
+                'user_input': 'essay_context',
+                'context': 'essay_context',
+                'essay_prompt': 'essay_prompt',
+                'story': 'chosen_story'
+            },
+            'write_body_paragraph': {
+                'user_input': 'paragraph_focus',
+                'focus': 'paragraph_focus',
+                'content': 'paragraph_content',
+                'story': 'story_context'
+            },
+            'write_conclusion': {
+                'user_input': 'essay_context',
+                'context': 'essay_context',
+                'themes': 'key_themes',
+                'growth': 'growth_message'
+            },
+            'draft_essay': {
+                'user_input': 'essay_prompt',
+                'essay_prompt': 'essay_prompt',
+                'outline': 'outline',
+                'story': 'chosen_story'
+            },
+            'rewrite_paragraph': {
+                'user_input': 'paragraph',
+                'paragraph': 'paragraph',
+                'instruction': 'style_instruction',
+                'style_instruction': 'style_instruction',
+                'voice': 'voice_profile',
+                'voice_profile': 'voice_profile'
+            },
+            'expand_outline_section': {
+                'user_input': 'section',
+                'section': 'section',
+                'outline': 'full_outline',
+                'details': 'expansion_details'
+            },
+            
+            # ====================================================================
+            # EVALUATION & SCORING TOOLS
+            # ====================================================================
+            'essay_scoring': {
+                'user_input': 'essay',
+                'essay': 'essay',
+                'draft': 'essay',
+                'essay_prompt': 'essay_prompt',
+                'rubric': 'scoring_criteria'
+            },
+            'weakness_highlight': {
+                'user_input': 'essay',
+                'essay': 'essay',
+                'draft': 'essay',
+                'focus_areas': 'evaluation_criteria'
+            },
+            'cliche_detection': {
+                'user_input': 'essay',
+                'essay': 'essay',
+                'text': 'essay'
+            },
+            'alignment_check': {
+                'user_input': 'essay',
+                'essay': 'essay',
+                'essay_prompt': 'essay_prompt',
+                'prompt': 'essay_prompt'
+            },
+            'comprehensive_validation': {
+                'user_input': 'essay',
+                'essay': 'essay',
+                'essay_prompt': 'essay_prompt',
+                'requirements': 'validation_criteria'
+            },
+            
+            # ====================================================================
+            # POLISH & REFINEMENT TOOLS  
+            # ====================================================================
+            'fix_grammar': {
+                'user_input': 'text',
+                'text': 'text',
+                'essay': 'text'
+            },
+            'optimize_word_count': {
+                'user_input': 'essay',
+                'essay': 'essay',
+                'target_count': 'target_word_count',
+                'word_limit': 'target_word_count'
+            },
+            'strengthen_voice': {
+                'user_input': 'essay',
+                'essay': 'essay',
+                'voice_style': 'target_voice',
+                'personality': 'voice_characteristics'
+            },
+            'improve_flow': {
+                'user_input': 'essay',
+                'essay': 'essay',
+                'flow_issues': 'problem_areas'
+            },
+            
+            # ====================================================================
+            # PROMPT ANALYSIS TOOLS
+            # ====================================================================
+            'classify_prompt': {
+                'user_input': 'essay_prompt',
+                'essay_prompt': 'essay_prompt',
+                'prompt': 'essay_prompt'
+            },
+            'analyze_requirements': {
+                'user_input': 'essay_prompt',
+                'essay_prompt': 'essay_prompt',
+                'prompt': 'essay_prompt'
+            },
+            'extract_keywords': {
+                'user_input': 'prompt_text',
+                'prompt_text': 'prompt_text',
+                'essay_prompt': 'prompt_text'
+            },
+            
+            # ====================================================================
+            # UTILITY & SUPPORT TOOLS
+            # ====================================================================
+            'clarify': {
+                'user_input': 'user_message',
+                'message': 'user_message',
+                'context': 'conversation_context',
+                'conversation_context': 'conversation_context',
+                'ambiguity': 'unclear_aspects'
+            },
+            'echo': {
+                'user_input': 'message',
+                'message': 'message',
+                'text': 'message'
+            },
+            'word_count': {
+                'user_input': 'text',
+                'text': 'text',
+                'essay': 'text',
+                'content': 'text'
+            },
+            
+            # ====================================================================
+            # SPECIALIZED TOOLS
+            # ====================================================================
+            'plan_essay': {
+                'user_input': 'essay_prompt',
+                'essay_prompt': 'essay_prompt',
+                'requirements': 'planning_requirements'
+            },
+            'track_progress': {
+                'user_input': 'current_state',
+                'state': 'current_state',
+                'goals': 'target_goals'
+            },
+            'provide_feedback': {
+                'user_input': 'work_sample',
+                'sample': 'work_sample',
+                'criteria': 'feedback_criteria'
+            }
+        }
         
-        # Add missing arguments for brainstorm tool
-        if tool_name == "brainstorm":
-            # Handle user_profile -> profile conversion (reasoning engine provides user_profile but tool expects profile)
-            if "user_profile" in updated_args:
-                user_profile_dict = updated_args.get("user_profile", {})
-                if isinstance(user_profile_dict, dict):
-                    # Convert user_profile dict to profile string
-                    profile_parts = []
-                    for key, value in user_profile_dict.items():
-                        if value:
-                            profile_parts.append(f"{key}: {value}")
-                    if profile_parts:
-                        updated_args["profile"] = "; ".join(profile_parts)
-                    else:
-                        updated_args["profile"] = "High school student passionate about learning and technology"
+        # Apply parameter mapping if tool has specific mappings
+        if tool_name in tool_parameter_mapping:
+            mapping = tool_parameter_mapping[tool_name]
+            mapped_args = {}
+            
+            # Apply mappings
+            for provided_key, provided_value in updated_args.items():
+                if provided_key in mapping:
+                    mapped_key = mapping[provided_key]
+                    mapped_args[mapped_key] = provided_value
                 else:
-                    updated_args["profile"] = str(user_profile_dict)
-                # Remove the user_profile key since we've converted it to profile
-                del updated_args["user_profile"]
+                    mapped_args[provided_key] = provided_value
             
-            # Add profile if still missing
-            if "profile" not in updated_args:
-                # Get user profile from memory if available
-                try:
-                    user_profile = self.memory.get_user_profile()
-                    if user_profile and user_profile.get("name"):
-                        # Create a simple profile description
-                        profile_parts = []
-                        if user_profile.get("name"):
-                            profile_parts.append(f"Name: {user_profile['name']}")
-                        if user_profile.get("core_values"):
-                            values = [cv.get("value", "") for cv in user_profile.get("core_values", [])]
-                            if values:
-                                profile_parts.append(f"Values: {', '.join(values)}")
-                        if user_profile.get("defining_moments"):
-                            moments = [dm.get("title", "") for dm in user_profile.get("defining_moments", [])]
-                            if moments:
-                                profile_parts.append(f"Key experiences: {', '.join(moments)}")
-                        
-                        if profile_parts:
-                            updated_args["profile"] = "; ".join(profile_parts)
-                        else:
-                            updated_args["profile"] = "High school student passionate about learning and technology"
-                    else:
-                        updated_args["profile"] = "High school student passionate about learning and technology"
-                except Exception:
-                    # Fallback profile if memory access fails
-                    updated_args["profile"] = "High school student passionate about learning and technology"
+            # Add any missing mapped parameters from updated_args
+            for original_key, mapped_key in mapping.items():
+                if original_key in updated_args and mapped_key not in mapped_args:
+                    mapped_args[mapped_key] = updated_args[original_key]
             
-            # Ensure essay_prompt is present
-            if "essay_prompt" not in updated_args:
-                updated_args["essay_prompt"] = "College application essay prompt"
+            updated_args = mapped_args
         
         return updated_args
     
@@ -1036,4 +1298,138 @@ class ActionExecutor:
             if 'voice_profile' not in result:
                 result['voice_profile'] = "Authentic, reflective high school student voice"
         
-        return result 
+        return result
+    
+    # =========================================================================
+    # Phase 2: User Context Integration Methods
+    # =========================================================================
+    
+    async def _enhance_tool_args_with_context(
+        self,
+        tool_name: str,
+        tool_args: Dict[str, Any],
+        reasoning: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """Enhance tool arguments with user context and extracted details.
+        
+        Args:
+            tool_name: Name of the tool being executed
+            tool_args: Original tool arguments
+            reasoning: Reasoning context with user information
+            
+        Returns:
+            Enhanced tool arguments with user context
+        """
+        try:
+            enhanced_args = dict(tool_args)  # Copy original args
+            
+            # Get user profile and context
+            user_profile = self.memory.get_user_profile()
+            
+            # Extract user context from current reasoning if available
+            user_input = reasoning.get('user_input', '')
+            if user_input:
+                user_themes = self.context_extractor.extract_key_themes(user_input)
+                
+                # Enhance args based on tool type and user context
+                if tool_name == 'brainstorm':
+                    enhanced_args = await self._enhance_brainstorm_args(enhanced_args, user_profile, user_themes)
+                elif tool_name == 'outline':
+                    enhanced_args = await self._enhance_outline_args(enhanced_args, user_profile, user_themes)
+                elif tool_name == 'draft':
+                    enhanced_args = await self._enhance_draft_args(enhanced_args, user_profile, user_themes)
+                elif tool_name in ['revise', 'polish']:
+                    enhanced_args = await self._enhance_revision_args(enhanced_args, user_profile, user_themes)
+            
+            return enhanced_args
+            
+        except Exception as e:
+            logger.warning(f"Failed to enhance tool args with context: {e}")
+            return tool_args  # Return original args on failure
+    
+    async def _enhance_brainstorm_args(
+        self,
+        args: Dict[str, Any],
+        user_profile: Dict[str, Any],
+        user_themes: List[str]
+    ) -> Dict[str, Any]:
+        """Enhance brainstorm tool arguments with user context."""
+        
+        enhanced_args = dict(args)
+        
+        # Add user profile if not present
+        if 'profile' not in enhanced_args and user_profile:
+            enhanced_args['profile'] = user_profile
+        
+        # Add extracted themes to prompt context
+        if user_themes and 'prompt' in enhanced_args:
+            prompt = enhanced_args['prompt']
+            enhanced_args['prompt'] = f"{prompt} (Focus on themes: {', '.join(user_themes)})"
+        
+        # Add user experiences if available
+        if user_profile and 'experiences' in user_profile:
+            enhanced_args['user_experiences'] = user_profile['experiences']
+        
+        return enhanced_args
+    
+    async def _enhance_outline_args(
+        self,
+        args: Dict[str, Any],
+        user_profile: Dict[str, Any],
+        user_themes: List[str]
+    ) -> Dict[str, Any]:
+        """Enhance outline tool arguments with user context."""
+        
+        enhanced_args = dict(args)
+        
+        # Add user context to story selection
+        if 'chosen_story' in enhanced_args and user_themes:
+            story = enhanced_args['chosen_story']
+            enhanced_args['story_context'] = {
+                'original_story': story,
+                'user_themes': user_themes,
+                'user_background': user_profile.get('background_details', [])
+            }
+        
+        return enhanced_args
+    
+    async def _enhance_draft_args(
+        self,
+        args: Dict[str, Any],
+        user_profile: Dict[str, Any],
+        user_themes: List[str]
+    ) -> Dict[str, Any]:
+        """Enhance draft tool arguments with user context."""
+        
+        enhanced_args = dict(args)
+        
+        # Add comprehensive user context for essay generation
+        enhanced_args['user_context'] = {
+            'profile': user_profile,
+            'themes': user_themes,
+            'experiences': user_profile.get('experiences', []),
+            'interests': user_profile.get('interests', []),
+            'background': user_profile.get('background_details', [])
+        }
+        
+        return enhanced_args
+    
+    async def _enhance_revision_args(
+        self,
+        args: Dict[str, Any],
+        user_profile: Dict[str, Any],
+        user_themes: List[str]
+    ) -> Dict[str, Any]:
+        """Enhance revision tool arguments with user context."""
+        
+        enhanced_args = dict(args)
+        
+        # Add user voice and style preferences
+        if user_profile:
+            enhanced_args['user_voice_context'] = {
+                'background': user_profile.get('background_details', []),
+                'interests': user_profile.get('interests', []),
+                'themes': user_themes
+            }
+        
+        return enhanced_args 

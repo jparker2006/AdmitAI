@@ -64,6 +64,9 @@ _DEFAULT_MODEL = os.getenv("ESSAY_AGENT_MODEL", "gpt-4o")
 _CACHE_PATH = os.getenv("ESSAY_AGENT_CACHE_PATH", ".essay_agent_cache.sqlite")
 _USE_CACHE = os.getenv("ESSAY_AGENT_CACHE", "1") == "1"
 
+# BUGFIX: Add evaluation mode to disable caching during conversations
+_EVALUATION_MODE = os.getenv("ESSAY_AGENT_EVALUATION_MODE", "0") == "1"
+
 # Rate limiting configuration
 _MIN_REQUEST_INTERVAL = float(os.getenv("ESSAY_AGENT_MIN_REQUEST_INTERVAL", "1.0"))  # seconds between requests
 _last_request_time = 0.0
@@ -71,7 +74,8 @@ _request_lock = threading.Lock()
 
 # Initialise global cache exactly once at import time.  SQLite is persistent,
 # while the in-memory cache avoids disk I/O when disabled.
-if _USE_CACHE:
+# BUGFIX: Disable caching in evaluation mode to prevent identical responses
+if _USE_CACHE and not _EVALUATION_MODE:
     set_llm_cache(SQLiteCache(_CACHE_PATH))
 else:  # pragma: no cover
     set_llm_cache(InMemoryCache())
@@ -178,6 +182,37 @@ def get_completion_llm(**overrides: Any):  # noqa: D401
     """Return a cached **completions** LLM instance (legacy OpenAI)."""
 
     return _completion_llm(**overrides)
+
+
+def set_evaluation_mode(enabled: bool = True):
+    """Enable/disable evaluation mode to control caching behavior.
+    
+    Args:
+        enabled: If True, disables LLM caching to ensure unique responses
+    """
+    global _EVALUATION_MODE
+    _EVALUATION_MODE = enabled
+    
+    # Update cache based on evaluation mode
+    if enabled:
+        # Use in-memory cache for evaluation (no persistence)
+        set_llm_cache(InMemoryCache())
+    else:
+        # Restore persistent cache for normal usage
+        if _USE_CACHE:
+            set_llm_cache(SQLiteCache(_CACHE_PATH))
+        else:
+            set_llm_cache(InMemoryCache())
+
+
+def get_evaluation_mode() -> bool:
+    """Check if evaluation mode is currently enabled.
+    
+    Returns:
+        True if evaluation mode is active
+    """
+    global _EVALUATION_MODE
+    return _EVALUATION_MODE
 
 
 @contextlib.contextmanager

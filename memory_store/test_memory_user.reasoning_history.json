@@ -1,0 +1,106 @@
+[
+  {
+    "id": "22d6361b-c99f-4259-8b0f-06c3432ff92a",
+    "timestamp": "2025-07-16T15:32:37.205132",
+    "user_input": "Hi, I'm Sarah from Stanford studying Computer Science. I love building apps and helping others through technology.",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.8,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "tool_execution",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  },
+  {
+    "id": "efa8c017-f223-4e6b-b0bb-aaf5f3f0397a",
+    "timestamp": "2025-07-16T15:32:38.236039",
+    "user_input": "Can you help me brainstorm essay ideas that highlight my passion for CS?",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.9,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "tool_execution",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  },
+  {
+    "id": "9d342da1-0f22-43b7-a1bf-fc1aebb521b5",
+    "timestamp": "2025-07-16T15:34:35.907837",
+    "user_input": "Hi, I'm Sarah from Stanford studying Computer Science. I love building apps and helping others through technology.",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.9,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "tool_execution",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  },
+  {
+    "id": "2585c73f-a4ff-4abf-be91-c5882afe231f",
+    "timestamp": "2025-07-16T15:34:36.936110",
+    "user_input": "Can you help me brainstorm essay ideas that highlight my passion for CS?",
+    "reasoning_steps": [
+      {
+        "step_number": 1,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.9,
+        "context_used": []
+      },
+      {
+        "step_number": 2,
+        "thought": "",
+        "tool_considered": null,
+        "confidence": 0.5,
+        "context_used": []
+      }
+    ],
+    "final_action": "tool_execution",
+    "result": null,
+    "success": true,
+    "execution_time": 0.0,
+    "context_tokens": 0
+  }
+]

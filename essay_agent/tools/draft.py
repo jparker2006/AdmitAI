@@ -110,9 +110,10 @@ Suggested next step: Retry with simplified outline or manual drafting
         outline: Union[Dict[str, Any], str],
         voice_profile: str,
         word_count: int = 650,
+        user_context: Dict[str, Any] = None,
         **_: Any,
     ) -> Dict[str, str]:  # type: ignore[override]
-        """Generate a full essay draft from an outline with word count enforcement."""
+        """Generate a full essay draft from an outline with user context integration."""
         from essay_agent.tools.errors import ToolError
         import json
         
@@ -147,7 +148,7 @@ Suggested next step: Retry with simplified outline or manual drafting
         # ----------------------- Generate draft with retry logic --------
         try:
             final_draft = self._run_with_word_count_retry(
-                outline_str, voice_profile, word_count
+                outline_str, voice_profile, word_count, user_context
             )
             return {"draft": final_draft}
         except Exception as e:
@@ -167,8 +168,8 @@ Suggested next step: Retry with simplified outline or manual drafting
                 "error": str(e),
             }
 
-    def _run_with_word_count_retry(self, outline_str: str, voice_profile: str, word_count: int) -> str:
-        """Execute draft generation with comprehensive error handling."""
+    def _run_with_word_count_retry(self, outline_str: str, voice_profile: str, word_count: int, user_context: Dict[str, Any] = None) -> str:
+        """Execute draft generation with comprehensive error handling and user context."""
         from essay_agent.utils.logging import debug_print, VERBOSE, tool_trace
         
         max_retries = 3
@@ -186,8 +187,8 @@ Suggested next step: Retry with simplified outline or manual drafting
                 voice_profile_truncated = self._prepare_voice_profile(voice_profile)
                 debug_print(VERBOSE, f"Truncated voice profile length: {len(voice_profile_truncated)} chars")
                 
-                # Generate initial draft
-                current_draft = self._generate_initial_draft(outline_str, voice_profile_truncated, word_count)
+                # Generate initial draft with user context
+                current_draft = self._generate_initial_draft(outline_str, voice_profile_truncated, word_count, user_context)
                 
                 # Validate draft is not empty
                 if not current_draft or not current_draft.strip():
@@ -344,8 +345,8 @@ Suggested next step: Retry with simplified outline or manual drafting
         # Fallback to empty list if no keywords found
         return []
 
-    def _generate_initial_draft(self, outline_str: str, voice_profile: str, word_count: int) -> str:
-        """Generate initial draft focused on content quality."""
+    def _generate_initial_draft(self, outline_str: str, voice_profile: str, word_count: int, user_context: Dict[str, Any] = None) -> str:
+        """Generate initial draft with user context integration for personalized content."""
         # Calculate word count range for self-validation (±10%)
         word_count_min = int(word_count * 0.9)
         word_count_max = int(word_count * 1.1)
@@ -353,19 +354,15 @@ Suggested next step: Retry with simplified outline or manual drafting
         # Extract keywords from outline for prompt
         extracted_keywords = self._extract_keywords_from_outline(outline_str)
         
-        prompt = render_template(
-            DRAFT_PROMPT,
-            outline=outline_str,
-            voice_profile=voice_profile,
-            word_count=word_count,  # Still pass for context, but not enforced
-            word_count_min=word_count_min,
-            word_count_max=word_count_max,
-            extracted_keywords=extracted_keywords,
+        # PHASE 2 ENHANCEMENT: Build enhanced prompt with user context
+        enhanced_prompt = self._build_enhanced_draft_prompt(
+            outline_str, voice_profile, word_count, word_count_min, word_count_max,
+            extracted_keywords, user_context
         )
 
         llm = get_chat_llm()
         from essay_agent.llm_client import call_llm
-        response: str = call_llm(llm, prompt)
+        response: str = call_llm(llm, enhanced_prompt)
 
         # Allow FakeListLLM deterministic fallback
         if isinstance(llm, FakeListLLM):
@@ -427,4 +424,114 @@ Suggested next step: Retry with simplified outline or manual drafting
         if not trimmed_draft:
             raise ValueError("Trimmed draft text is empty.")
 
-        return trimmed_draft 
+        return trimmed_draft
+    
+    def _build_enhanced_draft_prompt(
+        self,
+        outline_str: str,
+        voice_profile: str,
+        word_count: int,
+        word_count_min: int,
+        word_count_max: int,
+        extracted_keywords: list,
+        user_context: Dict[str, Any] = None
+    ) -> str:
+        """Build enhanced draft prompt with user context integration.
+        
+        This method solves Bug #11 by creating personalized essay content that
+        integrates user experiences, interests, and background details.
+        """
+        
+        # Start with base prompt template
+        base_prompt = render_template(
+            DRAFT_PROMPT,
+            outline=outline_str,
+            voice_profile=voice_profile,
+            word_count=word_count,
+            word_count_min=word_count_min,
+            word_count_max=word_count_max,
+            extracted_keywords=extracted_keywords,
+        )
+        
+        # If no user context, return base prompt
+        if not user_context:
+            return base_prompt
+        
+        # Extract user context elements
+        user_profile = user_context.get('profile', {})
+        user_themes = user_context.get('themes', [])
+        user_experiences = user_context.get('experiences', [])
+        user_interests = user_context.get('interests', [])
+        user_background = user_context.get('background', [])
+        
+        # Build context enhancement
+        context_enhancement = self._build_user_context_section(
+            user_profile, user_themes, user_experiences, user_interests, user_background
+        )
+        
+        # Create enhanced prompt with user context
+        enhanced_prompt = f"""
+{base_prompt}
+
+=== USER CONTEXT INTEGRATION ===
+
+{context_enhancement}
+
+INTEGRATION INSTRUCTIONS:
+1. Naturally weave in the user's specific experiences and background details
+2. Use their actual interests and themes to make the essay authentic
+3. Reference their mentioned activities, projects, or achievements
+4. Maintain their authentic voice and perspective
+5. Make connections between their experiences and the essay prompt
+6. Ensure all details feel genuine and personally meaningful
+
+Generate an essay that reflects THIS SPECIFIC USER'S story and experiences.
+"""
+        
+        return enhanced_prompt
+    
+    def _build_user_context_section(
+        self,
+        user_profile: Dict[str, Any],
+        user_themes: List[str],
+        user_experiences: List[str],
+        user_interests: List[str],
+        user_background: List[str]
+    ) -> str:
+        """Build the user context section for prompt enhancement."""
+        
+        context_parts = []
+        
+        # Add user experiences
+        if user_experiences:
+            context_parts.append(f"USER EXPERIENCES: {', '.join(user_experiences)}")
+        
+        # Add user interests
+        if user_interests:
+            context_parts.append(f"USER INTERESTS: {', '.join(user_interests)}")
+        
+        # Add user themes
+        if user_themes:
+            context_parts.append(f"KEY THEMES: {', '.join(user_themes)}")
+        
+        # Add background details
+        if user_background:
+            context_parts.append(f"BACKGROUND: {', '.join(user_background)}")
+        
+        # Add profile details
+        if user_profile:
+            profile_details = []
+            for key, value in user_profile.items():
+                if key in ['experiences', 'interests', 'goals', 'activities'] and value:
+                    if isinstance(value, list):
+                        profile_details.append(f"{key.title()}: {', '.join(str(v) for v in value)}")
+                    else:
+                        profile_details.append(f"{key.title()}: {value}")
+            
+            if profile_details:
+                context_parts.append(f"PROFILE DETAILS: {'; '.join(profile_details)}")
+        
+        if not context_parts:
+            return "No specific user context available - generate authentic personal essay content."
+        
+        return '\n'.join(context_parts) 

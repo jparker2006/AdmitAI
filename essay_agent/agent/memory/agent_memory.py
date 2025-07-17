@@ -693,6 +693,91 @@ class AgentMemory:
     # ReAct Agent Integration Methods
     # ================================================================
     
+    async def update_user_profile(self, updated_profile: Dict[str, Any]) -> None:
+        """Update user profile with new information from context extraction.
+        
+        This method is called by the ReAct agent when new user context is extracted
+        from conversations and needs to be persisted to the memory system.
+        
+        Args:
+            updated_profile: Dictionary containing updated user profile information
+        """
+        try:
+            if not self.hierarchical_memory:
+                logger.warning("Cannot update profile: hierarchical memory not available")
+                return
+            
+            # Get current profile
+            current_profile = self.hierarchical_memory.profile
+            
+            # Update profile fields safely
+            if 'user_info' in updated_profile:
+                user_info = updated_profile['user_info']
+                if hasattr(current_profile, 'user_info'):
+                    # Update existing user_info fields
+                    for key, value in user_info.items():
+                        if hasattr(current_profile.user_info, key) and value:
+                            setattr(current_profile.user_info, key, value)
+            
+            # Update core values if provided
+            if 'core_values' in updated_profile:
+                for cv_data in updated_profile['core_values']:
+                    if isinstance(cv_data, dict) and 'value' in cv_data:
+                        # Check if core value already exists
+                        existing_values = [cv.value for cv in current_profile.core_values]
+                        if cv_data['value'] not in existing_values:
+                            from essay_agent.memory.user_profile_schema import CoreValue
+                            new_cv = CoreValue(
+                                value=cv_data['value'],
+                                description=cv_data.get('description', ''),
+                                manifestations=cv_data.get('manifestations', [])
+                            )
+                            current_profile.core_values.append(new_cv)
+            
+            # Update defining moments if provided
+            if 'defining_moments' in updated_profile:
+                for dm_data in updated_profile['defining_moments']:
+                    if isinstance(dm_data, dict) and 'title' in dm_data:
+                        # Check if defining moment already exists
+                        existing_titles = [dm.title for dm in current_profile.defining_moments]
+                        if dm_data['title'] not in existing_titles:
+                            from essay_agent.memory.user_profile_schema import DefiningMoment
+                            new_dm = DefiningMoment(
+                                title=dm_data['title'],
+                                description=dm_data.get('description', ''),
+                                emotional_impact=dm_data.get('emotional_impact', ''),
+                                lessons_learned=dm_data.get('lessons_learned', ''),
+                                themes=dm_data.get('themes', [])
+                            )
+                            current_profile.defining_moments.append(new_dm)
+            
+            # Update writing voice if provided
+            if 'writing_voice' in updated_profile and updated_profile['writing_voice']:
+                voice_data = updated_profile['writing_voice']
+                if hasattr(current_profile, 'writing_voice') and current_profile.writing_voice:
+                    # Update existing writing voice
+                    for key, value in voice_data.items():
+                        if hasattr(current_profile.writing_voice, key) and value:
+                            setattr(current_profile.writing_voice, key, value)
+                else:
+                    # Create new writing voice
+                    from essay_agent.memory.user_profile_schema import WritingVoice
+                    current_profile.writing_voice = WritingVoice(
+                        tone=voice_data.get('tone', ''),
+                        style=voice_data.get('style', ''),
+                        sophistication_level=voice_data.get('sophistication_level', ''),
+                        preferred_sentence_structures=voice_data.get('preferred_sentence_structures', []),
+                        stylistic_traits=voice_data.get('stylistic_traits', [])
+                    )
+            
+            # Save updated profile
+            self.hierarchical_memory.save()
+            
+            logger.info(f"Updated user profile with new information")
+            
+        except Exception as e:
+            logger.error(f"Error updating user profile: {e}")
+    
     async def store_tool_execution(
         self,
         tool_name: str,

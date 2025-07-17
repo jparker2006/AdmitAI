@@ -24,6 +24,12 @@ from essay_agent.llm_client import get_chat_llm, call_llm
 from .reasoning_engine import ReasoningEngine, ReasoningResult, ReasoningError
 from .action_executor import ActionExecutor, ActionResult, ActionExecutionError
 
+# Import new LLM-driven components for Phase 2
+from essay_agent.prompts.response_generation import response_generator
+from essay_agent.prompts.tool_selection import comprehensive_tool_selector
+from essay_agent.memory.user_context_extractor import context_extractor
+from essay_agent.agent.school_context_injector import school_injector
+
 logger = logging.getLogger(__name__)
 
 
@@ -55,6 +61,12 @@ class EssayReActAgent:
         self.reasoning_engine = ReasoningEngine(self.prompt_builder, self.prompt_optimizer)
         self.action_executor = ActionExecutor(ENHANCED_REGISTRY, self.memory)
         
+        # Initialize new LLM-driven components for Phase 2
+        self.response_generator = response_generator
+        self.tool_selector = comprehensive_tool_selector
+        self.context_extractor = context_extractor
+        self.school_injector = school_injector
+        
         # Performance tracking
         self.session_start = datetime.now()
         self.interaction_count = 0
@@ -63,6 +75,14 @@ class EssayReActAgent:
         # Evaluation tracking attributes (required by conversation_runner)
         self.last_execution_tools = []
         self.last_memory_access = []
+        
+        # BUGFIX: Track actual memory access during current turn
+        self.current_turn_memory_access = []
+        
+        # Phase 2: Response deduplication and context tracking
+        self.recent_responses = []  # Track recent responses for deduplication
+        self.conversation_context = {}  # Track extracted user context
+        self.scenario_context = {}  # Track scenario information (school, etc.)
         
         logger.info(f"EssayReActAgent initialized for user {user_id}")
         
@@ -82,8 +102,14 @@ class EssayReActAgent:
         start_time = time.time()
         self.interaction_count += 1
         
+        # BUGFIX: Reset memory access tracking for this turn
+        self.current_turn_memory_access = []
+        
         try:
-            logger.info(f"Processing message {self.interaction_count}: {user_input[:100]}...")
+            logger.info(f"Starting ReAct interaction #{self.interaction_count}: {user_input[:100]}...")
+            
+            # PHASE 2 ENHANCEMENT: Extract user context and detect school mentions
+            await self._extract_and_update_context(user_input)
             
             # 1. OBSERVE: Get current context
             context = self._observe()
@@ -129,13 +155,8 @@ class EssayReActAgent:
             Dictionary containing user profile, essay state, conversation history, etc.
         """
         try:
-            # Retrieve context using AgentMemory's sophisticated retrieval
-            context = self.memory.retrieve_context(
-                user_input="",  # Will be provided in reasoning
-                context_size=2000,  # Reasonable context window
-                include_patterns=True,
-                include_recent_tools=True
-            )
+            # BUGFIX: Track memory access during retrieval
+            context = self._retrieve_context_with_tracking()
             
             # Add session information
             context["session_info"] = {
@@ -153,14 +174,107 @@ class EssayReActAgent:
             return context
             
         except Exception as e:
-            logger.warning(f"Context observation failed: {e}")
-            # Return minimal context for graceful degradation
+            logger.error(f"Context observation failed: {e}")
+            # Return minimal context on failure
             return {
-                "user_profile": {"user_id": self.user_id},
+                "user_profile": {},
                 "conversation_history": [],
                 "essay_state": {},
-                "error": f"Context retrieval failed: {e}"
+                "session_info": {"interaction_count": self.interaction_count}
             }
+
+    def _retrieve_context_with_tracking(self) -> Dict[str, Any]:
+        """Retrieve context from memory while tracking actual access patterns.
+        
+        Returns:
+            Context dictionary with memory access tracking
+        """
+        context = {}
+        
+        # Track user profile access
+        try:
+            if hasattr(self.memory, 'get_user_profile'):
+                user_profile = self.memory.get_user_profile()
+                if user_profile:
+                    context["user_profile"] = user_profile
+                    self._track_memory_access("user_profile", f"Retrieved profile for {self.user_id}")
+                else:
+                    context["user_profile"] = {}
+            else:
+                context["user_profile"] = {}
+        except Exception as e:
+            logger.warning(f"Failed to access user profile: {e}")
+            context["user_profile"] = {}
+        
+        # Track conversation history access
+        try:
+            if hasattr(self.memory, 'get_recent_history'):
+                history = self.memory.get_recent_history(turns=5)
+                if history:
+                    context["conversation_history"] = history
+                    self._track_memory_access("conversation_history", f"Retrieved {len(history)} conversation turns")
+                else:
+                    context["conversation_history"] = []
+            else:
+                context["conversation_history"] = []
+        except Exception as e:
+            logger.warning(f"Failed to access conversation history: {e}")
+            context["conversation_history"] = []
+        
+        # Track reasoning chains access
+        try:
+            if hasattr(self.memory, 'recent_reasoning_chains') and self.memory.recent_reasoning_chains:
+                context["reasoning_chains"] = self.memory.recent_reasoning_chains[-3:]  # Last 3 chains
+                self._track_memory_access("reasoning_chains", f"Retrieved {len(context['reasoning_chains'])} reasoning chains")
+            else:
+                context["reasoning_chains"] = []
+        except Exception as e:
+            logger.warning(f"Failed to access reasoning chains: {e}")
+            context["reasoning_chains"] = []
+        
+        # Track tool execution history
+        try:
+            if hasattr(self.memory, 'recent_tool_executions') and self.memory.recent_tool_executions:
+                context["tool_history"] = self.memory.recent_tool_executions[-5:]  # Last 5 executions
+                self._track_memory_access("tool_history", f"Retrieved {len(context['tool_history'])} tool executions")
+            else:
+                context["tool_history"] = []
+        except Exception as e:
+            logger.warning(f"Failed to access tool history: {e}")
+            context["tool_history"] = []
+        
+        # Get current essay state if available
+        try:
+            # Try to get essay state from context manager or memory
+            if hasattr(self.memory, 'context_manager') and self.memory.context_manager:
+                essay_state = self.memory.context_manager.get_current_state()
+                if essay_state:
+                    context["essay_state"] = essay_state
+                    self._track_memory_access("essay_state", f"Retrieved current essay state")
+                else:
+                    context["essay_state"] = {}
+            else:
+                context["essay_state"] = {}
+        except Exception as e:
+            logger.warning(f"Failed to access essay state: {e}")
+            context["essay_state"] = {}
+        
+        return context
+    
+    def _track_memory_access(self, access_type: str, description: str) -> None:
+        """Track actual memory access with details.
+        
+        Args:
+            access_type: Type of memory accessed (user_profile, conversation_history, etc.)
+            description: Description of what was accessed
+        """
+        access_record = {
+            "type": access_type,
+            "timestamp": time.time(),
+            "description": description
+        }
+        self.current_turn_memory_access.append(access_record)
+        logger.debug(f"Memory access tracked: {access_type} - {description}")
         
     async def _reason(self, user_input: str, context: Dict[str, Any]) -> ReasoningResult:
         """Use LLM to reason about what action to take.
@@ -244,10 +358,10 @@ class EssayReActAgent:
             )
         
     async def _respond(self, user_input: str, reasoning: ReasoningResult, action_result: ActionResult) -> str:
-        """Generate natural response based on action result.
+        """Generate natural response with LLM-driven enhancements.
         
-        This method creates a natural language response that appropriately
-        communicates the results of the action to the user.
+        This method uses the intelligent response generation system to create
+        contextual, unique responses that integrate user details and avoid duplication.
         
         Args:
             user_input: Original user request
@@ -255,21 +369,48 @@ class EssayReActAgent:
             action_result: Result from action phase
             
         Returns:
-            Natural language response
+            Enhanced natural language response
         """
         try:
             if action_result.success:
                 if action_result.action_type == "tool_execution":
-                    return await self._format_tool_response(action_result, reasoning)
+                    # Use intelligent response generator with context and deduplication
+                    response = await self.response_generator.generate_contextual_response(
+                        user_input=user_input,
+                        tool_result=action_result.result,
+                        conversation_history=self.memory.get_recent_history(5),
+                        user_profile=self.memory.get_user_profile(),
+                        previous_responses=self.recent_responses,
+                        school_context=self.scenario_context.get('school_context')
+                    )
+                    
+                    # Add school-specific context if relevant
+                    if school_name := self._extract_school_name(user_input):
+                        response = await self.school_injector.inject_school_context(
+                            response=response,
+                            school_name=school_name,
+                            user_interests=self._get_user_interests(),
+                            user_context=self.conversation_context,
+                            response_type=action_result.tool_name if hasattr(action_result, 'tool_name') else 'general'
+                        )
+                    
+                    # Cache response for deduplication
+                    self._cache_response(response)
+                    
+                    return response
+                    
                 elif action_result.action_type == "conversation":
-                    return str(action_result.result) if action_result.result else self._generate_default_response()
+                    # Enhanced conversational response
+                    response = await self._generate_contextual_conversation(user_input, reasoning)
+                    self._cache_response(response)
+                    return response
                 else:
                     return self._generate_default_response()
             else:
                 return self._format_error_response(action_result, user_input)
                 
         except Exception as e:
-            logger.error(f"Response generation failed: {e}")
+            logger.error(f"Enhanced response generation failed: {e}")
             return self._generate_fallback_response(user_input)
     
     async def _format_tool_response(self, action_result: ActionResult, reasoning: ReasoningResult) -> str:
@@ -585,54 +726,24 @@ Transform the tool output into a beautiful response that helps the user move for
         try:
             # Clear previous tracking
             self.last_execution_tools = []
-            self.last_memory_access = []
             
             # Track tool execution
             if action_result.action_type == "tool_execution" and action_result.tool_name:
                 self.last_execution_tools = [action_result.tool_name]
                 logger.debug(f"Tracked tool execution: {action_result.tool_name}")
             
-            # Track memory access more comprehensively
-            memory_accesses = []
+            # BUGFIX: Use actual memory access tracking instead of heuristics
+            # Convert current turn memory access to the format expected by evaluation system
+            self.last_memory_access = [access["type"] for access in self.current_turn_memory_access]
             
-            # Track if user profile was accessed (should happen on most interactions)
-            try:
-                if hasattr(self.memory, 'get_user_profile'):
-                    profile = self.memory.get_user_profile()
-                    if profile:
-                        memory_accesses.append('user_profile')
-            except:
-                pass
-            
-            # Track conversation memory access
-            try:
-                if hasattr(self.memory, 'get_recent_history'):
-                    history = self.memory.get_recent_history(turns=1)
-                    if history:
-                        memory_accesses.append('conversation_history')
-            except:
-                pass
-            
-            # Track context retrieval
-            try:
-                if hasattr(self.memory, 'recent_reasoning_chains') and self.memory.recent_reasoning_chains:
-                    memory_accesses.append('reasoning_chains')
-            except:
-                pass
-            
-            # Track if recent tool executions were accessed
-            try:
-                if hasattr(self.memory, 'recent_tool_executions') and self.memory.recent_tool_executions:
-                    memory_accesses.append('tool_history')
-            except:
-                pass
-            
-            # Heuristic: if reasoning mentions user data, mark profile access
-            if any(keyword in reasoning.reasoning.lower() for keyword in ['profile', 'remember', 'previous', 'user', 'experience', 'story', 'background']):
-                if 'user_profile' not in memory_accesses:
-                    memory_accesses.append('user_profile')
-            
-            self.last_memory_access = memory_accesses
+            # Remove duplicates while preserving order
+            seen = set()
+            unique_accesses = []
+            for access_type in self.last_memory_access:
+                if access_type not in seen:
+                    unique_accesses.append(access_type)
+                    seen.add(access_type)
+            self.last_memory_access = unique_accesses
                     
         except Exception as e:
             logger.warning(f"Failed to update tracking attributes: {e}")
@@ -841,4 +952,107 @@ What aspect of your essay feels weakest right now? Structure, details, voice, or
 - Tell me your story and I'll help you structure it effectively
 - Ask specific questions about any aspect of essay writing
 
-What would you like to focus on first? Whether you're just starting or polishing a final draft, I'm here to help you create a compelling essay that showcases your unique story.""" 
+What would you like to focus on first? Whether you're just starting or polishing a final draft, I'm here to help you create a compelling essay that showcases your unique story."""
+    
+    # =========================================================================
+    # Phase 2: LLM-Driven Enhancement Methods
+    # =========================================================================
+    
+    async def _extract_and_update_context(self, user_input: str) -> None:
+        """Extract user context and update conversation state."""
+        
+        try:
+            # Extract user context using the context extractor
+            context_update = await self.context_extractor.extract_and_update_context(
+                user_input=user_input,
+                existing_profile=self.memory.get_user_profile(),
+                conversation_history=self.memory.get_recent_history(3)
+            )
+            
+            # Update conversation context
+            self.conversation_context.update({
+                'latest_experiences': context_update.new_experiences,
+                'latest_interests': context_update.new_interests,
+                'latest_background': context_update.new_background,
+                'latest_goals': context_update.new_goals
+            })
+            
+            # Update user profile in memory
+            if context_update.updated_profile:
+                await self.memory.update_user_profile(context_update.updated_profile)
+            
+            # Detect school mentions and update scenario context
+            school_name = self.school_injector.extract_school_from_input(user_input)
+            if school_name:
+                school_context = self.school_injector.get_school_context(school_name)
+                if school_context:
+                    self.scenario_context['school_context'] = {
+                        'name': school_context.name,
+                        'values': school_context.values,
+                        'programs': school_context.programs,
+                        'culture': school_context.culture
+                    }
+            
+            logger.debug(f"Context extracted: {context_update.integration_summary}")
+            
+        except Exception as e:
+            logger.warning(f"Context extraction failed: {e}")
+    
+    def _extract_school_name(self, user_input: str) -> Optional[str]:
+        """Extract school name from user input or scenario context."""
+        
+        # Check scenario context first
+        if 'school_context' in self.scenario_context:
+            return self.scenario_context['school_context']['name']
+        
+        # Extract from user input
+        return self.school_injector.extract_school_from_input(user_input)
+    
+    def _get_user_interests(self) -> List[str]:
+        """Get user interests from conversation context and profile."""
+        
+        interests = []
+        
+        # From conversation context
+        if 'latest_interests' in self.conversation_context:
+            interests.extend(self.conversation_context['latest_interests'])
+        
+        # From user profile
+        user_profile = self.memory.get_user_profile()
+        if user_profile and 'interests' in user_profile:
+            profile_interests = user_profile['interests']
+            if isinstance(profile_interests, list):
+                interests.extend(profile_interests)
+        
+        return list(set(interests))  # Remove duplicates
+    
+    def _cache_response(self, response: str) -> None:
+        """Cache response for deduplication checking."""
+        
+        self.recent_responses.append(response)
+        
+        # Keep only last 5 responses to prevent memory bloat
+        if len(self.recent_responses) > 5:
+            self.recent_responses = self.recent_responses[-3:]
+    
+    async def _generate_contextual_conversation(self, user_input: str, reasoning: ReasoningResult) -> str:
+        """Generate enhanced conversational response with context integration."""
+        
+        try:
+            # Use the response generator for conversation responses too
+            conversation_result = f"Based on your request: {user_input}, here's my guidance..."
+            
+            response = await self.response_generator.generate_contextual_response(
+                user_input=user_input,
+                tool_result=conversation_result,
+                conversation_history=self.memory.get_recent_history(3),
+                user_profile=self.memory.get_user_profile(),
+                previous_responses=self.recent_responses,
+                school_context=self.scenario_context.get('school_context')
+            )
+            
+            return response
+            
+        except Exception as e:
+            logger.error(f"Contextual conversation generation failed: {e}")
+            return self._generate_helpful_fallback(user_input, "conversation_fallback") 

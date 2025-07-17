@@ -344,56 +344,297 @@ Execute the {tool_name} tool with enhanced context awareness.
         
         return tools
     
-    async def _get_conversation_context(self, context: Dict[str, Any]) -> str:
-        """Get formatted conversation context."""
-        if self.memory and hasattr(self.memory, 'get_conversation_history'):
-            try:
-                history = await self.memory.get_conversation_history(limit=5)
-                return self.context_injector.format_conversation_context(history)
-            except Exception as e:
-                logger.warning("Could not get conversation history: %s", e)
+    def _inject_context_safely(self, context: Dict[str, Any]) -> Dict[str, Any]:
+        """Safely inject context with comprehensive defaults and validation.
         
-        return format_context_for_reasoning(context.get('conversation_history', {}))
+        Args:
+            context: Raw context dictionary from memory system
+            
+        Returns:
+            Safely processed context with all required fields and defaults
+        """
+        safe_context = context.copy() if context else {}
+        
+        # CRITICAL FIX: Ensure all template variables have safe defaults
+        required_defaults = {
+            # Core context fields
+            'user_profile': {},
+            'conversation_history': [],
+            'tool_outputs': {},
+            'user_state': {},
+            'performance_context': {},
+            'memory_context': {},
+            'conversation_context': {},
+            
+            # User profile fields
+            'user_id': 'unknown_user',
+            'user_name': 'Student',
+            'academic_interests': [],
+            'core_values': [],
+            'defining_moments': [],
+            'essay_history': [],
+            
+            # Conversation fields
+            'recent_messages': [],
+            'current_phase': 'planning',
+            'current_essay': {},
+            'word_limit': 650,
+            
+            # Tool execution fields
+            'recent_tools': [],
+            'tool_usage_stats': {},
+            'last_tool_result': None,
+            
+            # Memory fields
+            'semantic_memories': [],
+            'reasoning_chains': [],
+            'pattern_insights': [],
+            
+            # Performance fields
+            'execution_times': {},
+            'success_rates': {},
+            'optimization_suggestions': []
+        }
+        
+        # Apply defaults for missing fields
+        for key, default_value in required_defaults.items():
+            if key not in safe_context:
+                safe_context[key] = default_value
+            elif safe_context[key] is None:
+                safe_context[key] = default_value
+        
+        # NESTED SAFETY: Ensure nested dictionaries are safe
+        if isinstance(safe_context.get('user_profile'), dict):
+            profile_defaults = {
+                'name': safe_context.get('user_name', 'Student'),
+                'core_values': [],
+                'defining_moments': [],
+                'academic_interests': [],
+                'writing_style': 'authentic',
+                'experience_level': 'intermediate'
+            }
+            
+            for key, default in profile_defaults.items():
+                if key not in safe_context['user_profile']:
+                    safe_context['user_profile'][key] = default
+        
+        # CONVERSATION HISTORY SAFETY: Ensure proper format
+        if not isinstance(safe_context.get('conversation_history'), list):
+            safe_context['conversation_history'] = []
+        
+        # Ensure conversation entries have required fields
+        safe_history = []
+        for entry in safe_context['conversation_history']:
+            if isinstance(entry, dict):
+                safe_entry = {
+                    'user': entry.get('user', ''),
+                    'agent': entry.get('agent', ''),
+                    'timestamp': entry.get('timestamp', 'recent')
+                }
+                safe_history.append(safe_entry)
+        safe_context['conversation_history'] = safe_history
+        
+        # TOOL OUTPUTS SAFETY: Ensure proper format
+        if not isinstance(safe_context.get('tool_outputs'), dict):
+            safe_context['tool_outputs'] = {}
+        
+        # PERFORMANCE CONTEXT SAFETY: Ensure metrics are numbers
+        perf_context = safe_context.get('performance_context', {})
+        if not isinstance(perf_context, dict):
+            perf_context = {}
+        
+        perf_defaults = {
+            'average_response_time': 2.5,
+            'success_rate': 0.85,
+            'total_interactions': 1,
+            'recent_tool_success': True
+        }
+        
+        for key, default in perf_defaults.items():
+            if key not in perf_context:
+                perf_context[key] = default
+            elif not isinstance(perf_context[key], (int, float, bool)):
+                perf_context[key] = default
+        
+        safe_context['performance_context'] = perf_context
+        
+        return safe_context
+    
+    async def _get_conversation_context(self, context: Dict[str, Any]) -> str:
+        """Get formatted conversation context with error handling.
+        
+        Args:
+            context: Safe context dictionary
+            
+        Returns:
+            Formatted conversation context string
+        """
+        try:
+            conversation_history = context.get('conversation_history', [])
+            
+            if not conversation_history:
+                return "No previous conversation context available."
+            
+            # Format recent conversation turns
+            formatted_turns = []
+            for turn in conversation_history[-3:]:  # Last 3 turns
+                if isinstance(turn, dict):
+                    user_msg = str(turn.get('user', '')).strip()
+                    agent_msg = str(turn.get('agent', '')).strip()
+                    
+                    if user_msg and agent_msg:
+                        formatted_turns.append(f"User: {user_msg}")
+                        formatted_turns.append(f"Agent: {agent_msg}")
+            
+            if formatted_turns:
+                return "RECENT CONVERSATION:\n" + "\n".join(formatted_turns)
+            else:
+                return "Conversation started but no complete turns yet."
+                
+        except Exception as e:
+            logger.error(f"Error formatting conversation context: {e}")
+            return "Conversation context temporarily unavailable."
     
     async def _get_memory_context(self, context: Dict[str, Any]) -> str:
-        """Get formatted memory context."""
-        if self.memory and hasattr(self.memory, 'get_recent_memories'):
-            try:
-                memories = await self.memory.get_recent_memories(limit=3)
-                return self.context_injector.format_memory_context(memories)
-            except Exception as e:
-                logger.warning("Could not get memory context: %s", e)
+        """Get formatted memory context with error handling.
         
-        return context.get('memory_summary', 'No memory context available.')
-    
-    async def _get_performance_context(self, context: Dict[str, Any]) -> str:
-        """Get formatted performance context."""
-        if self.memory and hasattr(self.memory, 'get_performance_metrics'):
-            try:
-                performance = await self.memory.get_performance_metrics()
-                return get_performance_context(performance)
-            except Exception as e:
-                logger.warning("Could not get performance context: %s", e)
-        
-        return "No performance data available."
+        Args:
+            context: Safe context dictionary
+            
+        Returns:
+            Formatted memory context string
+        """
+        try:
+            user_profile = context.get('user_profile', {})
+            
+            memory_parts = []
+            
+            # Add user profile summary
+            if isinstance(user_profile, dict):
+                name = user_profile.get('name', 'Student')
+                memory_parts.append(f"USER: {name}")
+                
+                # Add core values
+                core_values = user_profile.get('core_values', [])
+                if core_values:
+                    if isinstance(core_values[0], dict):
+                        values_list = [cv.get('value', '') for cv in core_values if cv.get('value')]
+                    else:
+                        values_list = [str(cv) for cf in core_values if cv]
+                    
+                    if values_list:
+                        memory_parts.append(f"VALUES: {', '.join(values_list[:3])}")  # Top 3
+                
+                # Add defining moments
+                defining_moments = user_profile.get('defining_moments', [])
+                if defining_moments:
+                    if isinstance(defining_moments[0], dict):
+                        moments_list = [dm.get('title', '') for dm in defining_moments if dm.get('title')]
+                    else:
+                        moments_list = [str(dm) for dm in defining_moments if dm]
+                    
+                    if moments_list:
+                        memory_parts.append(f"KEY EXPERIENCES: {', '.join(moments_list[:2])}")  # Top 2
+            
+            # Add recent tool usage
+            recent_tools = context.get('recent_tools', [])
+            if recent_tools:
+                memory_parts.append(f"RECENT TOOLS: {', '.join(recent_tools[-3:])}")
+            
+            if memory_parts:
+                return "MEMORY CONTEXT:\n" + "\n".join(memory_parts)
+            else:
+                return "Building memory context from new interactions."
+                
+        except Exception as e:
+            logger.error(f"Error formatting memory context: {e}")
+            return "Memory context temporarily unavailable."
     
     def _format_user_state(self, context: Dict[str, Any]) -> str:
-        """Format current user state information."""
-        state_parts = []
+        """Format user state with error handling.
         
-        if context.get('essay_phase'):
-            state_parts.append(f"Essay Phase: {context['essay_phase']}")
+        Args:
+            context: Safe context dictionary
+            
+        Returns:
+            Formatted user state string
+        """
+        try:
+            state_parts = []
+            
+            # Current essay phase
+            current_phase = context.get('current_phase', 'planning')
+            state_parts.append(f"PHASE: {current_phase}")
+            
+            # Word count progress
+            current_essay = context.get('current_essay', {})
+            if isinstance(current_essay, dict):
+                word_count = current_essay.get('word_count', 0)
+                word_limit = context.get('word_limit', 650)
+                if word_count > 0:
+                    completion = (word_count / word_limit) * 100
+                    state_parts.append(f"PROGRESS: {word_count}/{word_limit} words ({completion:.0f}%)")
+                else:
+                    state_parts.append(f"TARGET: {word_limit} words")
+            
+            # Recent activity
+            recent_tools = context.get('recent_tools', [])
+            if recent_tools:
+                last_tool = recent_tools[-1] if recent_tools else 'none'
+                state_parts.append(f"LAST ACTION: {last_tool}")
+            
+            return "USER STATE:\n" + "\n".join(state_parts)
+            
+        except Exception as e:
+            logger.error(f"Error formatting user state: {e}")
+            return "USER STATE: Active session in progress"
+    
+    async def _get_performance_context(self, context: Dict[str, Any]) -> str:
+        """Get formatted performance context with error handling.
         
-        if context.get('current_goal'):
-            state_parts.append(f"Current Goal: {context['current_goal']}")
-        
-        if context.get('last_action'):
-            state_parts.append(f"Last Action: {context['last_action']}")
-        
-        if context.get('user_mood'):
-            state_parts.append(f"User Mood: {context['user_mood']}")
-        
-        return '\n'.join(state_parts) if state_parts else "User state unavailable."
+        Args:
+            context: Safe context dictionary
+            
+        Returns:
+            Formatted performance context string
+        """
+        try:
+            performance = context.get('performance_context', {})
+            
+            if not isinstance(performance, dict):
+                return "PERFORMANCE: Session starting"
+            
+            perf_parts = []
+            
+            # Response timing
+            avg_time = performance.get('average_response_time', 0)
+            if avg_time > 0:
+                perf_parts.append(f"AVG RESPONSE: {avg_time:.1f}s")
+            
+            # Success rate
+            success_rate = performance.get('success_rate', 0)
+            if success_rate > 0:
+                perf_parts.append(f"SUCCESS RATE: {success_rate*100:.0f}%")
+            
+            # Total interactions
+            interactions = performance.get('total_interactions', 0)
+            if interactions > 0:
+                perf_parts.append(f"INTERACTIONS: {interactions}")
+            
+            # Recent tool success
+            recent_success = performance.get('recent_tool_success', None)
+            if recent_success is not None:
+                status = "✓" if recent_success else "✗"
+                perf_parts.append(f"LAST TOOL: {status}")
+            
+            if perf_parts:
+                return "PERFORMANCE:\n" + "\n".join(perf_parts)
+            else:
+                return "PERFORMANCE: Initializing session metrics"
+                
+        except Exception as e:
+            logger.error(f"Error formatting performance context: {e}")
+            return "PERFORMANCE: Metrics temporarily unavailable"
     
     def _format_user_profile(self, profile: Dict[str, Any]) -> str:
         """Format user profile information."""
@@ -407,40 +648,6 @@ Execute the {tool_name} tool with enhanced context awareness.
                 profile_parts.append(f"{key.replace('_', ' ').title()}: {profile[key]}")
         
         return '\n'.join(profile_parts)
-    
-    def _inject_context_safely(self, context: Dict[str, Any]) -> Dict[str, Any]:
-        """Safely inject context with defaults for missing values.
-        
-        Args:
-            context: Original context dictionary
-            
-        Returns:
-            Context dictionary with safe defaults
-        """
-        safe_context = {
-            'user_profile': 'Student working on college essays',
-            'conversation_history': [],
-            'current_task': 'essay_assistance',
-            'essay_phase': 'unknown',
-            'current_goal': 'essay writing assistance',
-            'last_action': 'user_input',
-            'user_mood': 'engaged',
-            **context  # Original context overrides defaults
-        }
-        
-        # Ensure user_profile is properly formatted
-        if isinstance(safe_context.get('user_profile'), dict):
-            user_profile_dict = safe_context['user_profile']
-            if user_profile_dict:
-                profile_parts = []
-                for key, value in user_profile_dict.items():
-                    if value:
-                        profile_parts.append(f"{key}: {value}")
-                safe_context['user_profile'] = "; ".join(profile_parts) if profile_parts else "Student working on college essays"
-            else:
-                safe_context['user_profile'] = "Student working on college essays"
-        
-        return safe_context
     
     def _safe_format_template(self, template: str, format_dict: Dict[str, Any]) -> str:
         """Safely format template with error handling for missing keys.
