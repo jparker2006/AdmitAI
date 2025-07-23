@@ -1,0 +1,110 @@
+{
+  "chat_history": [
+    {
+      "content": "Hi! I need help brainstorming ideas for the prompt \u2018Describe a challenge you overcame.\u2019",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "1. None",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "ai",
+      "name": null,
+      "id": null,
+      "example": false,
+      "tool_calls": [],
+      "invalid_tool_calls": []
+    },
+    {
+      "content": "I overcame social anxiety after moving to a new country\u2014brainstorm angles for that",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "Could you suggest five story angles for the prompt \u201cDescribe a challenge you overcame?\u201d",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "You: Could you suggest five story angles for the prompt \u201cDescribe a challenge you overcame",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "Could you suggest five possible story angles for",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "the Common App prompt \u201cDescribe a challenge you overcame?\u201dquit",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "\u26a0\ufe0f  expand_outline error: Tool 'expand_outline' not found",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "ai",
+      "name": null,
+      "id": null,
+      "example": false,
+      "tool_calls": [],
+      "invalid_tool_calls": []
+    },
+    {
+      "content": "Help me brainstorm essay angles for \u201cDescribe a challenge you overcame\u201d",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "suggest_stories: essay_prompt=\"Describe a challenge you overcame\"",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "{\n  \"ok\": {\n    \"error\": \"Failed to parse response\",\n    \"raw_text\": \"stories=[StorySuggestion(title='Conquering Stage Fright', description='During a school play, I was cast in a lead role despite my fear of performing in front of an audience. Through rigorous practice ...\",\n    \"success\": false\n  },\n  \"error\": null\n}",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "ai",
+      "name": null,
+      "id": null,
+      "example": false,
+      "tool_calls": [],
+      "invalid_tool_calls": []
+    }
+  ],
+  "summary": "Could you suggest five possible story angles for \nthe Common App prompt \u201cDescribe a challenge you overcame?\u201dquit \n\u26a0\ufe0f  expand_outline error: Tool 'expand_outline' not found \nHelp me brainstorm essay angles for \u201cDescribe a challenge you overcame\u201d \nsuggest_stories: essay_prompt=\"Describe a challenge you overcame\" \n{\n  \"ok\": {\n    \"error\": \"Failed to parse response\",\n    \"raw_text\": \"stories=[StorySuggestion(title='Conquering Stage Fright', description='During a school play, I was cast in a lead role despite my fear of performing in front of an audience. Through rigorous practice ...\",\n    \"success\": false\n  },\n  \"error\": null\n}"
+}

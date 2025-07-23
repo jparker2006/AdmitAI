@@ -1,0 +1,63 @@
+{
+  "user_info": {
+    "name": "",
+    "grade": 0,
+    "intended_major": "",
+    "college_list": [],
+    "platforms": []
+  },
+  "academic_profile": {
+    "gpa": null,
+    "test_scores": {},
+    "courses": [],
+    "activities": []
+  },
+  "core_values": [],
+  "defining_moments": [
+    {
+      "title": "Reviving Our Community Garden",
+      "description": "I led a team of neighbors to restore our neglected community garden, transforming it into a vibrant space for all. Through this project, I learned the power of collaboration and the joy of seeing our community flourish.",
+      "emotional_impact": "",
+      "lessons_learned": "",
+      "used_in_essays": [],
+      "themes": [
+        "Collaboration",
+        "Community Engagement"
+      ],
+      "story_category": "defining_moment",
+      "story_weight": 1.0,
+      "college_usage": {}
+    },
+    {
+      "title": "Cultural Festival Organizer",
+      "description": "I organized a cultural festival at my school, celebrating diverse traditions and fostering inclusivity. This experience taught me the importance of cultural understanding and the impact of bringing people together through shared experiences.",
+      "emotional_impact": "",
+      "lessons_learned": "",
+      "used_in_essays": [],
+      "themes": [
+        "Cultural Appreciation",
+        "Inclusivity"
+      ],
+      "story_category": "defining_moment",
+      "story_weight": 1.0,
+      "college_usage": {}
+    },
+    {
+      "title": "Tradition of Family Storytelling",
+      "description": "Every Sunday, my family gathers to share stories from our heritage, strengthening our bonds and preserving our cultural roots. These sessions have deepened my appreciation for my background and the values passed down through generations.",
+      "emotional_impact": "",
+      "lessons_learned": "",
+      "used_in_essays": [],
+      "themes": [
+        "Family Heritage",
+        "Cultural Preservation"
+      ],
+      "story_category": "defining_moment",
+      "story_weight": 1.0,
+      "college_usage": {}
+    }
+  ],
+  "writing_voice": null,
+  "essay_history": [],
+  "college_story_usage": {}
+}

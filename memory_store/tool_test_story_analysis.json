@@ -1,0 +1,63 @@
+{
+  "user_info": {
+    "name": "",
+    "grade": 0,
+    "intended_major": "",
+    "college_list": [],
+    "platforms": []
+  },
+  "academic_profile": {
+    "gpa": null,
+    "test_scores": {},
+    "courses": [],
+    "activities": []
+  },
+  "core_values": [],
+  "defining_moments": [
+    {
+      "title": "The Unexpected Debate Turnaround",
+      "description": "In the final round of a debate tournament, my partner fell ill, leaving me to handle both roles. Navigating this challenge alone taught me resilience and adaptability under pressure.",
+      "emotional_impact": "",
+      "lessons_learned": "",
+      "used_in_essays": [],
+      "themes": [
+        "Resilience",
+        "Adaptability"
+      ],
+      "story_category": "defining_moment",
+      "story_weight": 1.0,
+      "college_usage": {}
+    },
+    {
+      "title": "Finding My Voice in Debate",
+      "description": "Initially terrified of public speaking, I joined the debate team to conquer my fear. Over time, I transformed fear into confidence, learning to articulate my thoughts with clarity and conviction.",
+      "emotional_impact": "",
+      "lessons_learned": "",
+      "used_in_essays": [],
+      "themes": [
+        "Confidence",
+        "Personal Transformation"
+      ],
+      "story_category": "defining_moment",
+      "story_weight": 1.0,
+      "college_usage": {}
+    },
+    {
+      "title": "Debate: A Lesson in Empathy",
+      "description": "Arguing both sides of contentious issues in debate taught me to appreciate diverse perspectives. This experience deepened my empathy and understanding of complex societal issues.",
+      "emotional_impact": "",
+      "lessons_learned": "",
+      "used_in_essays": [],
+      "themes": [
+        "Empathy",
+        "Understanding"
+      ],
+      "story_category": "defining_moment",
+      "story_weight": 1.0,
+      "college_usage": {}
+    }
+  ],
+  "writing_voice": null,
+  "essay_history": [],
+  "college_story_usage": {}
+}

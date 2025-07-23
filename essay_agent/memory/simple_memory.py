@@ -42,16 +42,87 @@ class SimpleMemory:  # pylint: disable=too-few-public-methods
 
         if not raw:
             return _default_profile()
+
+        # ------------------------------------------------------------------
+        # Capture unknown top-level keys (extras).  We special-case the legacy
+        # ``model_extra`` container because including it *again* inside itself
+        # would create a self-referential dict that silently breaks downstream
+        # look-ups and JSON serialisation.
+        # ------------------------------------------------------------------
+
+        unknown = {k: v for k, v in raw.items() if k not in UserProfile.model_fields}
+
+        # If the legacy container itself appears at the root we merge *its*
+        # contents into ``unknown`` and drop the key to avoid recursion.
+        legacy_container = unknown.pop("model_extra", {}) if isinstance(unknown.get("model_extra"), dict) else {}
+        if legacy_container:
+            unknown.update(legacy_container)
+
+        if unknown:
+            # Ensure legacy container is a dict even if file contained null/other
+            if not isinstance(raw.get("model_extra"), dict):
+                raw["model_extra"] = {}
+            raw["model_extra"].update(unknown)  # type: ignore[attr-defined]
+
         try:
-            return UserProfile.model_validate(raw)  # type: ignore[attr-defined]
+            prof = UserProfile.model_validate(raw)  # type: ignore[attr-defined]
         except ValidationError as exc:  # pragma: no cover
             raise ValueError("Corrupt user profile JSON") from exc
 
+        # ------------------------------------------------------------------
+        # Keep **one** flat copy of extras on both containers so that callers
+        # can safely access them regardless of the pydantic version they use.
+        # ------------------------------------------------------------------
+
+        base_extras = getattr(prof, "model_extra", None)
+        if not isinstance(base_extras, dict):
+            base_extras = {}
+
+        merged_extras: dict[str, Any] = {**base_extras}  # type: ignore[var-annotated]
+
+        # Merge any new unknown keys discovered above
+        merged_extras.update(unknown)
+
+        # Ensure legacy container exists ------------------------------------
+        try:
+            object.__setattr__(prof, "model_extra", merged_extras)  # type: ignore[attr-defined]
+        except Exception:
+            pass
+
+        # Mirror into pydantic-v2 extras container --------------------------
+        try:
+            object.__setattr__(prof, "__pydantic_extra__", merged_extras)
+        except Exception:
+            pass
+        return prof
+
     @staticmethod
     def save(user_id: str, profile: UserProfile) -> None:  # noqa: D401
-        """Persist *profile* for *user_id* with pretty JSON formatting."""
+        """Persist *profile* for *user_id* including extras."""
 
-        save_user_profile(user_id, profile.model_dump())
+        # --------------------------------------------------------------
+        # Persist profile *plus* any extras.  We first build a merged
+        # ``extras`` dict combining both possible containers so that we can
+        # write a single, authoritative copy to disk (and optionally keep a
+        # flat root-level copy for backward compatibility).
+        # --------------------------------------------------------------
+
+        data = profile.model_dump()
+
+        extra_v2 = getattr(profile, "__pydantic_extra__", {}) or {}
+        extra_legacy = getattr(profile, "model_extra", {}) or {}
+
+        merged_extras = {**extra_legacy, **extra_v2}
+
+        # Store merged copy inside legacy container -----------------------
+        if merged_extras:
+            data["model_extra"] = merged_extras
+
+        # Optionally keep a flat root-level view for existing files/tools --
+        data.update(merged_extras)
+
+        # Finally write to disk -------------------------------------------
+        save_user_profile(user_id, data)
 
     # ------------------------------------------------------------------
     # Essay helpers

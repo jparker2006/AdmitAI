@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import sys
+import os
 from datetime import datetime
 from typing import Any
 
@@ -230,3 +231,16 @@ def bottleneck_alert(
     print(f"{symbol} {bottleneck_type:<15} {component:<12} {severity_str}")
     if rec_str:
         print(f"   💡 {rec_str}") 
+
+# ---------------------------------------------------------------------------
+# Argument resolution pretty-printer (Phase-6)
+# ---------------------------------------------------------------------------
+
+def log_args(arg_diag: dict[str, str]) -> None:  # noqa: D401
+    """Pretty-print ArgResolver diagnostics when VERBOSE or SHOW_ARGS flag set."""
+    if not VERBOSE and os.getenv("ESSAY_AGENT_SHOW_ARGS") != "1":
+        return
+
+    import json as _json
+    print("\n🧩 ArgResolver Sources:")
+    print(_json.dumps(arg_diag, indent=2, default=str)) 

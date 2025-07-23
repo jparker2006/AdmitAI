@@ -14,7 +14,7 @@ from datetime import datetime
 from pathlib import Path
 
 from .conversation_runner import ConversationRunner
-from ..agent.core.react_agent import EssayReActAgent
+from ..agent_autonomous import AutonomousEssayAgent
 from ..memory.simple_memory import SimpleMemory
 from ..memory.user_profile_schema import UserProfile, CoreValue, DefiningMoment, Activity
 from .conversational_scenarios import ConversationPhase
@@ -50,7 +50,7 @@ class IntegratedConversationRunner(ConversationRunner):
         self.eval_user_id = f"{self.memory_prefix}_{self.current_profile.profile_id}"
         
         # Initialize ReAct agent with real memory (no EvaluationMemory stub!)
-        self.agent = EssayReActAgent(user_id=self.eval_user_id)
+        self.agent = AutonomousEssayAgent(user_id=self.eval_user_id)
         
         # Load profile data into REAL memory system
         await self._load_profile_into_real_memory()

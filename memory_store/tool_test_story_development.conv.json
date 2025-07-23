@@ -1,0 +1,47 @@
+{
+  "chat_history": [
+    {
+      "content": "Develop my story about learning to code",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "{'ok': None, 'error': ToolError(type='TypeError', message=\"_run() missing 1 required keyword-only argument: 'voice_profile'\", trace='  File \"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\", line 131, in ainvoke\\n    result = await coro\\n  File \"/opt/homebrew/Cellar/python@3.9/3.9.12/Frameworks/Python.framework/Versions/3.9/lib/python3.9/asyncio/tasks.py\", line 479, in wait_for\\n    return fut.result()\\n  File \"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\", line 142, in _arun_wrapper\\n    return await asyncio.to_thread(self._run, *args, **kwargs)\\n  File \"/opt/homebrew/Cellar/python@3.9/3.9.12/Frameworks/Python.framework/Versions/3.9/lib/python3.9/asyncio/threads.py\", line 25, in to_thread\\n    return await loop.run_in_executor(None, func_call)\\n  File \"/opt/homebrew/Cellar/python@3.9/3.9.12/Frameworks/Python.framework/Versions/3.9/lib/python3.9/concurrent/futures/thread.py\", line 58, in run\\n    result = self.fn(*self.args, **self.kwargs)\\n')}",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "ai",
+      "name": null,
+      "id": null,
+      "example": false,
+      "tool_calls": [],
+      "invalid_tool_calls": []
+    },
+    {
+      "content": "{'ok': None, 'error': ToolError(type='TypeError', message=\"_run() missing 1 required keyword-only argument: 'voice_profile'\", trace='  File \"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\", line 131, in ainvoke\\n    result = await coro\\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/tasks.py\", line 481, in wait_for\\n    return fut.result()\\n  File \"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\", line 142, in _arun_wrapper\\n    return await asyncio.to_thread(self._run, *args, **kwargs)\\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/threads.py\", line 25, in to_thread\\n    return await loop.run_in_executor(None, func_call)\\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/thread.py\", line 52, in run\\n    result = self.fn(*self.args, **self.kwargs)\\n')}",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "ai",
+      "name": null,
+      "id": null,
+      "example": false,
+      "tool_calls": [],
+      "invalid_tool_calls": []
+    },
+    {
+      "content": "{'ok': None, 'error': {'type': 'TypeError', 'message': \"_run() missing 1 required keyword-only argument: 'voice_profile'\", 'trace': '  File \"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\", line 132, in ainvoke\\n    result = await coro\\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/tasks.py\", line 481, in wait_for\\n    return fut.result()\\n  File \"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\", line 143, in _arun_wrapper\\n    return await asyncio.to_thread(self._run, *args, **kwargs)\\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/threads.py\", line 25, in to_thread\\n    return await loop.run_in_executor(None, func_call)\\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/thread.py\", line 52, in run\\n    result = self.fn(*self.args, **self.kwargs)\\n'}}",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "ai",
+      "name": null,
+      "id": null,
+      "example": false,
+      "tool_calls": [],
+      "invalid_tool_calls": []
+    }
+  ],
+  "summary": "Develop my story about learning to code \n{'ok': None, 'error': ToolError(type='TypeError', message=\"_run() missing 1 required keyword-only argument: 'voice_profile'\", trace='  File \"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\", line 131, in ainvoke\\n    result = await coro\\n  File \"/opt/homebrew/Cellar/python@3.9/3.9.12/Frameworks/Python.framework/Versions/3.9/lib/python3.9/asyncio/tasks.py\", line 479, in wait_for\\n    return fut.result()\\n  File \"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\", line 142, in _arun_wrapper\\n    return await asyncio.to_thread(self._run, *args, **kwargs)\\n  File \"/opt/homebrew/Cellar/python@3.9/3.9.12/Frameworks/Python.framework/Versions/3.9/lib/python3.9/asyncio/threads.py\", line 25, in to_thread\\n    return await loop.run_in_executor(None, func_call)\\n  File \"/opt/homebrew/Cellar/python@3.9/3.9.12/Frameworks/Python.framework/Versions/3.9/lib/python3.9/concurrent/futures/thread.py\", line 58, in run\\n    result = self.fn(*self.args, **self.kwargs)\\n')} \n{'ok': None, 'error': ToolError(type='TypeError', message=\"_run() missing 1 required keyword-only argument: 'voice_profile'\", trace='  File \"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\", line 131, in ainvoke\\n    result = await coro\\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/tasks.py\", line 481, in wait_for\\n    return fut.result()\\n  File \"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\", line 142, in _arun_wrapper\\n    return await asyncio.to_thread(self._run, *args, **kwargs)\\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/threads.py\", line 25, in to_thread\\n    return await loop.run_in_executor(None, func_call)\\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/thread.py\", line 52, in run\\n    result = self.fn(*self.args, **self.kwargs)\\n')} \n{'ok': None, 'error': {'type': 'TypeError', 'message': \"_run() missing 1 required keyword-only argument: 'voice_profile'\", 'trace': '  File \"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\", line 132, in ainvoke\\n    result = await coro\\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/tasks.py\", line 481, in wait_for\\n    return fut.result()\\n  File \"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\", line 143, in _arun_wrapper\\n    return await asyncio.to_thread(self._run, *args, **kwargs)\\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/threads.py\", line 25, in to_thread\\n    return await loop.run_in_executor(None, func_call)\\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/thread.py\", line 52, in run\\n    result = self.fn(*self.args, **self.kwargs)\\n'}} \nDevelop my story about learning to code \n{'ok': None, 'error': {'type': 'TypeError', 'message': \"_run() missing 1 required keyword-only argument: 'voice_profile'\", 'trace': '  File \"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\", line 132, in ainvoke\\n    result = await coro\\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/tasks.py\", line 481, in wait_for\\n    return fut.result()\\n  File \"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\", line 143, in _arun_wrapper\\n    return await asyncio.to_thread(self._run, *args, **kwargs)\\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/threads.py\", line 25, in to_thread\\n    return await loop.run_in_executor(None, func_call)\\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/thread.py\", line 52, in run\\n    result = self.fn(*self.args, **self.kwargs)\\n'}}"
+}

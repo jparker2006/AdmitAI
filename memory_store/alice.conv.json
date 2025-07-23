@@ -1,0 +1,241 @@
+{
+  "chat_history": [
+    {
+      "content": "Hi! I need to write a 250-word \u201cWhy Stanford\u201d essay that highlights my passion for cutting-edge AI research and Stanford\u2019s entrepreneurial ecosystem.",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "I'm here to help you with your essay. What specific aspect would you like to work on? I can help with brainstorming ideas, creating outlines, drafting, revising, or polishing your essay.",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "ai",
+      "name": null,
+      "id": null,
+      "example": false,
+      "tool_calls": [],
+      "invalid_tool_calls": []
+    },
+    {
+      "content": "Can you brainstorm three personal story angles that connect those themes and then suggest a five-part outline for the strongest one?",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "Help me create an outline for my essay",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "I\u2019ve created an outline:\n\n{\n  \"ok\": {\n    \"outline\": {\n      \"hook\": \"A moment that redefined my perspective on: Untitled story...\",\n      \"context\": \"Provide background that anchors the reader and highlights the setting.\",\n      \"conflict\": \"Describe the central tension or obstacle encountered.\",\n      \"growth\": \"Explain the actions taken and lessons learned in overcoming the conflict.\",\n      \"reflection\": \"Conclude with personal insights and how the experience shapes future goals.\"\n    },\n    \"estimated_word_count\": 650,\n    \"keyword_data\": {\n      \"extracted_keywords\": [\n        \"help\",\n        \"create\",\n        \"outline\",\n        \"essay\"\n      ],\n      \"keyword_planning\": {\n        \"section_keywords\": {\n          \"hook\": [\n            \"help\"\n          ],\n          \"context\": [\n            \"create\"\n          ],\n          \"conflict\": [\n            \"outline\"\n          ],\n          \"growth\": [\n            \"essay\"\n          ],\n          \"reflection\": []\n        },\n        \"integration_strategy\": \"Keywords distributed across outline sections for natural integration\",\n        \"total_keywords\": 4,\n        \"planning_notes\": \"Each section should weave in assigned keywords naturally through story details\"\n      },\n      \"prompt_analysis\": {\n        \"total_words\": 8,\n        \"unique_keywords\": 4,\n        \"selected_keywords\": 4\n      }\n    },\n    \"word_distribution\": {\n      \"hook_words\": 97,\n      \"hook_percentage\": 15,\n      \"context_words\": 130,\n      \"context_percentage\": 20,\n      \"conflict_words\": 162,\n      \"conflict_percentage\": 25,\n      \"growth_words\": 162,\n      \"growth_percentage\": 25,\n      \"reflection_words\": 97,\n      \"reflection_percentage\": 15\n    }\n  },\n  \"error\": null\n}",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "ai",
+      "name": null,
+      "id": null,
+      "example": false,
+      "tool_calls": [],
+      "invalid_tool_calls": []
+    },
+    {
+      "content": "Hi there! I\u2019d love your help crafting a standout personal essay for Stanford\u2019s prompt about \u201can idea or experience that makes you genuinely excited about learning.\u201d I\u2019ve been thinking about my community robotics outreach program as that spark. Could we start by brainstorming how this experience shows my curiosity and love of learning?",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "{'ok': None, 'error': {'type': 'TypeError', 'message': \"_run() missing 1 required keyword-only argument: 'voice_profile'\", 'trace': '  File \"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\", line 132, in ainvoke\\n    result = await coro\\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/tasks.py\", line 481, in wait_for\\n    return fut.result()\\n  File \"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\", line 143, in _arun_wrapper\\n    return await asyncio.to_thread(self._run, *args, **kwargs)\\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/threads.py\", line 25, in to_thread\\n    return await loop.run_in_executor(None, func_call)\\n  File \"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/thread.py\", line 52, in run\\n    result = self.fn(*self.args, **self.kwargs)\\n'}}",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "ai",
+      "name": null,
+      "id": null,
+      "example": false,
+      "tool_calls": [],
+      "invalid_tool_calls": []
+    },
+    {
+      "content": "Hi! I\u2019m working on Stanford\u2019s essay: \u2018Reflect on an idea or experience that makes you genuinely excited about learning.\u2019 I\u2019m thinking of writing about the community robotics program I started. Could we start by brainstorming angles or stories that best show my curiosity and passion for learning?",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "Here are some essay ideas:\n\n{\n  \"ok\": {\n    \"stories\": [\n      {\n        \"title\": \"Building Bridges with Robotics\",\n        \"description\": \"I initiated a community robotics program, bringing together students from diverse backgrounds to solve complex challenges. Through collaboration, we not only built robots but also fostered a sense of unity and shared learning.\",\n        \"prompt_fit\": \"This story shows how creating a robotics program sparked my excitement for learning through community collaboration.\",\n        \"insights\": [\n          \"Collaboration\",\n          \"Diversity\"\n        ],\n        \"themes\": [\n          \"community\"\n        ]\n      },\n      {\n        \"title\": \"Cultural Exchange Through Technology\",\n        \"description\": \"I organized a virtual exchange program connecting my robotics team with students from another country. This experience broadened our perspectives and sparked a passion for cross-cultural learning and technological innovation.\",\n        \"prompt_fit\": \"This story highlights my excitement for learning through cultural exchange and technological innovation.\",\n        \"insights\": [\n          \"Cultural Awareness\",\n          \"Innovation\"\n        ],\n        \"themes\": [\n          \"community\"\n        ]\n      },\n      {\n        \"title\": \"Empowering Youth Through STEM\",\n        \"description\": \"I volunteered to teach robotics at a local community center, inspiring younger students to explore STEM fields. Watching their curiosity and confidence grow fueled my own enthusiasm for learning and teaching.\",\n        \"prompt_fit\": \"This story illustrates my excitement for learning by empowering others through STEM education.\",\n        \"insights\": [\n          \"Empowerment\",\n          \"Mentorship\"\n        ],\n        \"themes\": [\n          \"community\"\n        ]\n      }\n    ]\n  },\n  \"error\": null\n}",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "ai",
+      "name": null,
+      "id": null,
+      "example": false,
+      "tool_calls": [],
+      "invalid_tool_calls": []
+    },
+    {
+      "content": "Could you outline idea #1 (\u201cBuilding Bridges with Robotics\u201d) in five sections?",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "I\u2019ve created an outline:\n\n{\n  \"ok\": {\n    \"outline\": {\n      \"hook\": \"A moment that redefined my perspective on: Untitled story...\",\n      \"context\": \"Provide background that anchors the reader and highlights the setting.\",\n      \"conflict\": \"Describe the central tension or obstacle encountered.\",\n      \"growth\": \"Explain the actions taken and lessons learned in overcoming the conflict.\",\n      \"reflection\": \"Conclude with personal insights and how the experience shapes future goals.\"\n    },\n    \"estimated_word_count\": 650,\n    \"keyword_data\": {\n      \"extracted_keywords\": [\n        \"outline\",\n        \"idea\",\n        \"building\",\n        \"bridges\",\n        \"robotics\",\n        \"five\",\n        \"sections\"\n      ],\n      \"keyword_planning\": {\n        \"section_keywords\": {\n          \"hook\": [\n            \"outline\"\n          ],\n          \"context\": [\n            \"idea\"\n          ],\n          \"conflict\": [\n            \"building\"\n          ],\n          \"growth\": [\n            \"bridges\"\n          ],\n          \"reflection\": [\n            \"robotics\",\n            \"five\",\n            \"sections\"\n          ]\n        },\n        \"integration_strategy\": \"Keywords distributed across outline sections for natural integration\",\n        \"total_keywords\": 7,\n        \"planning_notes\": \"Each section should weave in assigned keywords naturally through story details\"\n      },\n      \"prompt_analysis\": {\n        \"total_words\": 12,\n        \"unique_keywords\": 7,\n        \"selected_keywords\": 7\n      }\n    },\n    \"word_distribution\": {\n      \"hook_words\": 97,\n      \"hook_percentage\": 15,\n      \"context_words\": 130,\n      \"context_percentage\": 20,\n      \"conflict_words\": 162,\n      \"conflict_percentage\": 25,\n      \"growth_words\": 162,\n      \"growth_percentage\": 25,\n      \"reflection_words\": 97,\n      \"reflection_percentage\": 15\n    }\n  },\n  \"error\": null\n}",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "ai",
+      "name": null,
+      "id": null,
+      "example": false,
+      "tool_calls": [],
+      "invalid_tool_calls": []
+    },
+    {
+      "content": "Great\u2014could you expand each of those 5 sections with 2-3 bullet points specific to my robotics outreach story?",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "{\n  \"ok\": null,\n  \"error\": {\n    \"type\": \"TypeError\",\n    \"message\": \"_run() missing 3 required keyword-only arguments: 'outline_section', 'section_name', and 'voice_profile'\",\n    \"trace\": \"  File \\\"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\\\", line 132, in ainvoke\\n    result = await coro\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/tasks.py\\\", line 481, in wait_for\\n    return fut.result()\\n  File \\\"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\\\", line 143, in _arun_wrapper\\n    return await asyncio.to_thread(self._run, *args, **kwargs)\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/threads.py\\\", line 25, in to_thread\\n    return await loop.run_in_executor(None, func_call)\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/thread.py\\\", line 52, in run\\n    result = self.fn(*self.args, **self.kwargs)\\n\"\n  }\n}",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "ai",
+      "name": null,
+      "id": null,
+      "example": false,
+      "tool_calls": [],
+      "invalid_tool_calls": []
+    },
+    {
+      "content": "outline: Building Bridges with Robotics \u2013 helping diverse students build robots for community service.",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "I\u2019ve created an outline:\n\n{\n  \"ok\": {\n    \"outline\": {\n      \"hook\": \"A moment that redefined my perspective on: Untitled story...\",\n      \"context\": \"Provide background that anchors the reader and highlights the setting.\",\n      \"conflict\": \"Describe the central tension or obstacle encountered.\",\n      \"growth\": \"Explain the actions taken and lessons learned in overcoming the conflict.\",\n      \"reflection\": \"Conclude with personal insights and how the experience shapes future goals.\"\n    },\n    \"estimated_word_count\": 650,\n    \"keyword_data\": {\n      \"extracted_keywords\": [\n        \"community\"\n      ],\n      \"keyword_planning\": {\n        \"section_keywords\": {\n          \"hook\": [\n            \"community\"\n          ],\n          \"context\": [],\n          \"conflict\": [],\n          \"growth\": [],\n          \"reflection\": []\n        },\n        \"integration_strategy\": \"Keywords distributed across outline sections for natural integration\",\n        \"total_keywords\": 1,\n        \"planning_notes\": \"Each section should weave in assigned keywords naturally through story details\"\n      },\n      \"prompt_analysis\": {\n        \"total_words\": 14,\n        \"unique_keywords\": 7,\n        \"selected_keywords\": 1\n      }\n    },\n    \"word_distribution\": {\n      \"hook_words\": 97,\n      \"hook_percentage\": 15,\n      \"context_words\": 130,\n      \"context_percentage\": 20,\n      \"conflict_words\": 162,\n      \"conflict_percentage\": 25,\n      \"growth_words\": 162,\n      \"growth_percentage\": 25,\n      \"reflection_words\": 97,\n      \"reflection_percentage\": 15\n    }\n  },\n  \"error\": null\n}",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "ai",
+      "name": null,
+      "id": null,
+      "example": false,
+      "tool_calls": [],
+      "invalid_tool_calls": []
+    },
+    {
+      "content": "outline:",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "I\u2019ve created an outline:\n\n{\n  \"ok\": {\n    \"outline\": {\n      \"hook\": \"A moment that redefined my perspective on: Untitled story...\",\n      \"context\": \"Provide background that anchors the reader and highlights the setting.\",\n      \"conflict\": \"Describe the central tension or obstacle encountered.\",\n      \"growth\": \"Explain the actions taken and lessons learned in overcoming the conflict.\",\n      \"reflection\": \"Conclude with personal insights and how the experience shapes future goals.\"\n    },\n    \"estimated_word_count\": 650,\n    \"keyword_data\": {\n      \"extracted_keywords\": [\n        \"outline\"\n      ],\n      \"keyword_planning\": {\n        \"section_keywords\": {\n          \"hook\": [\n            \"outline\"\n          ],\n          \"context\": [],\n          \"conflict\": [],\n          \"growth\": [],\n          \"reflection\": []\n        },\n        \"integration_strategy\": \"Keywords distributed across outline sections for natural integration\",\n        \"total_keywords\": 1,\n        \"planning_notes\": \"Each section should weave in assigned keywords naturally through story details\"\n      },\n      \"prompt_analysis\": {\n        \"total_words\": 1,\n        \"unique_keywords\": 1,\n        \"selected_keywords\": 1\n      }\n    },\n    \"word_distribution\": {\n      \"hook_words\": 97,\n      \"hook_percentage\": 15,\n      \"context_words\": 130,\n      \"context_percentage\": 20,\n      \"conflict_words\": 162,\n      \"conflict_percentage\": 25,\n      \"growth_words\": 162,\n      \"growth_percentage\": 25,\n      \"reflection_words\": 97,\n      \"reflection_percentage\": 15\n    }\n  },\n  \"error\": null\n}",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "ai",
+      "name": null,
+      "id": null,
+      "example": false,
+      "tool_calls": [],
+      "invalid_tool_calls": []
+    },
+    {
+      "content": "story = \"Building Bridges with Robotics \u2013 helping diverse students build robots for community service.\"",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "prompt = \"Reflect on an idea or experience that makes you genuinely excited about learning.\"",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "word_count = 650",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "{\n  \"ok\": null,\n  \"error\": {\n    \"type\": \"TypeError\",\n    \"message\": \"_run() missing 1 required keyword-only argument: 'text'\",\n    \"trace\": \"  File \\\"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\\\", line 132, in ainvoke\\n    result = await coro\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/tasks.py\\\", line 481, in wait_for\\n    return fut.result()\\n  File \\\"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\\\", line 143, in _arun_wrapper\\n    return await asyncio.to_thread(self._run, *args, **kwargs)\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/threads.py\\\", line 25, in to_thread\\n    return await loop.run_in_executor(None, func_call)\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/thread.py\\\", line 52, in run\\n    result = self.fn(*self.args, **self.kwargs)\\n\"\n  }\n}",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "ai",
+      "name": null,
+      "id": null,
+      "example": false,
+      "tool_calls": [],
+      "invalid_tool_calls": []
+    },
+    {
+      "content": "export ESSAY_AGENT_OFFLINE_TEST=1",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "I was unable to determine the right tool to help. Let\u2019s discuss instead.",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "ai",
+      "name": null,
+      "id": null,
+      "example": false,
+      "tool_calls": [],
+      "invalid_tool_calls": []
+    },
+    {
+      "content": "export PLANNER_SHOW_PROMPT=1",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    }
+  ],
+  "summary": "word_count = 650 \n{\n  \"ok\": null,\n  \"error\": {\n    \"type\": \"TypeError\",\n    \"message\": \"_run() missing 1 required keyword-only argument: 'text'\",\n    \"trace\": \"  File \\\"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\\\", line 132, in ainvoke\\n    result = await coro\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/tasks.py\\\", line 481, in wait_for\\n    return fut.result()\\n  File \\\"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\\\", line 143, in _arun_wrapper\\n    return await asyncio.to_thread(self._run, *args, **kwargs)\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/threads.py\\\", line 25, in to_thread\\n    return await loop.run_in_executor(None, func_call)\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/thread.py\\\", line 52, in run\\n    result = self.fn(*self.args, **self.kwargs)\\n\"\n  }\n} \nexport ESSAY_AGENT_OFFLINE_TEST=1 \nI was unable to determine the right tool to help. Let\u2019s discuss instead. \nexport PLANNER_SHOW_PROMPT=1 \nI was unable to determine the right tool to help. Let\u2019s discuss instead."
+}

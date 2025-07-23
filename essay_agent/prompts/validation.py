@@ -9,61 +9,42 @@ from __future__ import annotations
 from essay_agent.prompts.templates import make_prompt
 
 # ---------------------------------------------------------------------------
-# Plagiarism Detection Prompt
+# Plagiarism Detection Tool
 # ---------------------------------------------------------------------------
 
+__all__ = []
+
 PLAGIARISM_DETECTION_PROMPT = make_prompt(
-    """You are a **Professional Academic Integrity Specialist** with expertise in detecting plagiarism and unoriginal content in college essays.
+    """
+<role>
+You are a plagiarism-detection specialist who flags non-original content.
+</role>
 
-# === PLAGIARISM DETECTION PROTOCOL ===
+<input>
+EssayText: {essay_text}
+Date: {today}
+</input>
 
-## INPUT
-- Essay text: {essay_text}
-- Context: {context}
+<constraints>
+You MUST respond with valid JSON exactly matching the schema below.
+• plagiarism_score 0.0-1.0 (two decimals).
+• flagged_passages array (up to 5 items) with reason.
+• No markdown or extra keys.
+</constraints>
 
-## ANALYSIS REQUIREMENTS
-
-**STEP 1: ORIGINALITY ASSESSMENT**
-- Analyze the essay for signs of plagiarism or unoriginal content
-- Look for overly sophisticated language inconsistent with student writing
-- Identify generic statements that appear template-like
-- Check for sudden shifts in writing style or voice
-
-**STEP 2: SIMILARITY PATTERNS**
-- Identify phrases that seem copied from common sources
-- Look for clichéd expressions common in college essays
-- Check for overly formal or academic language inappropriate for personal narratives
-- Flag sections that lack personal voice or authentic details
-
-**STEP 3: AUTHENTICITY MARKERS**
-- Evaluate presence of specific personal details
-- Assess consistency of voice throughout the essay
-- Look for genuine emotional reflection
-- Check for unique perspective or insights
-
-## OUTPUT FORMAT
-Return a JSON object with this exact structure:
-{{
-    "similarity_score": <float 0.0-1.0>,
-    "flagged_sections": [
-        {{
-            "text": "<excerpt>",
-            "reason": "<explanation>",
-            "severity": "<low|medium|high|critical>"
-        }}
-    ],
-    "authenticity_score": <float 0.0-1.0>,
-    "overall_assessment": "<pass|warning|fail>",
-    "recommendations": ["<specific suggestions>"]
-}}
-
-## CRITICAL GUIDELINES
-- Focus on content authenticity, not just text similarity
-- Consider that some common phrases are acceptable in personal narratives
-- Prioritize detection of copied content over stylistic similarity
-- Provide specific, actionable feedback for improvement
+<output_schema>
+{
+  "plagiarism_score": 0.12,
+  "is_original": true,
+  "flagged_passages": [
+    {"text": "string", "source": "string", "similarity": 0.9}
+  ],
+  "assessment": "string"
+}
+</output_schema>
 """
 )
+__all__.append("PLAGIARISM_DETECTION_PROMPT")
 
 # ---------------------------------------------------------------------------
 # Cliche Detection Prompt
@@ -138,85 +119,39 @@ Return a JSON object with this exact structure:
 # ---------------------------------------------------------------------------
 
 OUTLINE_ALIGNMENT_PROMPT = make_prompt(
-    """You are a **Structural Analysis Expert** specializing in evaluating how well essays follow their planned outlines.
+    """
+<role>
+You are an outline‐alignment auditor who judges how closely an essay follows its outline.
+</role>
 
-# === OUTLINE ALIGNMENT PROTOCOL ===
+<input>
+EssayText: {essay_text}
+Outline: {outline}
+Context: {context}
+Date: {today}
+</input>
 
-## INPUT
-- Essay text: {essay_text}
-- Original outline: {outline}
-- Context: {context}
+<constraints>
+You MUST respond with valid JSON exactly matching the schema below.  
+• Provide coverage data for five sections and overall_alignment 0.0-1.0.  
+• List any missing_elements; overall_alignment ≥0.8 means is_aligned true.  
+• No markdown or extra keys.
+</constraints>
 
-## ANALYSIS REQUIREMENTS
-
-**STEP 1: SECTION IDENTIFICATION**
-Map essay content to outline sections:
-- **Hook**: Opening that captures attention
-- **Context**: Background information and setting
-- **Conflict**: Challenge, problem, or tension
-- **Growth**: Actions taken, lessons learned, development
-- **Reflection**: Insights, future implications, broader meaning
-
-**STEP 2: COVERAGE ANALYSIS**
-For each outline section:
-- Identify corresponding essay paragraphs/sentences
-- Assess completeness of coverage (0-100%)
-- Evaluate depth and development
-- Check for missing elements
-
-**STEP 3: STRUCTURAL COHERENCE**
-- Verify logical flow between sections
-- Check for smooth transitions
-- Assess balance between sections
-- Identify structural weaknesses
-
-**STEP 4: ALIGNMENT SCORING**
-- Calculate coverage percentage for each section
-- Evaluate overall structural adherence
-- Identify gaps or deviations from outline
-- Assess impact on essay effectiveness
-
-## OUTPUT FORMAT
-Return a JSON object with this exact structure:
-{{
-    "section_coverage": {{
-        "hook": {{
-            "coverage_percentage": <0-100>,
-            "found_content": "<relevant text>",
-            "assessment": "<well_covered|partially_covered|missing>"
-        }},
-        "context": {{
-            "coverage_percentage": <0-100>,
-            "found_content": "<relevant text>",
-            "assessment": "<well_covered|partially_covered|missing>"
-        }},
-        "conflict": {{
-            "coverage_percentage": <0-100>,
-            "found_content": "<relevant text>",
-            "assessment": "<well_covered|partially_covered|missing>"
-        }},
-        "growth": {{
-            "coverage_percentage": <0-100>,
-            "found_content": "<relevant text>",
-            "assessment": "<well_covered|partially_covered|missing>"
-        }},
-        "reflection": {{
-            "coverage_percentage": <0-100>,
-            "found_content": "<relevant text>",
-            "assessment": "<well_covered|partially_covered|missing>"
-        }}
-    }},
-    "overall_alignment": <float 0.0-1.0>,
-    "structural_flow": <float 0.0-1.0>,
-    "missing_elements": ["<outline points not covered>"],
-    "recommendations": ["<specific structural improvements>"]
-}}
-
-## CRITICAL GUIDELINES
-- Be thorough in identifying outline coverage
-- Consider semantic similarity, not just exact matches
-- Evaluate structural flow and logical progression
-- Provide specific recommendations for improvement
+<output_schema>
+{
+  "section_coverage": {
+    "hook": {"coverage_percentage": 95, "assessment": "well_covered"},
+    "context": {"coverage_percentage": 80, "assessment": "partially_covered"},
+    "conflict": {"coverage_percentage": 60, "assessment": "partially_covered"},
+    "growth": {"coverage_percentage": 90, "assessment": "well_covered"},
+    "reflection": {"coverage_percentage": 70, "assessment": "partially_covered"}
+  },
+  "overall_alignment": 0.79,
+  "missing_elements": ["conflict details"],
+  "recommendations": ["Add specific conflict paragraph"]
+}
+</output_schema>
 """
 )
 
@@ -225,76 +160,73 @@ Return a JSON object with this exact structure:
 # ---------------------------------------------------------------------------
 
 FINAL_POLISH_PROMPT = make_prompt(
-    """You are a **Professional Essay Editor** conducting final quality checks before essay submission.
+    """
+<role>
+You are a final-polish reviewer who performs technical and content checks before submission.
+</role>
 
-# === FINAL POLISH PROTOCOL ===
+<input>
+EssayText: {essay_text}
+Context: {context}
+Date: {today}
+</input>
 
-## INPUT
-- Essay text: {essay_text}
-- Word limit: {word_limit}
-- Essay prompt: {essay_prompt}
-- Context: {context}
+<constraints>
+You MUST respond with valid JSON exactly matching the schema below.  
+• overall_polish 0.0-1.0.  
+• technical_issues list ≤5 items.  
+• submission_ready true if overall_polish ≥0.8 and no high-severity technical issues.  
+• No markdown or extra keys.
+</constraints>
 
-## ANALYSIS REQUIREMENTS
-
-**STEP 1: TECHNICAL VALIDATION**
-- Word count: Count actual words vs. limit
-- Grammar: Identify grammatical errors
-- Spelling: Check for spelling mistakes
-- Punctuation: Verify proper punctuation usage
-- Formatting: Check paragraph structure and flow
-
-**STEP 2: CONTENT VALIDATION**
-- Prompt adherence: Verify essay addresses all prompt requirements
-- Completeness: Ensure all necessary elements are present
-- Coherence: Check logical flow and transitions
-- Clarity: Assess readability and comprehension
-
-**STEP 3: VOICE & TONE**
-- Consistency: Evaluate voice consistency throughout
-- Authenticity: Assess genuineness of personal voice
-- Appropriateness: Check tone matches essay purpose
-- Engagement: Evaluate reader engagement level
-
-**STEP 4: FINAL QUALITY CHECKS**
-- Overall polish: Assess professional presentation
-- Impact: Evaluate emotional and intellectual impact
-- Memorability: Check for distinctive elements
-- Submission readiness: Final go/no-go assessment
-
-## OUTPUT FORMAT
-Return a JSON object with this exact structure:
-{{
-    "technical_issues": [
-        {{
-            "type": "<grammar|spelling|punctuation|formatting>",
-            "text": "<problematic text>",
-            "correction": "<suggested fix>",
-            "severity": "<low|medium|high>"
-        }}
-    ],
-    "word_count": {{
-        "actual": <integer>,
-        "limit": <integer>,
-        "status": "<under|within|over>",
-        "variance": <integer>
-    }},
-    "prompt_adherence": {{
-        "score": <float 0.0-1.0>,
-        "missing_elements": ["<prompt requirements not addressed>"],
-        "assessment": "<fully_addresses|partially_addresses|poorly_addresses>"
-    }},
-    "voice_consistency": <float 0.0-1.0>,
-    "overall_polish": <float 0.0-1.0>,
-    "submission_ready": <boolean>,
-    "critical_issues": ["<issues that prevent submission>"],
-    "recommendations": ["<final improvement suggestions>"]
-}}
-
-## CRITICAL GUIDELINES
-- Be thorough but focus on submission-critical issues
-- Prioritize problems that would impact admissions officers
-- Provide specific, actionable corrections
-- Consider the essay's overall impact and effectiveness
+<output_schema>
+{
+  "technical_issues": [
+    {"type": "grammar", "description": "string", "severity": "medium"}
+  ],
+  "overall_polish": 0.85,
+  "submission_ready": true,
+  "recommendations": ["string"]
+}
+</output_schema>
 """
 ) 
+
+# ---------------------------------------------------------------------------
+# Comprehensive Validation Tool
+# ---------------------------------------------------------------------------
+
+COMPREHENSIVE_VALIDATION_PROMPT = make_prompt(
+    """
+<role>
+You are a master validation suite that runs a battery of quality checks on an essay.
+</role>
+
+<input>
+EssayText: {essay_text}
+EssayPrompt: {essay_prompt}
+Outline: {outline}
+Date: {today}
+</input>
+
+<constraints>
+You MUST respond with valid JSON exactly matching the schema below.
+• Run all checks: alignment, clarity, voice, structure, clichés, and grammar.
+• Provide a final readiness_score from 0.0 to 10.0.
+• The 'summary' should be a one-sentence assessment.
+• No markdown or extra keys.
+</constraints>
+
+<output_schema>
+{{
+  "readiness_score": 9.5,
+  "is_ready_for_submission": true,
+  "summary": "string",
+  "passed_checks": ["string", "..."],
+  "failed_checks": ["string", "..."]
+}}
+</output_schema>
+"""
+)
+
+__all__.append("COMPREHENSIVE_VALIDATION_PROMPT") 

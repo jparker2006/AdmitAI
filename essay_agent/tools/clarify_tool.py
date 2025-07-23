@@ -11,9 +11,13 @@ from essay_agent.tools import register_tool
 @register_tool("clarify")
 class ClarifyTool(ValidatedTool):
     """Ask clarifying questions when user request is ambiguous.
-    
+
     This tool analyzes user input and generates appropriate clarifying
-    questions to better understand their needs and intent.
+    questions to better understand user needs.
+
+    Args:
+        user_input (str): The ambiguous user request that needs clarification.
+        context (str): A summary of the current conversation or task.
     """
 
     name: str = "clarify"

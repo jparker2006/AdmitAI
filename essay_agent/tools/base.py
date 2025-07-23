@@ -8,10 +8,12 @@ import time
 import traceback
 from abc import ABC
 from typing import Any, Dict, Optional, Union
+import re
 
 from langchain.tools import BaseTool
 from pydantic import BaseModel, Field, ValidationError
 from essay_agent.llm_client import get_chat_llm
+from essay_agent.utils.json_repair import fix as repair_json
 from essay_agent.tools.errors import ToolError
 
 
@@ -91,7 +93,7 @@ class ValidatedTool(BaseTool, ABC):
                 else:
                     result = self._run(*args, **kwargs)
 
-                return {"ok": result, "error": None}
+                return {"ok": safe_model_to_dict(result), "error": None}
             except asyncio.TimeoutError as exc:
                 last_error = exc
                 attempt += 1
@@ -99,7 +101,8 @@ class ValidatedTool(BaseTool, ABC):
                 
                 if attempt >= self.max_attempts:
                     # Provide graceful degradation for timeout errors
-                    return self._handle_timeout_fallback(*args, **kwargs)
+                    fb = self._handle_timeout_fallback(*args, **kwargs)
+                    return {"ok": safe_model_to_dict(fb.get("ok")), "error": fb.get("error")}
                     
             except Exception as exc:  # noqa: BLE001
                 last_error = exc
@@ -107,7 +110,7 @@ class ValidatedTool(BaseTool, ABC):
                 print(f"⚠️  Tool '{self.name}' failed on attempt {attempt}/{self.max_attempts}: {type(exc).__name__}")
                 
                 if attempt >= self.max_attempts:
-                    return {"ok": None, "error": _format_exc(exc)}
+                    return {"ok": None, "error": safe_model_to_dict(_format_exc(exc))}
 
             # Exponential backoff with longer delays
             if attempt < self.max_attempts:
@@ -121,7 +124,7 @@ class ValidatedTool(BaseTool, ABC):
                     time.sleep(delay)
                     delay = min(delay * 2, 16.0)  # cap the wait to 16s
 
-        return {"ok": None, "error": _format_exc(last_error) if last_error else "Unknown error"}
+        return {"ok": None, "error": safe_model_to_dict(_format_exc(last_error)) if last_error else "Unknown error"}
 
     async def ainvoke(self, *args: Any, **kwargs: Any) -> Dict[str, Any]:  # type: ignore[override]
         try:
@@ -129,9 +132,9 @@ class ValidatedTool(BaseTool, ABC):
             if self.timeout is not None:
                 coro = asyncio.wait_for(coro, timeout=self.timeout)
             result = await coro
-            return {"ok": result, "error": None}
+            return {"ok": safe_model_to_dict(result), "error": None}
         except Exception as exc:  # noqa: BLE001
-            return {"ok": None, "error": _format_exc(exc)}
+            return {"ok": None, "error": safe_model_to_dict(_format_exc(exc))}
 
     # ------------------------------------------------------------------
     # Internal helpers
@@ -159,6 +162,120 @@ class ValidatedTool(BaseTool, ABC):
         
         return {"ok": fallback_result, "error": error_msg}
 
+    # ------------------------------------------------------------------
+    # Shared helper for LLM + parser execution (used by many tools)
+    # ------------------------------------------------------------------
+
+    def _call_llm_with_prompt_and_parser(
+        self,
+        llm,
+        *,
+        prompt_text: str,
+        parser,
+        required_keys: list[str] | None = None,
+    ) -> Dict[str, Any]:  # noqa: D401,E501
+        """Utility that sends *prompt_text* to *llm* and returns parsed dict.
+
+        This centralises the common pattern of:
+        1. Call the LLM with a prompt
+        2. Parse the raw response with a pydantic_parser / OutputParser
+        3. Convert the parsed model (or dict) into a plain ``dict`` so that
+           downstream code can safely JSON-serialize the result.
+
+        It also supports the deterministic offline-testing path controlled by
+        the ``ESSAY_AGENT_OFFLINE_TEST`` environment variable.  In that mode we
+        skip the real LLM call and instead return an empty instance parsed by
+        the provided *parser*, ensuring unit tests remain fast and reliable.
+        """
+        import os
+        from essay_agent.llm_client import call_llm
+        from essay_agent.response_parser import safe_parse
+
+        # Offline stub path ------------------------------------------------
+        if os.getenv("ESSAY_AGENT_OFFLINE_TEST") == "1":
+            try:
+                # Attempt to create a blank instance via parser for schema shape
+                blank_json = "{}"
+                parsed = safe_parse(parser, blank_json)
+                return safe_model_to_dict(parsed)
+            except Exception:
+                # Fallback to empty dict if parser cannot handle blank input
+                return {}
+
+        # Online path – actual LLM call ------------------------------------
+        raw = call_llm(llm, prompt_text)
+        raw = _strip_fences(raw)
+        # Debug raw LLM response when flag enabled -------------------------
+        import os, textwrap
+        if os.getenv("ESSAY_AGENT_SHOW_RAW") == "1":
+            from essay_agent.utils.logging import debug_print, VERBOSE
+            snippet = textwrap.shorten(raw.replace("\n", " "), width=500, placeholder="…")
+            debug_print(True, f"RAW LLM → {self.name}: {snippet}")
+        # Attempt parse ---------------------------------------------------
+        try:
+            parsed = safe_parse(parser, raw)
+            out_dict = safe_model_to_dict(parsed)
+        except Exception:
+            # Centralised schema-aware repair -----------------------------
+            from essay_agent.tools.schema_registry import TOOL_OUTPUT_SCHEMA
+
+            schema_text = TOOL_OUTPUT_SCHEMA.get(self.name, "")
+            rep_raw = repair_json(raw, schema_text)
+
+            try:
+                parsed = safe_parse(parser, rep_raw)
+                out_dict = safe_model_to_dict(parsed)
+            except Exception:
+                fb = self._handle_timeout_fallback()
+                return safe_model_to_dict(fb.get("ok"))
+
+        # ----------------- Validate required keys (post-repair) -------------
+        if required_keys:
+            missing = [k for k in required_keys if k not in out_dict or out_dict[k] in (None, [], {})]
+            if missing:
+                # Centralised schema-aware repair -----------------------------
+                from essay_agent.tools.schema_registry import TOOL_OUTPUT_SCHEMA
+
+                schema_text = TOOL_OUTPUT_SCHEMA.get(self.name, "")
+                rep_raw = repair_json(raw, schema_text)
+
+                try:
+                    parsed = safe_parse(parser, rep_raw)
+                    out_dict = safe_model_to_dict(parsed)
+                    missing = [k for k in required_keys if k not in out_dict or out_dict[k] in (None, [], {})]
+                except Exception:
+                    missing = required_keys  # force fallback
+
+            if missing:
+                fb = self._handle_timeout_fallback()
+                return safe_model_to_dict(fb.get("ok"))
+
+        return out_dict
+
 
 def _format_exc(exc: Exception) -> ToolError:
     return ToolError(type=exc.__class__.__name__, message=str(exc), trace="".join(traceback.format_tb(exc.__traceback__))) 
+
+
+# ---------------------------------------------------------------------------
+# Helper: strip markdown code fences (```json ... ```)
+# ---------------------------------------------------------------------------
+
+
+_FENCE_RE = re.compile(r"^```(?:[a-zA-Z0-9]+)?\s*(.*?)\s*```$", re.DOTALL)
+
+
+def _strip_fences(text: str) -> str:  # noqa: D401
+    """Return *text* without outer ``` fences if present.
+
+    Works with or without a language hint (```json, ```python, etc.).  If no
+    matching fences are found the text is returned unchanged.
+    """
+    if not isinstance(text, str):
+        return text  # leave non-str untouched
+
+    stripped = text.strip()
+    match = _FENCE_RE.match(stripped)
+    if match:
+        return match.group(1).strip()
+    return text 

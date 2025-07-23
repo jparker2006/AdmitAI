@@ -17,7 +17,7 @@ import logging
 from .conversational_scenarios import ConversationScenario, ConversationPhase
 from .real_profiles import UserProfile
 from .college_prompts import CollegePrompt, get_prompt_by_id
-from ..agent.core.react_agent import EssayReActAgent
+from ..agent_autonomous import AutonomousEssayAgent
 # EvaluationMemory is defined in this file below
 from ..llm_client import get_chat_llm
 
@@ -178,7 +178,7 @@ class ConversationRunner:
         await self._load_profile_into_memory()
         
         # Initialize ReAct agent (manages its own memory internally)
-        self.agent = EssayReActAgent(
+        self.agent = AutonomousEssayAgent(
             user_id=self.current_profile.profile_id
         )
         

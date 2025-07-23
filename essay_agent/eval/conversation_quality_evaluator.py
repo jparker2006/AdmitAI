@@ -19,7 +19,7 @@ from pathlib import Path
 from .conversation_runner import ConversationResult, ConversationTurn
 from .real_profiles import UserProfile
 from .conversational_scenarios import ConversationScenario
-from ..agent.core.react_agent import EssayReActAgent
+from ..agent_autonomous import AutonomousEssayAgent
 
 logger = logging.getLogger(__name__)
 
@@ -127,7 +127,7 @@ class ConversationQualityEvaluator:
         """
         try:
             # Create agent instance for manual chat mode
-            agent = EssayReActAgent(user_id=user_id)
+            agent = AutonomousEssayAgent(user_id=user_id)
             
             # Check if agent has access to conversation history
             if hasattr(agent, 'memory') and agent.memory:

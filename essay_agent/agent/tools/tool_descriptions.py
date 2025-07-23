@@ -199,8 +199,92 @@ TOOL_DESCRIPTIONS: Dict[str, ToolDescription] = {
         when_to_use="During revision to eliminate generic language and improve originality",
         example_usage="Check my essay for clichés and overused phrases",
         dependencies=["draft"],
+        estimated_tokens=500,
+        confidence_threshold=0.7
+    ),
+
+    # ----------------------------------------------------------------
+    # CURSOR-STYLE TEXT SELECTION & REAL-TIME TOOLS (generic stubs)
+    # ----------------------------------------------------------------
+    # These tools rely on the unified prompt helper introduced in Section 3.2.
+    # They share similar input/output patterns, so a concise description is
+    # sufficient for reasoning and avoids noisy registry warnings.
+
+    **{
+        name: ToolDescription(
+            name=name,
+            category="cursor_tools",
+            description=f"{name.replace('_', ' ').title()} – lightweight editor assistance for selected text.",
+            purpose="Provide real-time improvements or insights on highlighted text inside the essay editor.",
+            input_requirements=["selection", "instruction"],
+            output_format="Dictionary with key specific to each tool (e.g., improved_text)",
+            when_to_use="While the user is actively editing text and requests this specific assistance.",
+            example_usage=f"{name} selection='I love CS' instruction='make formal'",
+            dependencies=[],
+            estimated_tokens=150,
+            confidence_threshold=0.6,
+        ) for name in [
+            "modify_selection",
+            "explain_selection",
+            "improve_selection",
+            "rewrite_selection",
+            "expand_selection",
+            "condense_selection",
+            "replace_selection",
+            "smart_autocomplete",
+            "transition_helper",
+            "voice_matcher",
+            "live_feedback",
+            "word_choice_optimizer",
+            "authenticity_checker",
+            "goal_tracker",
+            "strategy_advisor",
+        ]
+    },
+
+    # ----------------------------------------------------------------
+    # Supplemental brainstorming helpers referenced in some workflows
+    # ----------------------------------------------------------------
+    "brainstorm_specific": ToolDescription(
+        name="brainstorm_specific",
+        category="brainstorming",
+        description="Generate targeted story ideas tailored to a specific essay prompt or theme.",
+        purpose="Help users quickly surface stories that match nuanced prompt requirements (e.g., diversity, community).",
+        input_requirements=["essay_prompt", "profile"],
+        output_format="List of Story objects with prompt_fit annotations",
+        when_to_use="When the user requests brainstorming focused on a particular prompt angle.",
+        example_usage="brainstorm_specific prompt='Stanford AI + entrepreneurship'",
+        dependencies=[],
+        estimated_tokens=700,
+        confidence_threshold=0.75,
+    ),
+
+    "story_development": ToolDescription(
+        name="story_development",
+        category="brainstorming",
+        description="Expand a chosen story idea into richer narrative details and key moments.",
+        purpose="Fill out context, conflict, and resolution elements before outlining.",
+        input_requirements=["story_title", "current_details"],
+        output_format="Enhanced story object with vivid scenes and emotional beats",
+        when_to_use="After selecting a brainstormed idea that needs more depth before outlining.",
+        example_usage="story_development story_title='Robotics Club setback'",
+        dependencies=["brainstorm"],
+        estimated_tokens=600,
+        confidence_threshold=0.7,
+    ),
+
+    "story_themes": ToolDescription(
+        name="story_themes",
+        category="brainstorming",
+        description="Extract and list central themes present in a story idea or draft paragraph.",
+        purpose="Help align story with essay prompt and personal values.",
+        input_requirements=["story_text"],
+        output_format="List of thematic keywords with short explanations",
+        when_to_use="When evaluating which story best matches a prompt’s required themes.",
+        example_usage="story_themes story_text='Building an AI project for the blind'",
+        dependencies=["brainstorm"],
         estimated_tokens=300,
-        confidence_threshold=0.6
+        confidence_threshold=0.65,
     ),
     
     "alignment_check": ToolDescription(

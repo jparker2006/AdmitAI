@@ -79,7 +79,11 @@ class DetectOverlapResult(BaseModel):
 
 @register_tool("classify_prompt")
 class ClassifyPromptTool(ValidatedTool):
-    """Classify essay prompt by theme (adversity, growth, identity, etc.)"""
+    """Classify essay prompt by theme (adversity, growth, identity, etc.)
+
+    Args:
+        essay_prompt (str): The essay prompt to classify.
+    """
     
     name: str = "classify_prompt"
     description: str = (
@@ -112,7 +116,11 @@ class ClassifyPromptTool(ValidatedTool):
 
 @register_tool("extract_requirements")
 class ExtractRequirementsTool(ValidatedTool):
-    """Extract word limits, key questions, and evaluation criteria from essay prompt"""
+    """Extract word limits, key questions, and evaluation criteria from essay prompt
+
+    Args:
+        essay_prompt (str): The essay prompt to analyze.
+    """
     
     name: str = "extract_requirements"
     description: str = (
@@ -145,7 +153,12 @@ class ExtractRequirementsTool(ValidatedTool):
 
 @register_tool("suggest_strategy")
 class SuggestStrategyTool(ValidatedTool):
-    """Suggest response strategy for essay prompt given user's profile"""
+    """Suggest response strategy for essay prompt given user's profile
+
+    Args:
+        essay_prompt (str): The essay prompt to analyze.
+        profile (str): The user's profile containing their stories and values.
+    """
     
     name: str = "suggest_strategy"
     description: str = (
@@ -182,56 +195,55 @@ class SuggestStrategyTool(ValidatedTool):
 
 @register_tool("detect_overlap")
 class DetectOverlapTool(ValidatedTool):
-    """Check if story overlaps with previous essays"""
+    """Check if story overlaps with previous essays for the same college.
+
+    Args:
+        story (str): The candidate story to check.
+        previous_essays (Union[List[str], str]): The list of previously written essays for the same college.
+        college_name (str): The name of the college for which the check is being performed.
+    """
     
     name: str = "detect_overlap"
     description: str = (
-        "Detect thematic or anecdotal overlap between a candidate story and previous essays."
+        "Detect thematic or anecdotal overlap between a candidate story and previous essays for the same college."
     )
     
     timeout: float = 15.0  # Overlap detection may require analysis of multiple essays
     
-    def _run(self, *, story: str, previous_essays: Union[List[str], str], **_: Any) -> Dict[str, Any]:
+    def _run(self, *, story: str, previous_essays: Union[List[str], str], college_name: str, **_: Any) -> Dict[str, Any]:
         # Input validation
         story = str(story).strip()
         if not story:
             raise ValueError("story must not be empty")
+        college_name = str(college_name).strip()
+        if not college_name:
+            raise ValueError("college_name must not be empty")
         
         # Handle previous_essays as either list or JSON string
+        essays_to_check = []
         if isinstance(previous_essays, str):
             try:
-                previous_essays = json.loads(previous_essays)
+                essays_to_check = json.loads(previous_essays)
             except json.JSONDecodeError:
-                # Treat as single essay string
-                previous_essays = [previous_essays]
-        
-        if not isinstance(previous_essays, list):
-            raise ValueError("previous_essays must be a list of strings or JSON array")
-        
-        # Filter out empty essays
-        previous_essays = [essay.strip() for essay in previous_essays if essay.strip()]
-        
+                essays_to_check = [previous_essays]
+        elif isinstance(previous_essays, list):
+            essays_to_check = previous_essays
+            
         # Render prompt
         rendered_prompt = render_template(
             DETECT_OVERLAP_PROMPT,
             story=story,
-            previous_essays=json.dumps(previous_essays)
+            previous_essays=json.dumps(essays_to_check), # Ensure it's a JSON string for the prompt
+            college_name=college_name
         )
         
         # LLM call
-        llm = get_chat_llm(temperature=0.1)  # Low temperature for consistent analysis
+        llm = get_chat_llm(temperature=0.0) # Deterministic analysis
         raw = call_llm(llm, rendered_prompt)
         
         # Parse and validate
         parser = pydantic_parser(DetectOverlapResult)
         parsed = safe_parse(parser, raw)
-        
-        # Additional validation: ensure conflicting_essays indices are valid
-        if parsed.conflicting_essays:
-            max_index = len(previous_essays) - 1
-            for idx in parsed.conflicting_essays:
-                if idx < 0 or idx > max_index:
-                    raise ValueError(f"Invalid essay index {idx}, must be 0-{max_index}")
         
         return parsed.model_dump()
 

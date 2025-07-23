@@ -1,0 +1,194 @@
+{
+  "user_info": {
+    "name": "Alex Johnson",
+    "grade": 12,
+    "intended_major": "Computer Science",
+    "college_list": [
+      "Stanford",
+      "MIT",
+      "Harvard",
+      "Yale",
+      "UC Berkeley"
+    ],
+    "platforms": [
+      "Common App",
+      "Coalition"
+    ]
+  },
+  "academic_profile": {
+    "gpa": 3.8,
+    "test_scores": {
+      "SAT": 1450,
+      "ACT": null
+    },
+    "courses": [
+      "AP Computer Science",
+      "AP Calculus BC",
+      "AP Literature"
+    ],
+    "activities": [
+      {
+        "name": "Robotics Club",
+        "role": "Lead Programmer",
+        "duration": "2 years",
+        "description": "Designed autonomous navigation systems for competitive robots",
+        "impact": "Led team to regional championship, mentored 8 younger students"
+      },
+      {
+        "name": "Volunteer Tutoring",
+        "role": "Math Tutor",
+        "duration": "3 years",
+        "description": "Tutored underprivileged students in algebra and geometry",
+        "impact": "Improved student grades by average of 1.2 letter grades"
+      },
+      {
+        "name": "Cultural Heritage Club",
+        "role": "Vice President",
+        "duration": "2 years",
+        "description": "Organized cultural awareness events and language preservation workshops",
+        "impact": "Increased school cultural diversity awareness by 40%, preserved family traditions"
+      },
+      {
+        "name": "Environmental Club",
+        "role": "Project Leader",
+        "duration": "2 years",
+        "description": "Led campus sustainability initiatives and community clean-up events",
+        "impact": "Reduced school waste by 25%, organized 15 community events"
+      },
+      {
+        "name": "Peer Mentorship Program",
+        "role": "Mentor",
+        "duration": "1 year",
+        "description": "Guided freshman students through academic and social challenges",
+        "impact": "Supported 12 students with 95% retention rate"
+      }
+    ]
+  },
+  "core_values": [
+    {
+      "value": "Innovation",
+      "description": "Belief in using technology to solve real-world problems",
+      "evidence": [
+        "Created app for local food bank",
+        "Robotics innovations"
+      ],
+      "used_in_essays": [],
+      "importance_level": 8
+    },
+    {
+      "value": "Service",
+      "description": "Commitment to helping others succeed",
+      "evidence": [
+        "Tutoring program",
+        "Mentoring younger students"
+      ],
+      "used_in_essays": [],
+      "importance_level": 8
+    },
+    {
+      "value": "Cultural Pride",
+      "description": "Deep appreciation for heritage and traditions",
+      "evidence": [
+        "Led cultural heritage club",
+        "Organized cultural awareness events"
+      ],
+      "used_in_essays": [],
+      "importance_level": 8
+    },
+    {
+      "value": "Environmental Stewardship",
+      "description": "Responsibility to protect and preserve our planet",
+      "evidence": [
+        "Campus sustainability initiatives",
+        "Community clean-up events"
+      ],
+      "used_in_essays": [],
+      "importance_level": 8
+    }
+  ],
+  "defining_moments": [
+    {
+      "title": "First Programming Success",
+      "description": "Creating my first working program that solved a real problem for our school's attendance system",
+      "emotional_impact": "Overwhelming sense of accomplishment and realization that code could create meaningful change",
+      "lessons_learned": "Technology can be a powerful tool for positive impact when applied thoughtfully",
+      "used_in_essays": [],
+      "themes": [
+        "problem-solving",
+        "innovation",
+        "purpose",
+        "technology"
+      ],
+      "story_category": "creative",
+      "story_weight": 1.0,
+      "college_usage": {}
+    },
+    {
+      "title": "Supporting Struggling Family Member",
+      "description": "Helping my younger sibling through a difficult learning disability diagnosis and finding new ways to support their education",
+      "emotional_impact": "Deep sense of responsibility and protective love that reshaped my priorities",
+      "lessons_learned": "Everyone learns differently; patience, creativity, and unconditional support can unlock potential",
+      "used_in_essays": [],
+      "themes": [
+        "family",
+        "empathy",
+        "perseverance",
+        "education"
+      ],
+      "story_category": "heritage",
+      "story_weight": 1.0,
+      "college_usage": {}
+    },
+    {
+      "title": "Cultural Identity Crisis",
+      "description": "Struggling with feeling disconnected from my heritage and then rediscovering it through community involvement",
+      "emotional_impact": "Initial shame and confusion transformed into deep pride and sense of belonging",
+      "lessons_learned": "Understanding your roots strengthens your sense of self and connection to others",
+      "used_in_essays": [],
+      "themes": [
+        "identity",
+        "culture",
+        "belonging",
+        "growth"
+      ],
+      "story_category": "heritage",
+      "story_weight": 1.0,
+      "college_usage": {}
+    },
+    {
+      "title": "Failed Leadership Attempt",
+      "description": "Trying to lead a school environmental project that completely fell apart due to my poor planning and communication",
+      "emotional_impact": "Humiliation and disappointment that forced me to confront my limitations",
+      "lessons_learned": "True leadership requires listening, planning, and building consensus, not just having good ideas",
+      "used_in_essays": [],
+      "themes": [
+        "failure",
+        "leadership",
+        "humility",
+        "growth"
+      ],
+      "story_category": "obstacle",
+      "story_weight": 1.0,
+      "college_usage": {}
+    },
+    {
+      "title": "Tutoring Breakthrough Moment",
+      "description": "Helping a student who had been failing math finally understand a concept after weeks of different approaches",
+      "emotional_impact": "Joy and validation that teaching and patience can truly transform someone's life",
+      "lessons_learned": "Everyone has potential; the key is finding the right approach and never giving up",
+      "used_in_essays": [],
+      "themes": [
+        "teaching",
+        "persistence",
+        "empathy",
+        "achievement"
+      ],
+      "story_category": "accomplishment",
+      "story_weight": 1.0,
+      "college_usage": {}
+    }
+  ],
+  "writing_voice": null,
+  "essay_history": [],
+  "college_story_usage": {}
+}

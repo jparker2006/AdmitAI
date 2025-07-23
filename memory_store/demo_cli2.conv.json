@@ -1,0 +1,25 @@
+{
+  "chat_history": [
+    {
+      "content": "Hi there! I want help brainstorming.",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "Here are some essay ideas:\n\n{\n  \"ok\": {\n    \"stories\": [\n      {\n        \"title\": \"Reviving the Community Garden\",\n        \"description\": \"I led a team to restore our neglected community garden, transforming it into a vibrant space for all. Through this project, I learned the power of collaboration and the importance of green spaces in urban areas.\",\n        \"prompt_fit\": \"This story demonstrates my commitment to community service and environmental stewardship.\",\n        \"insights\": [\n          \"Leadership\",\n          \"Environmental Stewardship\"\n        ],\n        \"themes\": [\n          \"community\"\n        ]\n      },\n      {\n        \"title\": \"Cultural Festival Organizer\",\n        \"description\": \"Organizing our town's first multicultural festival taught me the value of cultural exchange and inclusivity. I coordinated with diverse groups to celebrate our differences and foster a sense of unity.\",\n        \"prompt_fit\": \"This story highlights my involvement in cultural activities and building community through inclusivity.\",\n        \"insights\": [\n          \"Cultural Awareness\",\n          \"Community Building\"\n        ],\n        \"themes\": [\n          \"community\"\n        ]\n      },\n      {\n        \"title\": \"Tradition of Sunday Soup Kitchen\",\n        \"description\": \"Every Sunday, I volunteer at a local soup kitchen, a tradition started by my grandmother. This experience has deepened my empathy and commitment to addressing food insecurity in our community.\",\n        \"prompt_fit\": \"This story reflects my dedication to community service and family traditions.\",\n        \"insights\": [\n          \"Empathy\",\n          \"Family Tradition\"\n        ],\n        \"themes\": [\n          \"community\"\n        ]\n      }\n    ]\n  },\n  \"error\": null\n}",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "ai",
+      "name": null,
+      "id": null,
+      "example": false,
+      "tool_calls": [],
+      "invalid_tool_calls": []
+    }
+  ],
+  "summary": "Hi there! I want help brainstorming. \nHere are some essay ideas:\n\n{\n  \"ok\": {\n    \"stories\": [\n      {\n        \"title\": \"Reviving the Community Garden\",\n        \"description\": \"I led a team to restore our neglected community garden, transforming it into a vibrant space for all. Through this project, I learned the power of collaboration and the importance of green spaces in urban areas.\",\n        \"prompt_fit\": \"This story demonstrates my commitment to community service and environmental stewardship.\",\n        \"insights\": [\n          \"Leadership\",\n          \"Environmental Stewardship\"\n        ],\n        \"themes\": [\n          \"community\"\n        ]\n      },\n      {\n        \"title\": \"Cultural Festival Organizer\",\n        \"description\": \"Organizing our town's first multicultural festival taught me the value of cultural exchange and inclusivity. I coordinated with diverse groups to celebrate our differences and foster a sense of unity.\",\n        \"prompt_fit\": \"This story highlights my involvement in cultural activities and building community through inclusivity.\",\n        \"insights\": [\n          \"Cultural Awareness\",\n          \"Community Building\"\n        ],\n        \"themes\": [\n          \"community\"\n        ]\n      },\n      {\n        \"title\": \"Tradition of Sunday Soup Kitchen\",\n        \"description\": \"Every Sunday, I volunteer at a local soup kitchen, a tradition started by my grandmother. This experience has deepened my empathy and commitment to addressing food insecurity in our community.\",\n        \"prompt_fit\": \"This story reflects my dedication to community service and family traditions.\",\n        \"insights\": [\n          \"Empathy\",\n          \"Family Tradition\"\n        ],\n        \"themes\": [\n          \"community\"\n        ]\n      }\n    ]\n  },\n  \"error\": null\n}"
+}

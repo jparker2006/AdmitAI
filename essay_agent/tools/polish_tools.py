@@ -15,6 +15,7 @@ from pydantic import BaseModel, Field
 # Tool infrastructure
 from essay_agent.prompts.templates import render_template
 from essay_agent.response_parser import schema_parser, safe_parse
+from essay_agent.response_parser import pydantic_parser, safe_parse
 from essay_agent.llm_client import get_chat_llm, call_llm
 from essay_agent.tools.base import ValidatedTool
 from essay_agent.tools import register_tool
@@ -22,6 +23,7 @@ from essay_agent.prompts.polish import (
     GRAMMAR_FIX_PROMPT,
     VOCABULARY_ENHANCEMENT_PROMPT,
     CONSISTENCY_CHECK_PROMPT,
+    OPTIMIZE_WORD_COUNT_PROMPT,
 )
 
 # ---------------------------------------------------------------------------
@@ -290,60 +292,48 @@ class ConsistencyCheckTool(ValidatedTool):
         return _call_and_parse(prompt, _CONSISTENCY_CHECK_SCHEMA)
 
 
+class OptimizeWordCountResult(BaseModel):
+    optimized_text: str = Field(..., description="Text adjusted to the target word count")
+    original_word_count: int = Field(..., description="Original word count")
+    final_word_count: int = Field(..., description="Final word count after optimization")
+
+
 @register_tool("optimize_word_count")
 class WordCountOptimizerTool(ValidatedTool):
-    """Intelligently trim essay to exact word count while preserving meaning and impact."""
-    
+    """Adjust text to meet a target word count.
+
+    Args:
+        text (str): The text to be optimized.
+        target_count (int): The desired word count.
+    """
+
     name: str = "optimize_word_count"
-    description: str = (
-        "Intelligently optimize essay word count to meet target requirements while preserving meaning and impact."
-    )
-    
-    timeout: float = 5.0  # Pure Python function, should be fast
-    
-    def _run(self, *, essay_text: str, target_words: int, preserve_meaning: bool = True, **_: Any) -> Dict[str, Any]:  # type: ignore[override]
-        # Input validation
-        essay_text = str(essay_text).strip()
-        if not essay_text:
-            return {"error": "essay_text cannot be empty"}
+    description: str = "Adjust text to meet a target word count."
+    timeout: float = 20.0
+
+    def _run(self, *, text: str, target_count: int, **_: Any) -> Dict[str, Any]:
+        text = str(text).strip()
+        if not text:
+            raise ValueError("text must not be empty.")
+        if not isinstance(target_count, int) or target_count <= 0:
+            raise ValueError("target_count must be a positive integer.")
+
+        original_word_count = len(text.split())
+
+        rendered_prompt = render_template(
+            OPTIMIZE_WORD_COUNT_PROMPT,
+            text=text,
+            target_count=target_count,
+        )
+
+        llm = get_chat_llm(temperature=0.2)
+        raw = call_llm(llm, rendered_prompt)
+
+        parser = pydantic_parser(OptimizeWordCountResult)
+        parsed = safe_parse(parser, raw)
+
+        # Ensure the final word count from the model is accurate
+        parsed.final_word_count = len(parsed.optimized_text.split())
+        parsed.original_word_count = original_word_count
         
-        try:
-            target_words = int(target_words)
-        except (ValueError, TypeError):
-            return {"error": "target_words must be a valid integer"}
-        
-        if target_words < 50:
-            return {"error": "target_words must be at least 50"}
-        
-        if target_words > 2000:
-            return {"error": "target_words cannot exceed 2000"}
-        
-        # Get current word count
-        current_words = _count_words(essay_text)
-        
-        # Optimize text
-        try:
-            optimized_text = _intelligent_trim_text(essay_text, target_words, preserve_meaning)
-            final_word_count = _count_words(optimized_text)
-            
-            # Calculate reduction statistics
-            words_removed = current_words - final_word_count
-            reduction_percentage = (words_removed / current_words) * 100 if current_words > 0 else 0
-            
-            return {
-                "optimized_essay": optimized_text,
-                "original_word_count": current_words,
-                "final_word_count": final_word_count,
-                "target_word_count": target_words,
-                "words_removed": words_removed,
-                "reduction_percentage": round(reduction_percentage, 1),
-                "target_achieved": final_word_count <= target_words,
-                "optimization_notes": (
-                    f"Successfully reduced from {current_words} to {final_word_count} words "
-                    f"({reduction_percentage:.1f}% reduction). "
-                    f"{'Target achieved.' if final_word_count <= target_words else 'Additional trimming may be needed.'}"
-                )
-            }
-        
-        except Exception as e:
-            return {"error": f"Word count optimization failed: {str(e)}"} 
+        return parsed.model_dump() 

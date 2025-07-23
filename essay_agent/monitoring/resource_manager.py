@@ -7,8 +7,14 @@ This module provides comprehensive resource management capabilities including:
 - Resource utilization monitoring
 """
 
+# ---------------------------------------------------------------------------
+# Optional psutil – use lightweight stub during offline tests
+# ---------------------------------------------------------------------------
 import asyncio
-import psutil
+try:
+    import psutil  # type: ignore
+except ModuleNotFoundError:  # pragma: no cover – offline CI path
+    from essay_agent._vendor import psutil_stub as psutil  # type: ignore
 import time
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Any

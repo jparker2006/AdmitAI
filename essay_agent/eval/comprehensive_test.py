@@ -16,7 +16,7 @@ from typing import Dict, List, Optional, Any, Tuple
 import argparse
 
 from essay_agent.cli import main as cli_main
-from essay_agent.agent.core.react_agent import EssayReActAgent
+from essay_agent.agent_autonomous import AutonomousEssayAgent
 from essay_agent.agent.memory.agent_memory import AgentMemory
 from essay_agent.models import UserProfile
 from essay_agent.tools import get_available_tools
@@ -543,10 +543,10 @@ class ComprehensiveTestRunner:
         result.execution_time = time.time() - start_time
         self.results.append(result)
 
-    async def _create_test_agent(self, user_id: str, is_new_user: bool = True) -> EssayReActAgent:
+    async def _create_test_agent(self, user_id: str, is_new_user: bool = True) -> AutonomousEssayAgent:
         """Create a test agent with appropriate configuration"""
         # Create agent - it will create its own memory internally
-        agent = EssayReActAgent(user_id=user_id)
+        agent = AutonomousEssayAgent(user_id=user_id)
         
         if not is_new_user:
             # Create sample profile for existing user and store it in agent's memory

@@ -1,0 +1,157 @@
+{
+  "evaluation_timestamp": "2025-07-16T21:52:16.413772",
+  "total_evaluations": 2,
+  "results": [
+    {
+      "scenario_id": "CONV-001-new-user-stanford-identity",
+      "user_profile_id": "tech_entrepreneur_student",
+      "execution_timestamp": "2025-07-16 21:51:55.438325",
+      "total_turns": 2,
+      "total_duration_seconds": 16.055551,
+      "completion_status": "partial",
+      "overall_success_score": 0.275,
+      "phase_results": [
+        {
+          "phase_name": "initial_request",
+          "completed": true,
+          "success_score": 0.55,
+          "turns_taken": 1,
+          "tools_used": [],
+          "memory_utilized": [
+            "semantic",
+            "working"
+          ],
+          "expected_behavior_match": 0.6,
+          "user_satisfaction": 0.575,
+          "issues_encountered": [],
+          "duration_seconds": 5.3852269649505615
+        },
+        {
+          "phase_name": "brainstorming",
+          "completed": false,
+          "success_score": 0.0,
+          "turns_taken": 1,
+          "tools_used": [],
+          "memory_utilized": [
+            "semantic",
+            "working"
+          ],
+          "expected_behavior_match": 0.0,
+          "user_satisfaction": 0.0,
+          "issues_encountered": [],
+          "duration_seconds": 10.150738954544067
+        }
+      ],
+      "conversation_turns": [
+        {
+          "turn_number": 1,
+          "timestamp": "2025-07-16 21:52:00.841782",
+          "user_input": "As we discussed before, i need help with my stanford essay. the prompt is 'what matters most to you, and why?' and i'm not sure where to start.",
+          "agent_response": "I'm here to help you with your essay. What specific aspect would you like to work on? I can help with brainstorming ideas, creating outlines, drafting, revising, or polishing your essay.",
+          "tools_used": [],
+          "memory_accessed": [
+            "semantic",
+            "working"
+          ],
+          "phase_name": "initial_request",
+          "success_indicators_met": [
+            "brainstorm_invitation"
+          ],
+          "expected_behavior_match": 0.6,
+          "response_time_seconds": 5.385142087936401,
+          "word_count": 31
+        },
+        {
+          "turn_number": 2,
+          "timestamp": "2025-07-16 21:52:06.341493",
+          "user_input": "As we discussed before, help me brainstorm what matters most to me",
+          "agent_response": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+          "tools_used": [],
+          "memory_accessed": [
+            "semantic",
+            "working"
+          ],
+          "phase_name": "brainstorming",
+          "success_indicators_met": [],
+          "expected_behavior_match": 0.0,
+          "response_time_seconds": 4.998281955718994,
+          "word_count": 27
+        }
+      ],
+      "tools_used_summary": {},
+      "memory_utilization_score": 0.5,
+      "unique_tools_used": 0,
+      "conversation_naturalness": 0.3,
+      "goal_achievement": 0.275,
+      "prompt_response_quality": 0.0,
+      "final_essay_word_count": null,
+      "final_essay_quality_score": null,
+      "prompt_relevance_score": null,
+      "issues_encountered": [],
+      "improvement_suggestions": [
+        "Improve agent response quality and tool selection",
+        "More user-centric and satisfying responses"
+      ],
+      "notable_successes": []
+    },
+    {
+      "scenario_id": "CONV-002-new-user-harvard-diversity",
+      "user_profile_id": "first_gen_immigrant_student",
+      "execution_timestamp": "2025-07-16 21:52:11.494645",
+      "total_turns": 1,
+      "total_duration_seconds": 4.918179,
+      "completion_status": "partial",
+      "overall_success_score": 0.0,
+      "phase_results": [
+        {
+          "phase_name": "initial_uncertainty",
+          "completed": false,
+          "success_score": 0.0,
+          "turns_taken": 1,
+          "tools_used": [],
+          "memory_utilized": [
+            "semantic",
+            "working"
+          ],
+          "expected_behavior_match": 0.0,
+          "user_satisfaction": 0.0,
+          "issues_encountered": [],
+          "duration_seconds": 4.891479015350342
+        }
+      ],
+      "conversation_turns": [
+        {
+          "turn_number": 1,
+          "timestamp": "2025-07-16 21:52:16.412744",
+          "user_input": "I'm working on my Harvard diversity essay but I don't know if my background is interesting enough.",
+          "agent_response": "I'm here to help you with your essay. What specific aspect would you like to work on? I can help with brainstorming ideas, creating outlines, drafting, revising, or polishing your essay.",
+          "tools_used": [],
+          "memory_accessed": [
+            "semantic",
+            "working"
+          ],
+          "phase_name": "initial_uncertainty",
+          "success_indicators_met": [],
+          "expected_behavior_match": 0.0,
+          "response_time_seconds": 4.891379117965698,
+          "word_count": 31
+        }
+      ],
+      "tools_used_summary": {},
+      "memory_utilization_score": 0.5,
+      "unique_tools_used": 0,
+      "conversation_naturalness": 0.0,
+      "goal_achievement": 0.0,
+      "prompt_response_quality": 0.0,
+      "final_essay_word_count": null,
+      "final_essay_quality_score": null,
+      "prompt_relevance_score": null,
+      "issues_encountered": [],
+      "improvement_suggestions": [
+        "Improve agent response quality and tool selection",
+        "More user-centric and satisfying responses"
+      ],
+      "notable_successes": []
+    }
+  ]
+}

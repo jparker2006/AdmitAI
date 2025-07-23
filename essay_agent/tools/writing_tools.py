@@ -62,6 +62,12 @@ def _call_and_parse(prompt: str, schema: Dict[str, Any]) -> Dict[str, Any]:  # n
     raw = call_llm(llm, prompt)
     parsed = safe_parse(schema_parser(schema), raw)
 
+    # Convert Pydantic model to dict if necessary --------------------------
+    from pydantic import BaseModel
+
+    if isinstance(parsed, BaseModel):
+        parsed = parsed.model_dump()
+
     # ``safe_parse`` returns a plain dict when using ``schema_parser``
     if isinstance(parsed, dict):
         return parsed
@@ -79,7 +85,14 @@ def _call_and_parse(prompt: str, schema: Dict[str, Any]) -> Dict[str, Any]:  # n
 
 @register_tool("expand_outline_section")
 class OutlineExpansionTool(ValidatedTool):
-    """Expand a single outline section into a vivid paragraph."""
+    """Expand a single outline section into a vivid paragraph.
+
+    Args:
+        outline_section (str): The content of the outline section to expand.
+        section_name (str): The name of the section (e.g., 'Hook', 'Conclusion').
+        voice_profile (str): A description of the user's writing voice.
+        target_words (int): The target word count for the expanded paragraph.
+    """
 
     name: str = "expand_outline_section"
     description: str = (
@@ -130,7 +143,13 @@ class OutlineExpansionTool(ValidatedTool):
 
 @register_tool("rewrite_paragraph")
 class ParagraphRewriteTool(ValidatedTool):
-    """Rewrite paragraph to meet a style/tone instruction."""
+    """Rewrite paragraph to meet a style/tone instruction.
+
+    Args:
+        paragraph (str): The paragraph to rewrite.
+        style_instruction (str): The goal for the revision (e.g., "make it more vivid").
+        voice_profile (str): A description of the user's writing voice.
+    """
 
     name: str = "rewrite_paragraph"
     description: str = (
@@ -178,7 +197,13 @@ class ParagraphRewriteTool(ValidatedTool):
 
 @register_tool("improve_opening")
 class OpeningImprovementTool(ValidatedTool):
-    """Improve an opening sentence to create a stronger hook."""
+    """Improve an opening sentence to create a stronger hook.
+
+    Args:
+        opening_sentence (str): The original opening sentence.
+        essay_context (str): A brief summary of the essay's topic.
+        voice_profile (str): A description of the user's writing voice.
+    """
 
     name: str = "improve_opening"
     description: str = (
@@ -222,7 +247,13 @@ class OpeningImprovementTool(ValidatedTool):
 
 @register_tool("strengthen_voice")
 class VoiceStrengtheningTool(ValidatedTool):
-    """Adjust paragraph to better match the user's authentic voice profile."""
+    """Adjust paragraph to better match the user's authentic voice profile.
+
+    Args:
+        paragraph (str): The paragraph to adjust.
+        voice_profile (str): A detailed description of the user's voice.
+        target_voice_traits (str): Specific traits to emphasize (e.g., "more confident, less formal").
+    """
 
     name: str = "strengthen_voice"
     description: str = (

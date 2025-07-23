@@ -1,0 +1,489 @@
+python -m essay_agent chat --user test_user332333322232sdwddg2recdvxec
+/Users/jparker/Desktop/AdmitAI/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+/Users/jparker/Desktop/AdmitAI/essay_agent/__init__.py:59: UserWarning: ReAct agent system not available: cannot import name 'BRAINSTORM_PROMPT' from partially initialized module 'essay_agent.prompts.brainstorm' (most likely due to a circular import) (/Users/jparker/Desktop/AdmitAI/essay_agent/prompts/brainstorm.py)
+  warnings.warn(f"ReAct agent system not available: {e}")
+📝 Essay prompt: Tell me about a time you faced a challenge, setback, or failure. How did it affect you, and what did you learn from the experience?
+🏫 Target college (optional): Stanford
+[INFO] essay_agent.agent_autonomous - AutonomousEssayAgent initialized for user test_user332333322232sdwddg2recdvxec
+🤖 Essay Agent Chat (Enhanced with ReAct Intelligence)
+Tell me what you'd like to work on, and I'll help you with your essay!
+Type 'help' for examples, 'status' for metrics, or 'quit' to exit.
+
+You:  Help me brainstorm some ideas for this essay
+
+---- PLANNER PROMPT ----
+<role>
+You are PlannerGPT-v2, the strategic architect turning user intent into an optimal sequence of tool calls.
+Think in THREE steps: (1) Analyse intent & context, (2) Select 1–5 tools, (3) Justify each choice in one sentence.
+Assume every tool is reliable.
+</role>
+
+<context>
+  last_tool_used: none
+  tool_stats: 
+  failure_count: 0
+  college: Stanford
+  essay_prompt: Tell me about a time you faced a challenge, setback, or failure. How did it affect you, and what did you learn from the experience?
+  recent_chat:
+  - {'role': 'user', 'content': 'Help me brainstorm some ideas for this essay'}
+
+</context>
+
+<rules>
+  • Use a maximum of 5 unique tools.
+  • If the last_tool_used is brainstorm, outline, or draft and the user did not explicitly request that same tool again, choose a different tool.
+  • If uncertain about the correct next action, the first step must be "clarify".
+  • If no tool seems suitable, plan a single "chat_response".
+  • Output must be **pure JSON** matching the schema below, and all args must be JSON-serialisable.
+</rules>
+
+<tools>
+  alignment_check – Analyze how well an essay addresses the specific…
+  brainstorm – Suggest 3 unique personal story ideas for a…
+  brainstorm_specific – Generate specific, targeted brainstorming ideas around a particular…
+  chat_response – Generate a direct conversational response using the underlying…
+  check_consistency – Check an essay for tense, voice, and stylistic…
+  clarify – Ask clarifying questions when user request is ambiguous…
+  classify_prompt – Classify an essay prompt by its dominant theme…
+  cliche_detection – Detect cliches in essay.…
+  comprehensive_validation – Run a final, comprehensive suite of validation checks…
+  condense_selection – Condense the selected text to be more concise.…
+  detect_overlap – Detect thematic or anecdotal overlap between a candidate…
+  draft – Expand an outline into a complete first-person draft…
+  echo – Enhanced echo tool that returns messages with conversational…
+  enhance_vocabulary – Enhance vocabulary precision and strength in an essay…
+  essay_scoring – Score a complete essay on the 5-dimension admissions…
+  expand_outline_section – Expand a single outline section into a vivid…
+  expand_selection – Expand the selected text to be more detailed.…
+  expand_story – Generate strategic follow-up questions to expand and develop…
+  explain_selection – Explain the selected text.…
+  extract_requirements – Extract explicit constraints and requirements from an essay…
+  final_polish – Final polish validation.…
+  fix_grammar – Fix grammar, spelling, and style errors in an…
+  improve_opening – Improve an opening sentence to create a compelling…
+  improve_selection – Improve the selected text for clarity and impact.…
+  length_optimizer – Redistribute word counts across outline sections to hit…
+  match_story – Rate how well a specific story matches an…
+  modify_selection – Modify the selected text based on a user…
+  optimize_word_count – Adjust text to meet a target word count.…
+  outline – Generate a structured five-part outline (hook, context, conflict,…
+  outline_alignment – Check essay alignment with outline.…
+  outline_generator – Create a structured outline with hook, context, growth…
+  plagiarism_check – Check essay for potential plagiarism.…
+  polish – Perform final grammar/style polish on a draft while…
+  replace_selection – Replace the selected text with a better alternative.…
+  revise – Revise essay draft according to a targeted focus…
+  rewrite_paragraph – Rewrite an existing paragraph to match a specific…
+  rewrite_selection – Rewrite the selected text with a different style…
+  smart_autocomplete – Provide real-time autocomplete suggestions.…
+  story_development – Take a story seed and develop it with…
+  story_themes – Analyze a story to identify key themes, values,…
+  strengthen_voice – Adjust a paragraph to better match the user's…
+  structure_validator – Evaluate an outline's structure, flow, and quality with…
+  suggest_next_actions – Suggest actionable next steps to help the user…
+  suggest_stories – Generate 5 relevant personal story suggestions from user…
+  suggest_strategy – Suggest a strategic approach for responding to an…
+  transition_suggestion – Generate seamless transition sentences between outline sections: hook,…
+  validate_uniqueness – Check if a story angle is unique and…
+  weakness_highlight – Analyze an essay to identify 3-5 specific weaknesses…
+  word_count – Accurate word counting and validation tool using Python-based…
+
+</tools>
+
+<constraints>
+  • Do NOT perform external I/O; interact only through registered tools.
+  • May return between 1 and 5 plan steps.
+  • Arguments must be strictly JSON-serialisable.
+</constraints>
+
+<output>
+Return **pure JSON** with this exact schema:
+{
+  "plan": [
+    {
+      "tool": "<tool_name>",
+      "args": { ... },
+      "thought": "<one sentence rationale>"
+    },
+    ...
+  ]
+}
+</output>
+
+<quality-checks>
+  - verify no step has empty tool or args
+  - every tool name exists in the <tools> list
+  - include a non-empty "thought" for each step explaining WHY
+</quality-checks> 
+
+### FEW-SHOT EXAMPLES (DO NOT EDIT BELOW MANUALLY) ################################
+
+# These examples illustrate how to translate common user intents into JSON plans.
+# PlannerGPT can imitate the style but must always adapt args to current context.
+# ------------------------------------------------------------------------------
+
+### EX1 – GRAMMAR FIX (ID: EX1)
+<user_input>
+Please fix the grammar in my intro paragraph.
+
+<expected_plan>
+[
+  {"tool": "fix_grammar", "args": {"text": "<selection>"}, "thought": "User asked for grammar help on selected text."}
+]
+
+### EX2 – VOICE STRENGTHENING (ID: EX2)
+<user_input>
+Can you make my conclusion sound more like my authentic voice?
+
+<expected_plan>
+[
+  {"tool": "voice_matcher", "args": {"selection": "<conclusion_paragraph>"}, "thought": "Analyse existing voice profile."},
+  {"tool": "strengthen_voice", "args": {"paragraph": "<conclusion_paragraph>", "voice_profile": "<matched_voice>"}, "thought": "Adjust tone to match student voice."}
+]
+
+### EX3 – SECTION REWRITE (ID: EX3)
+<user_input>
+Rewrite the growth paragraph to sound more reflective.
+
+<expected_plan>
+[
+  {"tool": "rewrite_paragraph", "args": {"paragraph": "<growth_paragraph>", "style": "reflective"}, "thought": "User wants to adjust tone of a section."}
+]
+
+### EX4 – OUTLINE VALIDATION (ID: EX4)
+<user_input>
+Does my outline flow well?
+
+<expected_plan>
+[
+  {"tool": "structure_validator", "args": {"outline": "<current_outline>"}, "thought": "Check structural flow."}
+]
+
+### EX5 – STORY DEVELOPMENT (ID: EX5)
+<user_input>
+Help me expand this story idea about failing my driving test.
+
+<expected_plan>
+[
+  {"tool": "story_development", "args": {"story": "Failing driving test"}, "thought": "Develop richer details."},
+  {"tool": "story_themes", "args": {"story": "<developed_story>"}, "thought": "Extract themes for alignment"}
+]
+
+### EX6 – TRANSITION IMPROVEMENT (ID: EX6)
+<user_input>
+I need a smoother transition between my context and conflict paragraphs.
+
+<expected_plan>
+[
+  {"tool": "transition_helper", "args": {"selection": "<end_of_context_paragraph>"}, "thought": "Generate candidate transition sentences."},
+  {"tool": "transition_suggestion", "args": {"outline": "<current_outline>"}, "thought": "Suggest best-fit transition within outline structure."}
+]
+
+### EX7 – CURSOR IMPROVE SELECTION (ID: EX7)
+<user_input>
+Make this sentence more vivid.
+
+<expected_plan>
+[
+  {"tool": "improve_selection", "args": {"selection": "<highlighted_text>"}, "thought": "Enhance clarity & impact."}
+]
+
+### EX8 – FINAL POLISH (ID: EX8)
+<user_input>
+Polish my final draft to perfection but keep it at 650 words.
+
+<expected_plan>
+[
+  {"tool": "polish", "args": {"draft": "<latest_draft>", "word_count": 650}, "thought": "Grammar/style polish with exact count."},
+  {"tool": "final_polish", "args": {"draft": "<polished_draft>"}, "thought": "Run full validation pipeline."}
+]
+
+# ------------------------------------------------------------------------------
+# QUICK TOOL MAP – each remaining tool referenced at least once so the model
+# learns their names. These mini-plans are illustrative only.
+# ------------------------------------------------------------------------------
+- alignment_check – Analyze how well an essay addresses the specific…
+- brainstorm – Suggest 3 unique personal story ideas for a…
+- brainstorm_specific – Generate specific, targeted brainstorming ideas around a particular…
+- chat_response – Generate a direct conversational response using the underlying…
+- check_consistency – Check an essay for tense, voice, and stylistic…
+- clarify – Ask clarifying questions when user request is ambiguous…
+- classify_prompt – Classify an essay prompt by its dominant theme…
+- cliche_detection – Detect cliches in essay.…
+- comprehensive_validation – Run a final, comprehensive suite of validation checks…
+- condense_selection – Condense the selected text to be more concise.…
+- detect_overlap – Detect thematic or anecdotal overlap between a candidate…
+- draft – Expand an outline into a complete first-person draft…
+- echo – Enhanced echo tool that returns messages with conversational…
+- enhance_vocabulary – Enhance vocabulary precision and strength in an essay…
+- essay_scoring – Score a complete essay on the 5-dimension admissions…
+- expand_outline_section – Expand a single outline section into a vivid…
+- expand_selection – Expand the selected text to be more detailed.…
+- expand_story – Generate strategic follow-up questions to expand and develop…
+- explain_selection – Explain the selected text.…
+- extract_requirements – Extract explicit constraints and requirements from an essay…
+- final_polish – Final polish validation.…
+- fix_grammar – Fix grammar, spelling, and style errors in an…
+- improve_opening – Improve an opening sentence to create a compelling…
+- improve_selection – Improve the selected text for clarity and impact.…
+- length_optimizer – Redistribute word counts across outline sections to hit…
+- match_story – Rate how well a specific story matches an…
+- modify_selection – Modify the selected text based on a user…
+- optimize_word_count – Adjust text to meet a target word count.…
+- outline – Generate a structured five-part outline (hook, context, conflict,…
+- outline_alignment – Check essay alignment with outline.…
+- outline_generator – Create a structured outline with hook, context, growth…
+- plagiarism_check – Check essay for potential plagiarism.…
+- polish – Perform final grammar/style polish on a draft while…
+- replace_selection – Replace the selected text with a better alternative.…
+- revise – Revise essay draft according to a targeted focus…
+- rewrite_paragraph – Rewrite an existing paragraph to match a specific…
+- rewrite_selection – Rewrite the selected text with a different style…
+- smart_autocomplete – Provide real-time autocomplete suggestions.…
+- story_development – Take a story seed and develop it with…
+- story_themes – Analyze a story to identify key themes, values,…
+- strengthen_voice – Adjust a paragraph to better match the user's…
+- structure_validator – Evaluate an outline's structure, flow, and quality with…
+- suggest_next_actions – Suggest actionable next steps to help the user…
+- suggest_stories – Generate 5 relevant personal story suggestions from user…
+- suggest_strategy – Suggest a strategic approach for responding to an…
+- transition_suggestion – Generate seamless transition sentences between outline sections
+- validate_uniqueness – Check if a story angle is unique and…
+- weakness_highlight – Analyze an essay to identify 3-5 specific weaknesses…
+- word_count – Accurate word counting and validation tool using Python-based…
+ 
+
+---- RAW PLAN ----
+[
+  {
+    "tool": "brainstorm",
+    "args": {
+      "prompt": "Tell me about a time you faced a challenge, setback, or failure. How did it affect you, and what did you learn from the experience?"
+    },
+    "thought": "The user requested help brainstorming ideas for an essay about challenges, setbacks, or failures."
+  }
+]
+
+=== TOOL » brainstorm ===
+ARGS:
+{
+  "prompt": "Tell me about a time you faced a challenge, setback, or failure. How did it affect you, and what did you learn from the experience?",
+  "tool_input": "Help me brainstorm some ideas for this essay",
+  "college_id": "Stanford",
+  "profile": "New applicant; profile pending.",
+  "user_id": "test_user332333322232sdwddg2recdvxec",
+  "essay_prompt": "Tell me about a time you faced a challenge, setback, or failure. How did it affect you, and what did you learn from the experience?"
+}
+
+=== BRAINSTORM PROMPT (temp=0.15) ===
+<role> You are an expert college-essay brainstorming coach who crafts authentic, unique story ideas. </role> <input> EssayPrompt: Tell me about a time you faced a challenge, setback, or failure. How did it affect you, and what did you learn from the experience? Profile: New applicant; profile pending. College: Stanford UsedStories: [] CrossCollegeSuggestions: [] PromptType: challenge Categories: ['obstacle', 'failure', 'conflict', 'problem_solving'] Date: 2025-07-21 </input> <constraints> You…
+==============================
+
+[08:19:11.776] RAW LLM → brainstorm: {
+  "stories": [
+    {
+      "title": "The Robotics Competition Setback",
+      "description": "Our team faced a major technical failure during a robotics competition. We learned to innovate under pressure and emerged with a stronger design.",
+      "prompt_fit": "This story highlights a significant challenge and the lessons learned from overcoming it.",
+      "insights": ["Innovation", "Teamwork"],
+      "themes": ["obstacle"]
+    },
+    {
+      "title": "Overcoming Stage Fright in Debate",
+      "description": "I froze during a crucial debate competition, but used the experience to develop confidence and public speaking skills. This failure taught me the importance of preparation and resilience.",
+      "prompt_fit": "The story addresses a personal failure and the growth that resulted from it.",
+      "insights": ["Confidence", "Resilience"],
+      "themes": ["failure"]
+    },
+    {
+      "title": "Navigating a Cultural Conflict Abroad",
+      "description": "While studying abroad, I encountered a cultural misunderstanding that led to conflict. By actively listening and adapting, I learned the value of empathy and cross-cultural communication.",
+      "prompt_fit": "This narrative fits the prompt by detailing a conflict and the personal growth achieved.",
+      "insights": ["Empathy", "Adaptability"],
+      "themes": ["conflict"]
+    }
+  ]
+}
+RESULT:
+1. {'title': 'The Robotics Competition Setback', 'description': 'Our team faced a major technical failure during a robotics competition. We learned to innovate under pressure and emerged with a stronger design.', 'prompt_fit': 'This story highlights a significant challenge and the lessons learned from overcoming it.', 'insights': ['Innovation', 'Teamwork'], 'themes': ['obstacle']}
+2. {'title': 'Overcoming Stage Fright in Debate', 'description': 'I froze during a crucial debate competition, but used the experience to develop confidence and public speaking skills. This failure taught me the importance of preparation and resilience.', 'prompt_fit': 'The story addresses a personal failure and the growth that resulted from it.', 'insights': ['Confidence', 'Resilience'], 'themes': ['failure']}
+3. {'title': 'Navigating a Cultural Conflict Abroad', 'description': 'While studying abroad, I encountered a cultural misunderstanding that led to conflict. By actively listening and adapting, I learned the value of empathy and cross-cultural communication.', 'prompt_fit': 'This narrative fits the prompt by detailing a conflict and the personal growth achieved.', 'insights': ['Empathy', 'Adaptability'], 'themes': ['conflict']}
+
+=== TOOL » brainstorm ===
+ARGS:
+{
+  "college_id": "Stanford",
+  "profile": "New applicant; profile pending.",
+  "essay_prompt": "Tell me about a time you faced a challenge, setback, or failure. How did it affect you, and what did you learn from the experience?",
+  "user_id": "test_user332333322232sdwddg2recdvxec"
+}
+
+=== BRAINSTORM PROMPT (temp=0.15) ===
+<role> You are an expert college-essay brainstorming coach who crafts authentic, unique story ideas. </role> <input> EssayPrompt: Tell me about a time you faced a challenge, setback, or failure. How did it affect you, and what did you learn from the experience? Profile: New applicant; profile pending. College: Stanford UsedStories: [] CrossCollegeSuggestions: [] PromptType: challenge Categories: ['obstacle', 'failure', 'conflict', 'problem_solving'] Date: 2025-07-21 </input> <constraints> You…
+==============================
+
+[08:19:13.217] RAW LLM → brainstorm: {
+  "stories": [
+    {
+      "title": "The Robotics Competition Setback",
+      "description": "Our team faced a major technical failure during a robotics competition. We learned to innovate under pressure and emerged with a stronger design.",
+      "prompt_fit": "This story highlights a significant challenge and the lessons learned from overcoming it.",
+      "insights": ["Innovation", "Teamwork"],
+      "themes": ["obstacle"]
+    },
+    {
+      "title": "Overcoming Stage Fright in Debate",
+      "description": "I froze during a crucial debate competition, but used the experience to develop confidence and public speaking skills. This failure taught me the importance of preparation and resilience.",
+      "prompt_fit": "The story addresses a personal failure and the growth that resulted from it.",
+      "insights": ["Confidence", "Resilience"],
+      "themes": ["failure"]
+    },
+    {
+      "title": "Navigating a Cultural Conflict Abroad",
+      "description": "While studying abroad, I encountered a cultural misunderstanding that led to conflict. By actively listening and adapting, I learned the value of empathy and cross-cultural communication.",
+      "prompt_fit": "This narrative fits the prompt by detailing a conflict and the personal growth achieved.",
+      "insights": ["Empathy", "Adaptability"],
+      "themes": ["conflict"]
+    }
+  ]
+}
+RESULT:
+1. {'title': 'The Robotics Competition Setback', 'description': 'Our team faced a major technical failure during a robotics competition. We learned to innovate under pressure and emerged with a stronger design.', 'prompt_fit': 'This story highlights a significant challenge and the lessons learned from overcoming it.', 'insights': ['Innovation', 'Teamwork'], 'themes': ['obstacle']}
+2. {'title': 'Overcoming Stage Fright in Debate', 'description': 'I froze during a crucial debate competition, but used the experience to develop confidence and public speaking skills. This failure taught me the importance of preparation and resilience.', 'prompt_fit': 'The story addresses a personal failure and the growth that resulted from it.', 'insights': ['Confidence', 'Resilience'], 'themes': ['failure']}
+3. {'title': 'Navigating a Cultural Conflict Abroad', 'description': 'While studying abroad, I encountered a cultural misunderstanding that led to conflict. By actively listening and adapting, I learned the value of empathy and cross-cultural communication.', 'prompt_fit': 'This narrative fits the prompt by detailing a conflict and the personal growth achieved.', 'insights': ['Empathy', 'Adaptability'], 'themes': ['conflict']}
+
+=== TOOL » brainstorm ===
+ARGS:
+{
+  "college_id": "Stanford",
+  "profile": "New applicant; profile pending.",
+  "essay_prompt": "Tell me about a time you faced a challenge, setback, or failure. How did it affect you, and what did you learn from the experience?",
+  "user_id": "test_user332333322232sdwddg2recdvxec"
+}
+
+=== BRAINSTORM PROMPT (temp=0.15) ===
+<role> You are an expert college-essay brainstorming coach who crafts authentic, unique story ideas. </role> <input> EssayPrompt: Tell me about a time you faced a challenge, setback, or failure. How did it affect you, and what did you learn from the experience? Profile: New applicant; profile pending. College: Stanford UsedStories: [] CrossCollegeSuggestions: [] PromptType: challenge Categories: ['obstacle', 'failure', 'conflict', 'problem_solving'] Date: 2025-07-21 </input> <constraints> You…
+==============================
+
+[08:19:14.225] RAW LLM → brainstorm: {
+  "stories": [
+    {
+      "title": "The Robotics Competition Setback",
+      "description": "Our team faced a major technical failure during a robotics competition. We learned to innovate under pressure and emerged with a stronger design.",
+      "prompt_fit": "This story highlights a significant challenge and the lessons learned from overcoming it.",
+      "insights": ["Innovation", "Teamwork"],
+      "themes": ["obstacle"]
+    },
+    {
+      "title": "Overcoming Stage Fright in Debate",
+      "description": "I froze during a crucial debate competition, but used the experience to develop confidence and public speaking skills. This failure taught me the importance of preparation and resilience.",
+      "prompt_fit": "The story addresses a personal failure and the growth that resulted from it.",
+      "insights": ["Confidence", "Resilience"],
+      "themes": ["failure"]
+    },
+    {
+      "title": "Navigating a Cultural Conflict Abroad",
+      "description": "While studying abroad, I encountered a cultural misunderstanding that led to conflict. By actively listening and adapting, I learned the value of empathy and cross-cultural communication.",
+      "prompt_fit": "This narrative fits the prompt by detailing a conflict and the personal growth achieved.",
+      "insights": ["Empathy", "Adaptability"],
+      "themes": ["conflict"]
+    }
+  ]
+}
+RESULT:
+1. {'title': 'The Robotics Competition Setback', 'description': 'Our team faced a major technical failure during a robotics competition. We learned to innovate under pressure and emerged with a stronger design.', 'prompt_fit': 'This story highlights a significant challenge and the lessons learned from overcoming it.', 'insights': ['Innovation', 'Teamwork'], 'themes': ['obstacle']}
+2. {'title': 'Overcoming Stage Fright in Debate', 'description': 'I froze during a crucial debate competition, but used the experience to develop confidence and public speaking skills. This failure taught me the importance of preparation and resilience.', 'prompt_fit': 'The story addresses a personal failure and the growth that resulted from it.', 'insights': ['Confidence', 'Resilience'], 'themes': ['failure']}
+3. {'title': 'Navigating a Cultural Conflict Abroad', 'description': 'While studying abroad, I encountered a cultural misunderstanding that led to conflict. By actively listening and adapting, I learned the value of empathy and cross-cultural communication.', 'prompt_fit': 'This narrative fits the prompt by detailing a conflict and the personal growth achieved.', 'insights': ['Empathy', 'Adaptability'], 'themes': ['conflict']}
+
+=== TOOL » brainstorm ===
+ARGS:
+{
+  "college_id": "Stanford",
+  "profile": "New applicant; profile pending.",
+  "essay_prompt": "Tell me about a time you faced a challenge, setback, or failure. How did it affect you, and what did you learn from the experience?",
+  "user_id": "test_user332333322232sdwddg2recdvxec"
+}
+
+=== BRAINSTORM PROMPT (temp=0.15) ===
+<role> You are an expert college-essay brainstorming coach who crafts authentic, unique story ideas. </role> <input> EssayPrompt: Tell me about a time you faced a challenge, setback, or failure. How did it affect you, and what did you learn from the experience? Profile: New applicant; profile pending. College: Stanford UsedStories: [] CrossCollegeSuggestions: [] PromptType: challenge Categories: ['obstacle', 'failure', 'conflict', 'problem_solving'] Date: 2025-07-21 </input> <constraints> You…
+==============================
+
+[08:19:15.230] RAW LLM → brainstorm: {
+  "stories": [
+    {
+      "title": "The Robotics Competition Setback",
+      "description": "Our team faced a major technical failure during a robotics competition. We learned to innovate under pressure and emerged with a stronger design.",
+      "prompt_fit": "This story highlights a significant challenge and the lessons learned from overcoming it.",
+      "insights": ["Innovation", "Teamwork"],
+      "themes": ["obstacle"]
+    },
+    {
+      "title": "Overcoming Stage Fright in Debate",
+      "description": "I froze during a crucial debate competition, but used the experience to develop confidence and public speaking skills. This failure taught me the importance of preparation and resilience.",
+      "prompt_fit": "The story addresses a personal failure and the growth that resulted from it.",
+      "insights": ["Confidence", "Resilience"],
+      "themes": ["failure"]
+    },
+    {
+      "title": "Navigating a Cultural Conflict Abroad",
+      "description": "While studying abroad, I encountered a cultural misunderstanding that led to conflict. By actively listening and adapting, I learned the value of empathy and cross-cultural communication.",
+      "prompt_fit": "This narrative fits the prompt by detailing a conflict and the personal growth achieved.",
+      "insights": ["Empathy", "Adaptability"],
+      "themes": ["conflict"]
+    }
+  ]
+}
+RESULT:
+1. {'title': 'The Robotics Competition Setback', 'description': 'Our team faced a major technical failure during a robotics competition. We learned to innovate under pressure and emerged with a stronger design.', 'prompt_fit': 'This story highlights a significant challenge and the lessons learned from overcoming it.', 'insights': ['Innovation', 'Teamwork'], 'themes': ['obstacle']}
+2. {'title': 'Overcoming Stage Fright in Debate', 'description': 'I froze during a crucial debate competition, but used the experience to develop confidence and public speaking skills. This failure taught me the importance of preparation and resilience.', 'prompt_fit': 'The story addresses a personal failure and the growth that resulted from it.', 'insights': ['Confidence', 'Resilience'], 'themes': ['failure']}
+3. {'title': 'Navigating a Cultural Conflict Abroad', 'description': 'While studying abroad, I encountered a cultural misunderstanding that led to conflict. By actively listening and adapting, I learned the value of empathy and cross-cultural communication.', 'prompt_fit': 'This narrative fits the prompt by detailing a conflict and the personal growth achieved.', 'insights': ['Empathy', 'Adaptability'], 'themes': ['conflict']}
+
+=== TOOL » brainstorm ===
+ARGS:
+{
+  "college_id": "Stanford",
+  "profile": "New applicant; profile pending.",
+  "essay_prompt": "Tell me about a time you faced a challenge, setback, or failure. How did it affect you, and what did you learn from the experience?",
+  "user_id": "test_user332333322232sdwddg2recdvxec"
+}
+
+=== BRAINSTORM PROMPT (temp=0.15) ===
+<role> You are an expert college-essay brainstorming coach who crafts authentic, unique story ideas. </role> <input> EssayPrompt: Tell me about a time you faced a challenge, setback, or failure. How did it affect you, and what did you learn from the experience? Profile: New applicant; profile pending. College: Stanford UsedStories: [] CrossCollegeSuggestions: [] PromptType: challenge Categories: ['obstacle', 'failure', 'conflict', 'problem_solving'] Date: 2025-07-21 </input> <constraints> You…
+==============================
+
+[08:19:16.235] RAW LLM → brainstorm: {
+  "stories": [
+    {
+      "title": "The Robotics Competition Setback",
+      "description": "Our team faced a major technical failure during a robotics competition. We learned to innovate under pressure and emerged with a stronger design.",
+      "prompt_fit": "This story highlights a significant challenge and the lessons learned from overcoming it.",
+      "insights": ["Innovation", "Teamwork"],
+      "themes": ["obstacle"]
+    },
+    {
+      "title": "Overcoming Stage Fright in Debate",
+      "description": "I froze during a crucial debate competition, but used the experience to develop confidence and public speaking skills. This failure taught me the importance of preparation and resilience.",
+      "prompt_fit": "The story addresses a personal failure and the growth that resulted from it.",
+      "insights": ["Confidence", "Resilience"],
+      "themes": ["failure"]
+    },
+    {
+      "title": "Navigating a Cultural Conflict Abroad",
+      "description": "While studying abroad, I encountered a cultural misunderstanding that led to conflict. By actively listening and adapting, I learned the value of empathy and cross-cultural communication.",
+      "prompt_fit": "This narrative fits the prompt by detailing a conflict and the personal growth achieved.",
+      "insights": ["Empathy", "Adaptability"],
+      "themes": ["conflict"]
+    }
+  ]
+}
+RESULT:
+1. {'title': 'The Robotics Competition Setback', 'description': 'Our team faced a major technical failure during a robotics competition. We learned to innovate under pressure and emerged with a stronger design.', 'prompt_fit': 'This story highlights a significant challenge and the lessons learned from overcoming it.', 'insights': ['Innovation', 'Teamwork'], 'themes': ['obstacle']}
+2. {'title': 'Overcoming Stage Fright in Debate', 'description': 'I froze during a crucial debate competition, but used the experience to develop confidence and public speaking skills. This failure taught me the importance of preparation and resilience.', 'prompt_fit': 'The story addresses a personal failure and the growth that resulted from it.', 'insights': ['Confidence', 'Resilience'], 'themes': ['failure']}
+3. {'title': 'Navigating a Cultural Conflict Abroad', 'description': 'While studying abroad, I encountered a cultural misunderstanding that led to conflict. By actively listening and adapting, I learned the value of empathy and cross-cultural communication.', 'prompt_fit': 'This narrative fits the prompt by detailing a conflict and the personal growth achieved.', 'insights': ['Empathy', 'Adaptability'], 'themes': ['conflict']}
+🤖: 1. **The Robotics Competition Setback**: Our team faced a major technical failure during a robotics competition. We learned to innovate under pressure and emerged with a stronger design. This story highlights a significant challenge and the lessons learned from overcoming it. *Insights*: Innovation, Teamwork. *Themes*: Obstacle.
+
+2. **Overcoming Stage Fright in Debate**: I froze during a crucial debate competition but used the experience to develop confidence and public speaking skills. This failure taught me the importance of preparation and resilience. The story addresses a personal failure and the growth that resulted from it. *Insights*: Confidence, Resilience. *Themes*: Failure.
+
+3. **Navigating a Cultural Conflict Abroad**: While studying abroad, I encountered a cultural misunderstanding that led to conflict. By actively listening and adapting, I learned the value of empathy and cross-cultural communication. This narrative fits the prompt by detailing a conflict and the personal growth achieved. *Insights*: Empathy, Adaptability. *Themes*: Conflict.
+

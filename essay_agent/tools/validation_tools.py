@@ -23,9 +23,11 @@ from essay_agent.prompts.validation import (
     PLAGIARISM_DETECTION_PROMPT,
     CLICHE_DETECTION_PROMPT,
     OUTLINE_ALIGNMENT_PROMPT,
-    FINAL_POLISH_PROMPT
+    FINAL_POLISH_PROMPT,
+    COMPREHENSIVE_VALIDATION_PROMPT,
 )
-from essay_agent.response_parser import safe_parse
+from essay_agent.response_parser import safe_parse, pydantic_parser
+from essay_agent.prompts.templates import render_template
 
 
 def simple_json_parse(text: str) -> Dict[str, Any]:
@@ -128,13 +130,11 @@ class ValidationResult(BaseModel):
 
 class ComprehensiveValidationResult(BaseModel):
     """Result of comprehensive validation pipeline."""
-    overall_status: str  # "pass", "warning", "fail"
-    overall_score: float = Field(ge=0.0, le=1.0)
-    validator_results: Dict[str, ValidationResult] = Field(default_factory=dict)
-    issues: List[ValidationIssue] = Field(default_factory=list)
-    recommendations: List[str] = Field(default_factory=list)
-    execution_time: float = 0.0
-    validators_run: int = 0
+    readiness_score: float = Field(..., ge=0.0, le=10.0)
+    is_ready_for_submission: bool
+    summary: str
+    passed_checks: List[str]
+    failed_checks: List[str]
 
 
 # ---------------------------------------------------------------------------
@@ -820,13 +820,11 @@ class QAValidationPipeline:
         recommendations = self._generate_recommendations(all_issues)
         
         return ComprehensiveValidationResult(
-            overall_status=overall_status,
-            overall_score=overall_score,
-            validator_results=validator_results,
-            issues=all_issues,
-            recommendations=recommendations,
-            execution_time=time.time() - start_time,
-            validators_run=validators_run
+            readiness_score=overall_score,
+            is_ready_for_submission=overall_status == "pass",
+            summary=f"Overall validation score: {overall_score:.2f}",
+            passed_checks=recommendations,
+            failed_checks=[] # No critical issues in this pipeline
         )
     
     def _determine_overall_status(self, validator_results: Dict[str, ValidationResult], overall_score: float) -> str:
@@ -883,19 +881,7 @@ def plagiarism_check(essay: str, context: dict = None) -> dict:
     validator = PlagiarismValidator()
     result = validator.validate(essay, context)
     
-    return {
-        "passed": result.passed,
-        "score": result.score,
-        "issues": [
-            {
-                "type": issue.issue_type,
-                "severity": issue.severity,
-                "message": issue.message,
-                "suggestion": issue.suggestion
-            }
-            for issue in result.issues
-        ]
-    }
+    return result.model_dump()
 
 
 @register_tool("cliche_detection")
@@ -907,19 +893,7 @@ def cliche_detection(essay: str, context: dict = None) -> dict:
     validator = ClicheDetectionValidator()
     result = validator.validate(essay, context)
     
-    return {
-        "passed": result.passed,
-        "score": result.score,
-        "issues": [
-            {
-                "type": issue.issue_type,
-                "severity": issue.severity,
-                "message": issue.message,
-                "suggestion": issue.suggestion
-            }
-            for issue in result.issues
-        ]
-    }
+    return result.model_dump()
 
 
 @register_tool("outline_alignment")
@@ -931,19 +905,7 @@ def outline_alignment(essay: str, context: dict = None) -> dict:
     validator = OutlineAlignmentValidator()
     result = validator.validate(essay, context)
     
-    return {
-        "passed": result.passed,
-        "score": result.score,
-        "issues": [
-            {
-                "type": issue.issue_type,
-                "severity": issue.severity,
-                "message": issue.message,
-                "suggestion": issue.suggestion
-            }
-            for issue in result.issues
-        ]
-    }
+    return result.model_dump()
 
 
 @register_tool("final_polish")
@@ -955,42 +917,41 @@ def final_polish(essay: str, context: dict = None) -> dict:
     validator = FinalPolishValidator()
     result = validator.validate(essay, context)
     
-    return {
-        "passed": result.passed,
-        "score": result.score,
-        "issues": [
-            {
-                "type": issue.issue_type,
-                "severity": issue.severity,
-                "message": issue.message,
-                "suggestion": issue.suggestion
-            }
-            for issue in result.issues
-        ]
-    }
+    return result.model_dump()
 
 
 @register_tool("comprehensive_validation")
-def comprehensive_validation(essay: str, context: dict = None) -> dict:
-    """Run comprehensive validation pipeline."""
-    if context is None:
-        context = {}
-    
-    pipeline = QAValidationPipeline()
-    result = pipeline.run_validation(essay, context)
-    
-    return {
-        "status": result.overall_status,
-        "score": result.overall_score,
-        "validators_run": result.validators_run,
-        "issues": [
-            {
-                "type": issue.issue_type,
-                "severity": issue.severity,
-                "message": issue.message,
-                "suggestion": issue.suggestion
-            }
-            for issue in result.issues
-        ],
-        "recommendations": result.recommendations
-    } 
+class ComprehensiveValidationTool(ValidatedTool):
+    """Run a final, comprehensive suite of validation checks on an essay.
+
+    Args:
+        essay_text (str): The full text of the essay to validate.
+        essay_prompt (str): The prompt the essay is answering.
+        outline (str): The essay's outline for structural checks.
+    """
+    name: str = "comprehensive_validation"
+    description: str = "Run a final, comprehensive suite of validation checks on an essay."
+    timeout: float = 60.0  # This is a complex, multi-check validation
+
+    def _run(self, *, essay_text: str, essay_prompt: str, outline: str, **_: Any) -> Dict[str, Any]:
+        essay_text = str(essay_text).strip()
+        essay_prompt = str(essay_prompt).strip()
+        outline = str(outline).strip()
+
+        if not essay_text or not essay_prompt or not outline:
+            raise ValueError("essay_text, essay_prompt, and outline must not be empty.")
+
+        rendered_prompt = render_template(
+            COMPREHENSIVE_VALIDATION_PROMPT,
+            essay_text=essay_text,
+            essay_prompt=essay_prompt,
+            outline=outline,
+        )
+
+        llm = get_chat_llm(temperature=0.1)
+        raw = call_llm(llm, rendered_prompt)
+
+        parser = pydantic_parser(ComprehensiveValidationResult)
+        parsed = safe_parse(parser, raw)
+        
+        return parsed.model_dump() 

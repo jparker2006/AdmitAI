@@ -52,12 +52,18 @@ try:
     from .agent.core.react_agent import EssayReActAgent  # noqa: F401
     from .agent.memory.agent_memory import AgentMemory  # noqa: F401
     from .agent.tools.tool_descriptions import TOOL_DESCRIPTIONS  # noqa: F401
+    from .agent_autonomous import AutonomousEssayAgent as _AutoEssayAgent  # New unified agent
+    EssayReActAgent = _AutoEssayAgent  # type: ignore
 except ImportError as e:  # pragma: no cover
     # Graceful degradation if ReAct agent components not available
     warnings.warn(f"ReAct agent system not available: {e}")
     EssayReActAgent = None  # type: ignore
     AgentMemory = None  # type: ignore
     TOOL_DESCRIPTIONS = {}  # type: ignore
+
+# Ensure alias exported
+if "EssayReActAgent" not in __all__:
+    __all__.append("EssayReActAgent")
 
 # Legacy compatibility - keep essential components
 from .executor import EssayExecutor  # noqa: F401

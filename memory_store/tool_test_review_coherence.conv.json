@@ -1,0 +1,25 @@
+{
+  "chat_history": [
+    {
+      "content": "Review coherence and logical flow",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "{\n  \"ok\": null,\n  \"error\": {\n    \"type\": \"TypeError\",\n    \"message\": \"_run() missing 1 required keyword-only argument: 'essay_text'\",\n    \"trace\": \"  File \\\"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\\\", line 132, in ainvoke\\n    result = await coro\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/tasks.py\\\", line 481, in wait_for\\n    return fut.result()\\n  File \\\"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\\\", line 143, in _arun_wrapper\\n    return await asyncio.to_thread(self._run, *args, **kwargs)\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/threads.py\\\", line 25, in to_thread\\n    return await loop.run_in_executor(None, func_call)\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/thread.py\\\", line 52, in run\\n    result = self.fn(*self.args, **self.kwargs)\\n\"\n  }\n}",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "ai",
+      "name": null,
+      "id": null,
+      "example": false,
+      "tool_calls": [],
+      "invalid_tool_calls": []
+    }
+  ],
+  "summary": "Review coherence and logical flow \n{\n  \"ok\": null,\n  \"error\": {\n    \"type\": \"TypeError\",\n    \"message\": \"_run() missing 1 required keyword-only argument: 'essay_text'\",\n    \"trace\": \"  File \\\"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\\\", line 132, in ainvoke\\n    result = await coro\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/tasks.py\\\", line 481, in wait_for\\n    return fut.result()\\n  File \\\"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\\\", line 143, in _arun_wrapper\\n    return await asyncio.to_thread(self._run, *args, **kwargs)\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/threads.py\\\", line 25, in to_thread\\n    return await loop.run_in_executor(None, func_call)\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/thread.py\\\", line 52, in run\\n    result = self.fn(*self.args, **self.kwargs)\\n\"\n  }\n} \nReview coherence and logical flow \n{\n  \"ok\": null,\n  \"error\": {\n    \"type\": \"TypeError\",\n    \"message\": \"_run() missing 1 required keyword-only argument: 'essay_text'\",\n    \"trace\": \"  File \\\"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\\\", line 132, in ainvoke\\n    result = await coro\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/tasks.py\\\", line 481, in wait_for\\n    return fut.result()\\n  File \\\"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\\\", line 143, in _arun_wrapper\\n    return await asyncio.to_thread(self._run, *args, **kwargs)\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/threads.py\\\", line 25, in to_thread\\n    return await loop.run_in_executor(None, func_call)\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/thread.py\\\", line 52, in run\\n    result = self.fn(*self.args, **self.kwargs)\\n\"\n  }\n}"
+}

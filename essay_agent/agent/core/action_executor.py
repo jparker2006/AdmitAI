@@ -357,6 +357,18 @@ class ActionExecutor:
             logger.warning(f"Tool '{tool_name}' returned None result")
             return f"Tool '{tool_name}' completed but didn't return specific results."
         
+        # Accept common dict structures directly (skip wrapper requirements)
+        if isinstance(result, dict):
+            # Brainstorm / story tools
+            if 'stories' in result:
+                return result
+            # Outline tool
+            if 'outline' in result:
+                return result
+            # Draft tool
+            if 'draft' in result or 'essay_draft' in result:
+                return result
+ 
         return result
     
     def _handle_action_error(
@@ -585,8 +597,7 @@ class ActionExecutor:
             'expand_story': {
                 'user_input': 'story_seed',
                 'story': 'story_seed',
-                'chosen_story': 'story_seed',
-                'story_seed': 'story_seed'
+                'chosen_story': 'story_seed'
             },
             'story_development': {
                 'user_input': 'story',
@@ -1223,7 +1234,7 @@ class ActionExecutor:
             if 'essay_prompt' not in result:
                 result['essay_prompt'] = "College application essay prompt"
                 
-        elif tool_name in ['classify_prompt', 'extract_requirements', 'suggest_strategy', 'detect_overlap']:
+        elif tool_name in ['classify_prompt', 'extract_requirements', 'suggest_strategy']:
             if 'prompt' not in result and 'user_input' in result:
                 result['prompt'] = result['user_input']
             if 'prompt' not in result and 'essay_prompt' in result:
@@ -1231,6 +1242,51 @@ class ActionExecutor:
             if 'prompt' not in result:
                 result['prompt'] = "College application essay prompt"
                 
+        elif tool_name == 'detect_overlap':
+            if 'story' not in result and 'user_input' in result:
+                result['story'] = result['user_input']
+            if 'story' not in result:
+                result['story'] = "A story to check for overlap."
+            
+            if 'college_name' not in result:
+                result['college_name'] = self.memory.get_current_college() or "Default University"
+
+            if 'previous_essays' not in result:
+                all_essays = self.memory.get_all_essays()
+                if all_essays:
+                    result['previous_essays'] = [
+                        essay['content'] for essay in all_essays 
+                        if essay.get('college') == result['college_name']
+                    ]
+                else:
+                    result['previous_essays'] = []
+
+        elif tool_name in ['modify_selection', 'explain_selection', 'improve_selection', 'rewrite_selection', 'expand_selection', 'condense_selection', 'replace_selection']:
+            if 'selection' not in result and 'user_input' in result:
+                result['selection'] = result['user_input']
+            if 'selection' not in result:
+                result['selection'] = "The user has selected this text for the tool to operate on."
+            
+            if 'surrounding_context' not in result:
+                result['surrounding_context'] = "The user is editing their college application essay."
+
+            if 'instruction' not in result and tool_name in ['modify_selection', 'rewrite_selection']:
+                result['instruction'] = f"A general instruction for the {tool_name} tool."
+
+        elif tool_name == 'smart_autocomplete':
+            if 'text_before_cursor' not in result and 'user_input' in result:
+                result['text_before_cursor'] = result['user_input']
+            if 'text_before_cursor' not in result:
+                result['text_before_cursor'] = "The user is typing their essay and has paused here."
+            if 'surrounding_context' not in result:
+                result['surrounding_context'] = "The user is in the middle of writing their main body paragraphs."
+
+        elif tool_name == 'suggest_next_actions':
+            if 'essay_state' not in result:
+                result['essay_state'] = str(self.memory.get_essay_state())
+            if 'conversation_history' not in result:
+                result['conversation_history'] = str(self.memory.get_recent_history(turns=5))
+
         elif tool_name == 'word_count':
             if 'text' not in result and 'user_input' in result:
                 result['text'] = result['user_input']

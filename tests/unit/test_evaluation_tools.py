@@ -644,3 +644,22 @@ class TestPydanticValidation:
         
         with pytest.raises(ValueError, match="weakness_type must be one of"):
             WeaknessHighlightResult(**invalid_data) 
+
+
+@pytest.mark.asyncio
+async def test_essay_scoring_serializable(monkeypatch):
+    """Ensure essay_scoring output is JSON serialisable in offline test mode."""
+    monkeypatch.setattr("essay_agent.tools.integration.SimpleMemory.load", lambda uid: {})
+    from essay_agent.tools.integration import execute_tool
+    import json
+
+    result = await execute_tool(
+        "essay_scoring",
+        essay_text="This is a sample essay text for scoring.",
+        essay_prompt="Tell us about yourself.",
+        user_id="pytest",
+        context={},
+    )
+
+    # Should not raise TypeError
+    json.dumps(result) 

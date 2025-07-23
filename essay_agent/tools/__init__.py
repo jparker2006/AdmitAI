@@ -102,6 +102,22 @@ for mod_info in pkgutil.iter_modules([str(_current_pkg)]):
         continue
     importlib.import_module(f"{__name__}.{mod_info.name}")
 
+# Explicit import of text_selection ensures registration even if module name
+# is added after initial package creation (e.g., during runtime tests).
+try:
+    importlib.import_module(f"{__name__}.text_selection")
+except ModuleNotFoundError:
+    # During early installations the file may not yet exist
+    pass
+
+# ---------------------------------------------------------------------------
+# U4-10A – Increase default timeout to 60 s for all tools --------------------
+# ---------------------------------------------------------------------------
+
+for _tool in REGISTRY.values():
+    if hasattr(_tool, "timeout") and _tool.timeout is not None and _tool.timeout < 60:  # type: ignore[attr-defined]
+        _tool.timeout = 60.0
+
 # ---------------------------------------------------------------------------
 # Tool access functions
 # ---------------------------------------------------------------------------
@@ -113,3 +129,16 @@ def get_available_tools() -> Dict[str, BaseTool]:
         Dictionary mapping tool names to tool instances
     """
     return dict(REGISTRY) 
+
+# ---------------------------------------------------------------------------
+# Export argument specification catalogue (Phase-6)
+# ---------------------------------------------------------------------------
+try:
+    from essay_agent.tools.tool_introspection import TOOL_ARG_SPEC, get_required_args, get_optional_args  # noqa: F401
+except Exception:  # pragma: no cover
+    # Introspection may fail during partial installations; fallback to empty mapping
+    TOOL_ARG_SPEC = {}
+    def get_required_args(name):  # type: ignore
+        return []
+    def get_optional_args(name):  # type: ignore
+        return [] 

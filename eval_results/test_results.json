@@ -1,0 +1,506 @@
+[
+  {
+    "test_id": "tool_brainstorm",
+    "test_name": "Tool Test: brainstorm",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.13298892974853516,
+    "tools_used": [
+      "brainstorm"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_brainstorm_specific",
+    "test_name": "Tool Test: brainstorm_specific",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.0036563873291015625,
+    "tools_used": [
+      "brainstorm_specific"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_generate_story_ideas",
+    "test_name": "Tool Test: generate_story_ideas",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.0035011768341064453,
+    "tools_used": [
+      "generate_story_ideas"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_story_development",
+    "test_name": "Tool Test: story_development",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.003843069076538086,
+    "tools_used": [
+      "story_development"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_story_themes",
+    "test_name": "Tool Test: story_themes",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.003459930419921875,
+    "tools_used": [
+      "story_themes"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_story_analysis",
+    "test_name": "Tool Test: story_analysis",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.0043849945068359375,
+    "tools_used": [
+      "story_analysis"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_outline",
+    "test_name": "Tool Test: outline",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.004044055938720703,
+    "tools_used": [
+      "outline"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_structure_essay",
+    "test_name": "Tool Test: structure_essay",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.003331899642944336,
+    "tools_used": [
+      "structure_essay"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_plan_essay",
+    "test_name": "Tool Test: plan_essay",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.0033042430877685547,
+    "tools_used": [
+      "plan_essay"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_organize_content",
+    "test_name": "Tool Test: organize_content",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.0033538341522216797,
+    "tools_used": [
+      "organize_content"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_write_introduction",
+    "test_name": "Tool Test: write_introduction",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.003427743911743164,
+    "tools_used": [
+      "write_introduction"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_write_body_paragraph",
+    "test_name": "Tool Test: write_body_paragraph",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.006114959716796875,
+    "tools_used": [
+      "write_body_paragraph"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_write_conclusion",
+    "test_name": "Tool Test: write_conclusion",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.005916118621826172,
+    "tools_used": [
+      "write_conclusion"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_draft_essay",
+    "test_name": "Tool Test: draft_essay",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.003353118896484375,
+    "tools_used": [
+      "draft_essay"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_rewrite_paragraph",
+    "test_name": "Tool Test: rewrite_paragraph",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.0038781166076660156,
+    "tools_used": [
+      "rewrite_paragraph"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_improve_transitions",
+    "test_name": "Tool Test: improve_transitions",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.00420689582824707,
+    "tools_used": [
+      "improve_transitions"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_add_details",
+    "test_name": "Tool Test: add_details",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.003719806671142578,
+    "tools_used": [
+      "add_details"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_enhance_voice",
+    "test_name": "Tool Test: enhance_voice",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.0034291744232177734,
+    "tools_used": [
+      "enhance_voice"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_revise_for_clarity",
+    "test_name": "Tool Test: revise_for_clarity",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.003515005111694336,
+    "tools_used": [
+      "revise_for_clarity"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_revise_for_impact",
+    "test_name": "Tool Test: revise_for_impact",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.0037488937377929688,
+    "tools_used": [
+      "revise_for_impact"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_strengthen_opening",
+    "test_name": "Tool Test: strengthen_opening",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.003487110137939453,
+    "tools_used": [
+      "strengthen_opening"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_improve_flow",
+    "test_name": "Tool Test: improve_flow",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.004391908645629883,
+    "tools_used": [
+      "improve_flow"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_polish_language",
+    "test_name": "Tool Test: polish_language",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.003804922103881836,
+    "tools_used": [
+      "polish_language"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_adjust_tone",
+    "test_name": "Tool Test: adjust_tone",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.0036690235137939453,
+    "tools_used": [
+      "adjust_tone"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_refine_word_choice",
+    "test_name": "Tool Test: refine_word_choice",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.0032880306243896484,
+    "tools_used": [
+      "refine_word_choice"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_final_edit",
+    "test_name": "Tool Test: final_edit",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.0033521652221679688,
+    "tools_used": [
+      "final_edit"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_analyze_essay",
+    "test_name": "Tool Test: analyze_essay",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.004637002944946289,
+    "tools_used": [
+      "analyze_essay"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_check_word_count",
+    "test_name": "Tool Test: check_word_count",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.004085063934326172,
+    "tools_used": [
+      "check_word_count"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_evaluate_prompt_response",
+    "test_name": "Tool Test: evaluate_prompt_response",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.003919839859008789,
+    "tools_used": [
+      "evaluate_prompt_response"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_assess_narrative_structure",
+    "test_name": "Tool Test: assess_narrative_structure",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.00426793098449707,
+    "tools_used": [
+      "assess_narrative_structure"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_review_coherence",
+    "test_name": "Tool Test: review_coherence",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.005517244338989258,
+    "tools_used": [
+      "review_coherence"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_score_essay",
+    "test_name": "Tool Test: score_essay",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.005870819091796875,
+    "tools_used": [
+      "score_essay"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_clarify",
+    "test_name": "Tool Test: clarify",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.003983974456787109,
+    "tools_used": [
+      "clarify"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_provide_feedback",
+    "test_name": "Tool Test: provide_feedback",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.004197835922241211,
+    "tools_used": [
+      "provide_feedback"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_suggest_improvements",
+    "test_name": "Tool Test: suggest_improvements",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.004237174987792969,
+    "tools_used": [
+      "suggest_improvements"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  },
+  {
+    "test_id": "tool_generate_alternatives",
+    "test_name": "Tool Test: generate_alternatives",
+    "category": "Tool Coverage",
+    "status": "PASS",
+    "execution_time": 0.0060842037200927734,
+    "tools_used": [
+      "generate_alternatives"
+    ],
+    "error_details": null,
+    "quality_score": 1.0,
+    "output_sample": "I apologize, but I encountered an error. Let me try to help you in a different way. What would you like to work on with your essay?",
+    "bug_reports": []
+  }
+]

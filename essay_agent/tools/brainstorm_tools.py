@@ -21,7 +21,8 @@ from essay_agent.prompts.brainstorming import (
     STORY_SUGGESTION_PROMPT,
     STORY_MATCHING_PROMPT,
     STORY_EXPANSION_PROMPT,
-    UNIQUENESS_VALIDATION_PROMPT
+    UNIQUENESS_VALIDATION_PROMPT,
+    SPECIFIC_BRAINSTORM_PROMPT
 )
 
 # ---------------------------------------------------------------------------
@@ -37,15 +38,8 @@ class StorySuggestion(BaseModel):
     unique_elements: List[str] = Field(..., min_length=1, max_length=3, description="Unique aspects")
 
 class StorySuggestionResult(BaseModel):
-    stories: List[StorySuggestion] = Field(..., min_length=5, max_length=5, description="Exactly 5 stories")
-    analysis_notes: str = Field(..., max_length=300, description="Profile analysis notes")
-    
-    @field_validator('stories')
-    @classmethod
-    def validate_stories_count(cls, v):
-        if len(v) != 5:
-            raise ValueError("Must provide exactly 5 story suggestions")
-        return v
+    stories: List[StorySuggestion] = Field(..., min_length=1, description="One or more story suggestions")
+    analysis_notes: str = Field("", max_length=300, description="Profile analysis notes")
 
 class StoryMatchingResult(BaseModel):
     match_score: float = Field(..., ge=0.0, le=10.0, description="Match score 0.0-10.0")
@@ -70,64 +64,109 @@ class UniquenessValidationResult(BaseModel):
     risk_mitigation: List[str] = Field(..., min_length=0, max_length=5, description="Risk mitigation strategies")
     recommendation: str = Field(..., max_length=300, description="Overall strategic guidance")
 
+class BrainstormingResult(BaseModel):
+    ideas: List[str] = Field(..., min_length=3, max_length=5, description="3-5 short idea strings")
+    next_steps: str = Field(..., description="Suggested next action for the user")
+    brainstorming_result: Optional[str] = Field(None, description="Human-readable preface")
+
 # ---------------------------------------------------------------------------
 # Tool implementations
 # ---------------------------------------------------------------------------
 
 @register_tool("suggest_stories")
 class StorySuggestionTool(ValidatedTool):
-    """Generate 5 relevant personal story suggestions from user profile"""
+    """Generate five personal story suggestions for a given essay prompt.
+
+    Args:
+        essay_prompt: The college essay question or prompt text.
+        profile: A narrative profile of the student (experiences, background, values).
+
+    Returns (dict):
+        stories (List[dict]): Exactly 5 story objects as defined in the output schema.
+        analysis_notes (str): Short rationale for story selection.
+        success / error keys handled by ValidatedTool wrapper.
+    """
     
-    name: str = "suggest_stories"
+    name: str = "suggest_stories"  # Keep primary name for description
     description: str = (
         "Generate 5 relevant personal story suggestions from user profile for essay prompt."
     )
     
     timeout: float = 20.0  # Story suggestion may take longer
     
-    def _run(self, *, essay_prompt: str, profile: str, **_: Any) -> Dict[str, Any]:
-        # Input validation
-        essay_prompt = str(essay_prompt).strip()
-        profile = str(profile).strip()
-        
-        if not essay_prompt:
-            raise ValueError("essay_prompt must be a non-empty string")
-        if not profile:
+    def _run(
+        self,
+        *,
+        tool_input: str = "",
+        prompt: str = "",
+        essay_prompt: str = "",
+        profile: str = "",
+        **_: Any,
+    ) -> Dict[str, Any]:
+        # Prioritize the most specific prompt argument available.
+        effective_prompt = (prompt or essay_prompt or tool_input).strip()
+        profile_str = (
+            str(profile).strip()
+            if isinstance(profile, str)
+            else json.dumps(profile)
+        )
+
+        if not effective_prompt:
+            raise ValueError(
+                "An essay prompt must be provided via 'prompt', 'essay_prompt', or 'tool_input'."
+            )
+        if not profile_str:
             raise ValueError("profile must be a non-empty string")
-        
-        if len(essay_prompt) > 2000:
-            raise ValueError("essay_prompt too long (max 2000 chars)")
-        if len(profile) > 10000:
-            raise ValueError("profile too long (max 10000 chars)")
-        
+
         # Render prompt
         try:
             prompt_text = render_template(
                 STORY_SUGGESTION_PROMPT,
-                essay_prompt=essay_prompt,
-                profile=profile
+                essay_prompt=effective_prompt,
+                profile=profile_str,
             )
-        except ValueError:
-            # Fallback to minimal prompt if template variable mismatch occurs
-            prompt_text = (
-                "SYSTEM: You are an essay brainstorming assistant.\n"
-                f"Essay Prompt: {essay_prompt}\n"
-                f"User Profile: {profile}\n"
-                "Generate 5 relevant personal story suggestions in valid JSON."
-            )
-        
-        # Call LLM
-        llm = get_chat_llm()
-        response = call_llm(llm, prompt_text)
-        
-        # Parse response
+        except ValueError as exc:
+            # Surface template errors for debugging
+            print("⚠️  STORY_SUGGESTION_PROMPT render failed:", exc)
+            raise
+
+        # Call LLM with deterministic low temperature --------------------------------
+        import os, textwrap
+        temp = float(os.getenv("ESSAY_AGENT_BRAINSTORM_TEMP", "0.2"))
+        llm = get_chat_llm(temperature=temp)
+
+        # Optional prompt preview when debugging --------------------------------------
+        if os.getenv("ESSAY_AGENT_SHOW_PROMPTS", "0") == "1":
+            preview = textwrap.shorten(prompt_text.replace("\n", " "), width=500, placeholder="…")
+            print(f"\n=== SUGGEST_STORIES PROMPT (temp={temp}) ===\n{preview}\n==============================\n")
+
         parser = pydantic_parser(StorySuggestionResult)
-        parsed_result = safe_parse(parser, response)
-        return safe_model_to_dict(parsed_result)
+
+        response = self._call_llm_with_prompt_and_parser(
+            llm,
+            prompt_text=prompt_text,
+            parser=parser,
+            required_keys=["stories"],
+        )
+        # Return parsed payload; ValidatedTool will wrap it.
+        return response
 
 @register_tool("match_story")
 class StoryMatchingTool(ValidatedTool):
-    """Rate how well a story matches an essay prompt (0-10 scale)"""
+    """Assess how well a story aligns with a specific essay prompt.
+
+    Args:
+        story: The full story text or concise summary to be evaluated.
+        essay_prompt: The college essay prompt to match against.
+
+    Returns (dict):
+        match_score (float): Composite alignment score 0.0-10.0 (0.1 precision).
+        rationale (str): Brief justification for the score.
+        strengths (List[str]): Concrete alignment strengths.
+        weaknesses (List[str]): Concrete alignment weaknesses.
+        improvement_suggestions (List[str]): Actionable ways to improve alignment.
+        optimization_priority (str): The single most impactful focus area.
+    """
     
     name: str = "match_story"
     description: str = (
@@ -177,7 +216,17 @@ class StoryMatchingTool(ValidatedTool):
 
 @register_tool("expand_story")
 class StoryExpansionTool(ValidatedTool):
-    """Generate follow-up questions to expand a story seed"""
+    """Generate development questions and focus areas to expand a story seed.
+
+    Args:
+        story_seed: A short description or seed of the story that needs expansion.
+
+    Returns (dict):
+        expansion_questions (List[str]): 5-8 targeted questions.
+        focus_areas (List[str]): 2-4 narrative aspects to focus on.
+        missing_details (List[str]): 2-5 key details still needed.
+        development_priority (str): Highest-priority area to tackle first.
+    """
     
     name: str = "expand_story"
     description: str = (
@@ -223,7 +272,18 @@ class StoryExpansionTool(ValidatedTool):
 
 @register_tool("brainstorm_specific")
 class SpecificBrainstormTool(ValidatedTool):
-    """Brainstorm specific ideas for a given topic or experience"""
+    """Brainstorm specific ideas for a given topic or experience.
+
+    Args:
+        topic: A concise phrase capturing the subject or experience to brainstorm around.
+        user_input: Raw user text (fallback if *topic* empty) to guide idea generation.
+
+    Returns (dict):
+        ideas (List[str]): 3-5 short idea strings.
+        next_steps (str): Suggested next action for the user.
+        success (bool): Indicates execution success.
+        brainstorming_result (str, optional): Human-readable preface.
+    """
     
     name: str = "brainstorm_specific"
     description: str = (
@@ -233,27 +293,52 @@ class SpecificBrainstormTool(ValidatedTool):
     timeout: float = 15.0
     
     def _run(self, *, topic: str = "", user_input: str = "", **kwargs: Any) -> Dict[str, Any]:
-        # Use either topic or user_input
-        subject = topic or user_input or "your experiences"
-        
-        # Simple brainstorming response
-        return {
-            "brainstorming_result": f"Here are some specific ideas about {subject}:",
-            "ideas": [
-                f"Consider the unique aspects of {subject}",
-                f"Think about the challenges you faced with {subject}",
-                f"Reflect on what you learned from {subject}",
-                f"How did {subject} change your perspective?",
-                f"What specific details make {subject} memorable?"
-            ],
-            "success": True,
-            "next_steps": "Choose one idea to develop further"
-        }
+        """Run the brainstorming tool with validated inputs."""
+
+        # Use topic if present, otherwise fallback to user_input
+        effective_topic = (topic or user_input or "").strip()
+        if not effective_topic:
+            raise ValueError("Must provide either 'topic' or 'user_input'.")
+
+        # Render prompt
+        try:
+            prompt_text = render_template(
+                SPECIFIC_BRAINSTORM_PROMPT,
+                topic=effective_topic
+            )
+        except ValueError:
+            prompt_text = (
+                "SYSTEM: You are a brainstorming assistant.\n"
+                f"Topic: {effective_topic}\n"
+                "Provide specific ideas in JSON."
+            )
+
+        # Prepare for LLM call
+        llm = get_chat_llm()
+        parser = pydantic_parser(BrainstormingResult)
+
+        # Call the helper and crucially, return its result
+        return self._call_llm_with_prompt_and_parser(
+            llm,
+            prompt_text=prompt_text,
+            parser=parser,
+        )
 
 
 @register_tool("story_development")
 class StoryDevelopmentTool(ValidatedTool):
-    """Develop and expand a story with rich details"""
+    """Develop and expand a story with rich details.
+
+    Args:
+        story: Draft or seed text of the story to enrich.
+        user_input: Fallback user text if *story* empty.
+
+    Returns (dict):
+        developed_story (str): Short enriched version.
+        development_questions (List[str]): 5 questions to deepen narrative.
+        themes (List[str]): 3-5 thematic labels.
+        next_steps (str): Recommended next action.
+    """
     
     name: str = "story_development"
     description: str = (
@@ -263,28 +348,68 @@ class StoryDevelopmentTool(ValidatedTool):
     timeout: float = 15.0
     
     def _run(self, *, story: str = "", user_input: str = "", **kwargs: Any) -> Dict[str, Any]:
-        # Use either story or user_input
-        story_content = story or user_input or "your story"
-        
-        # Simple story development response
-        return {
-            "developed_story": f"Let's develop your story about {story_content}:",
-            "development_questions": [
-                "What specific moment stands out most?",
-                "What emotions were you feeling?",
-                "What details can you add to set the scene?",
-                "What was the turning point?",
-                "How did this experience change you?"
-            ],
-            "themes": ["growth", "challenge", "insight", "transformation"],
-            "success": True,
-            "next_steps": "Add specific details and emotions to your story"
-        }
+        import os, json
+        from essay_agent.prompts.templates import render_template
+        from essay_agent.llm_client import get_chat_llm, call_llm
+
+        story_content = story or user_input
+        if not story_content:
+            raise ValueError("story cannot be empty")
+
+        # Offline deterministic stub ----------------------------
+        offline = os.getenv("ESSAY_AGENT_OFFLINE_TEST") == "1"
+        if offline:
+            return {
+                "developed_story": f"Let's develop your story about {story_content}:",
+                "development_questions": [
+                    "What specific moment stands out most?",
+                    "What emotions were you feeling?",
+                    "What details can you add to set the scene?",
+                    "What was the turning point?",
+                    "How did this experience change you?"
+                ],
+                "themes": ["growth", "challenge", "insight", "transformation"],
+                "next_steps": "Add specific details and emotions to your story",
+                "success": True,
+            }
+
+        # Online path ------------------------------------------
+        from essay_agent.prompts.brainstorming import STORY_DEVELOPMENT_PROMPT
+
+        rendered = render_template(STORY_DEVELOPMENT_PROMPT, story=story_content)
+        llm = get_chat_llm(temperature=0.3)
+        raw = call_llm(llm, rendered)
+        try:
+            data = json.loads(raw)
+            # minimal key checks
+            if not all(k in data for k in ("developed_story", "development_questions", "themes")):
+                raise ValueError
+        except Exception:
+            data = {
+                "developed_story": story_content,
+                "development_questions": [],
+                "themes": [],
+            }
+        data["success"] = True
+        if "next_steps" not in data:
+            data["next_steps"] = "Reflect on the development questions and expand your narrative."
+        return data
 
 
 @register_tool("story_themes")
 class StoryThemesTool(ValidatedTool):
-    """Identify and analyze themes within a story"""
+    """Identify and analyze themes within a story.
+
+    Args:
+        story: Full story text; fallback to user_input.
+
+    Returns (dict):
+        story_analysis (str): Summary line.
+        identified_themes (List[str]): 3-5 themes.
+        core_message (str): Essence of story in ≤20 words.
+        essay_potential (str): High|Medium|Low.
+        suggestions (str): Advice to strengthen theme focus.
+    """
     
     name: str = "story_themes"
     description: str = (
@@ -294,28 +419,66 @@ class StoryThemesTool(ValidatedTool):
     timeout: float = 15.0
     
     def _run(self, *, story: str = "", user_input: str = "", **kwargs: Any) -> Dict[str, Any]:
-        # Use either story or user_input
-        story_content = story or user_input or "your story"
-        
-        # Simple theme analysis response
-        return {
-            "story_analysis": f"Analyzing themes in: {story_content}",
-            "identified_themes": [
-                "Personal growth and resilience",
-                "Overcoming challenges",
-                "Community and relationships", 
-                "Learning and adaptation",
-                "Values and identity"
-            ],
-            "core_message": "This story demonstrates growth through challenge",
-            "essay_potential": "High - shows personal development",
-            "success": True,
-            "suggestions": "Focus on the transformation aspect of your experience"
-        }
+        import os, json
+        from essay_agent.prompts.templates import render_template
+        from essay_agent.llm_client import get_chat_llm, call_llm
+
+        story_content = story or user_input
+        if not story_content:
+            raise ValueError("story cannot be empty")
+
+        offline = os.getenv("ESSAY_AGENT_OFFLINE_TEST") == "1"
+        if offline:
+            return {
+                "story_analysis": f"Analyzing themes in: {story_content}",
+                "identified_themes": [
+                    "Personal growth and resilience",
+                    "Overcoming challenges",
+                    "Community and relationships",
+                ],
+                "core_message": "This story demonstrates growth through challenge",
+                "essay_potential": "High",
+                "suggestions": "Focus on the transformation aspect of your experience",
+                "success": True,
+            }
+
+        from essay_agent.prompts.brainstorming import STORY_THEMES_PROMPT
+
+        rendered = render_template(STORY_THEMES_PROMPT, story=story_content)
+        llm = get_chat_llm(temperature=0.3)
+        raw = call_llm(llm, rendered)
+        try:
+            data = json.loads(raw)
+            if not all(k in data for k in ("identified_themes", "core_message")):
+                raise ValueError
+        except Exception:
+            data = {
+                "story_analysis": f"Analyzing themes in: {story_content}",
+                "identified_themes": [],
+                "core_message": "",
+                "essay_potential": "Medium",
+                "suggestions": "Add more specific details to highlight unique themes",
+            }
+        data["success"] = True
+        return data
 
 @register_tool("validate_uniqueness")
 class UniquenessValidationTool(ValidatedTool):
-    """Check if story angle is unique and avoid clichés"""
+    """Evaluate a story angle for uniqueness and cliché risk.
+
+    Args:
+        story_angle: Short description of the proposed story.
+        previous_essays: List or single string of prior essays to compare against.
+
+    Returns (dict):
+        uniqueness_score (float): 0.00-1.00 uniqueness metric (two-decimal precision).
+        is_unique (bool): Whether the angle is sufficiently unique.
+        cliche_risks (List[str]): Potential cliché patterns.
+        differentiation_suggestions (List[str]): Ways to make the story more original.
+        unique_elements (List[str]): Elements already unique.
+        risk_mitigation (List[str]): Actions to reduce cliché risk.
+        recommendation (str): Concise overall guidance.
+    """
     
     name: str = "validate_uniqueness"
     description: str = (

@@ -16,7 +16,7 @@ from essay_agent.memory.user_profile_schema import UserProfile
 from essay_agent.tools import REGISTRY as TOOL_REGISTRY
 from essay_agent.utils.logging import debug_print
 from essay_agent.eval import run_real_evaluation
-from essay_agent.agent.core.react_agent import EssayReActAgent
+from essay_agent.agent_autonomous import AutonomousEssayAgent
 from essay_agent.eval.conversational_scenarios import (
     ALL_SCENARIOS, get_scenario_by_id, get_scenarios_by_category, 
     get_scenarios_by_difficulty, get_scenarios_by_school, get_scenario_summary
@@ -33,6 +33,14 @@ from essay_agent.eval.memory_scenarios import MemoryScenarioTester, run_comprehe
 from essay_agent.eval.llm_evaluator import LLMEvaluator, ConversationEvaluation
 from essay_agent.eval.batch_processor import BatchProcessor, BatchResult, BatchProgress 
 from essay_agent.eval.pattern_analyzer import PatternAnalyzer, PatternAnalysis
+from essay_agent.utils.prompt_validator import validate_prompt_len
+
+# Frontend debug interface
+try:
+    from essay_agent.frontend.cli import add_frontend_commands
+    FRONTEND_AVAILABLE = True
+except ImportError:
+    FRONTEND_AVAILABLE = False
 
 try:
     # tqdm is already a declared dependency in requirements.txt
@@ -185,6 +193,11 @@ def _cmd_write(args: argparse.Namespace) -> None:  # noqa: D401
     elog.VERBOSE = bool(args.verbose)
     elog.JSON_MODE = bool(args.json)
 
+    # Enable observability if requested -------------------------------------
+    import os
+    if getattr(args, "show_prompts", False):
+        os.environ["ESSAY_AGENT_SHOW_PROMPTS"] = "1"
+
     word_limit = args.word_limit or 650
     profile = _load_profile(user_id, args.profile)
 
@@ -213,7 +226,16 @@ def _cmd_write(args: argparse.Namespace) -> None:  # noqa: D401
     # ------------------------------------------------------------------
     # Real EssayAgent execution
     # ------------------------------------------------------------------
+    from essay_agent.memory.smart_memory import SmartMemory
     essay_prompt = EssayPrompt(text=prompt_text, word_limit=word_limit)
+
+    # Persist prompt & college before agent starts (EF-91-A)
+    mem = SmartMemory(user_id)
+    mem.set("essay_prompt", prompt_text)
+    if args.college:
+        mem.set("college", args.college)
+    mem.save()
+
     agent = EssayAgent(user_id=user_id)
 
     # Persist latest profile so subsequent tool calls can reference
@@ -816,6 +838,11 @@ def _cmd_eval_memory_list(args: argparse.Namespace) -> None:
 async def _cmd_chat(args: argparse.Namespace) -> None:  # noqa: D401
     """Handle 'essay-agent chat' command using ReAct agent."""
     
+    # Enable observability if requested
+    import os
+    if getattr(args, "show_prompts", False):
+        os.environ["ESSAY_AGENT_SHOW_PROMPTS"] = "1"
+    
     # Check if API key is set for LLM responses
     if not os.getenv("OPENAI_API_KEY"):
         print("❌ Error: OPENAI_API_KEY environment variable not set", file=sys.stderr)
@@ -842,7 +869,7 @@ async def _cmd_chat(args: argparse.Namespace) -> None:  # noqa: D401
             # Execute the shortcut using ReAct agent
             try:
                 profile = _load_profile(args.user, args.profile)
-                agent = EssayReActAgent(user_id=args.user)
+                agent = AutonomousEssayAgent(user_id=args.user)
                 
                 # Send the shortcut message
                 response = await agent.handle_message(shortcut_message)
@@ -875,11 +902,48 @@ async def _cmd_chat(args: argparse.Namespace) -> None:  # noqa: D401
     
     # Normal conversation mode
     try:
-        # Load user profile
+        # Load user profile; persist prompt/college if provided
         profile = _load_profile(args.user, args.profile)
+        from essay_agent.memory.smart_memory import SmartMemory
+        mem = SmartMemory(args.user)
+
+        # ----------------------------------------------------------
+        # EF-92B: Persist essay prompt & college at chat start
+        # ----------------------------------------------------------
+        # (1) Take any CLI-supplied values first -------------------
+        if getattr(args, "prompt", None):
+            mem.set("essay_prompt", args.prompt)
+        if getattr(args, "college", None):
+            mem.set("college", args.college)
+
+        # (2) Ask interactively if still missing -------------------
+        if not mem.get("essay_prompt", ""):
+            _inp = input("📝 Essay prompt: ").strip()
+            if _inp:
+                mem.set("essay_prompt", _inp)
+        if not mem.get("college", ""):
+            _college_inp = input("🏫 Target college (optional): ").strip()
+            if _college_inp:
+                mem.set("college", _college_inp)
+
+        mem.save()
         
         # Create ReAct agent
-        agent = EssayReActAgent(user_id=args.user)
+        agent = AutonomousEssayAgent(user_id=args.user)
+        
+        # ------------------------------------------------------------------
+        # Phase-3 bootstrap temporarily disabled at user request 2025-07-18
+        # ------------------------------------------------------------------
+        # (Auto-generating brainstorm/outline caused confusion. To restore,
+        # uncomment the block below or set a dedicated CLI flag.)
+
+        # try:
+        #     ran_bootstrap = await agent.orchestrator.bootstrap_if_needed()
+        #     if ran_bootstrap:
+        #         print("🧠 Auto-generated brainstorm & outline (offline mode)\n")
+        # except Exception as exc:  # pragma: no cover – non-fatal
+        #     if hasattr(args, 'debug') and args.debug:
+        #         print(f"[Debug] Bootstrap failed: {exc}")
         
         # Start enhanced conversation
         await _start_react_conversation(agent, args)
@@ -895,7 +959,7 @@ async def _cmd_chat(args: argparse.Namespace) -> None:  # noqa: D401
         sys.exit(1)
 
 
-async def _start_react_conversation(agent: EssayReActAgent, args: argparse.Namespace) -> None:
+async def _start_react_conversation(agent: AutonomousEssayAgent, args: argparse.Namespace) -> None:
     """Start enhanced conversation loop with ReAct agent."""
     print("🤖 Essay Agent Chat (Enhanced with ReAct Intelligence)")
     print("Tell me what you'd like to work on, and I'll help you with your essay!")
@@ -965,7 +1029,7 @@ def _cmd_agent_status(args: argparse.Namespace) -> None:  # noqa: D401
     
     try:
         # Create agent to get metrics
-        agent = EssayReActAgent(user_id=args.user)
+        agent = AutonomousEssayAgent(user_id=args.user)
         metrics = agent.get_session_metrics()
         
         if args.json:
@@ -1023,7 +1087,7 @@ def _cmd_agent_memory(args: argparse.Namespace) -> None:  # noqa: D401
     
     try:
         # Create agent to access memory
-        agent = EssayReActAgent(user_id=args.user)
+        agent = AutonomousEssayAgent(user_id=args.user)
         
         # Get recent conversation context
         context = agent._observe()
@@ -1602,7 +1666,7 @@ def _cmd_agent_debug(args: argparse.Namespace) -> None:  # noqa: D401
     
     try:
         # Create agent to access debug info
-        agent = EssayReActAgent(user_id=args.user)
+        agent = AutonomousEssayAgent(user_id=args.user)
         
         debug_info = {
             "user_id": args.user,
@@ -1734,7 +1798,7 @@ def cmd_memory_integration_test(args):
     """Test memory integration between evaluation and manual chat modes."""
     try:
         from essay_agent.eval.conversation_quality_evaluator import ConversationQualityEvaluator
-        from essay_agent.agent.core.react_agent import EssayReActAgent
+        from essay_agent.agent_autonomous import AutonomousEssayAgent
         
         print(f"🧪 Testing memory integration for user: {args.user_id}")
         
@@ -1893,6 +1957,65 @@ def cmd_eval_debug(args):
     except Exception as e:
         print(f"❌ Debug failed: {e}")
 
+# ---------------------------------------------------------------------------
+# init command – onboarding helper (EF-91)
+# ---------------------------------------------------------------------------
+
+
+def _cmd_init(args: argparse.Namespace) -> None:  # noqa: D401
+    """Handle `essay-agent init` by delegating to essay_agent.onboard."""
+
+    from essay_agent import onboard as _onboard_module  # pylint: disable=import-outside-toplevel
+
+    raw_args: list[str] = ["--user", args.user]
+    if getattr(args, "college", None):
+        raw_args.extend(["--college", args.college])
+    if getattr(args, "essay_prompt", None):
+        raw_args.extend(["--essay-prompt", args.essay_prompt])
+    if getattr(args, "resume", False):
+        raw_args.append("--resume")
+
+    _onboard_module.main(raw_args)
+
+
+# ---------------------------------------------------------------------------
+# resume command – continue unfinished workflow (EF-97)
+# ---------------------------------------------------------------------------
+
+
+def _cmd_resume(args: argparse.Namespace) -> None:  # noqa: D401
+    """Handle `essay-agent resume` to advance the user's essay workflow one phase."""
+
+    import asyncio
+    import json
+    import os
+
+    from essay_agent.agent_autonomous import AutonomousEssayAgent  # local import to avoid heavy deps
+
+    # Ensure stub environment for offline tests
+    if os.getenv("ESSAY_AGENT_OFFLINE_TEST") == "1":
+        os.environ.setdefault("OPENAI_API_KEY", "sk-test")
+
+    agent = AutonomousEssayAgent(user_id=args.user)
+
+    # 1. Avoid duplicate bootstrap runs ------------------------------------------------
+    ran_bootstrap = asyncio.run(agent.orchestrator.bootstrap_if_needed())
+
+    # 2. Resume workflow --------------------------------------------------------------
+    new_status = asyncio.run(agent.orchestrator.resume_workflow())
+
+    payload = {
+        "bootstrap_ran": ran_bootstrap,
+        "new_status": new_status,
+    }
+
+    if getattr(args, "json", False):
+        print(json.dumps(payload))
+    else:
+        if ran_bootstrap:
+            print("🔄  Bootstrap sequence executed (outline created).")
+        print(f"✅  Workflow resumed – current status: {new_status}")
+
 
 # ---------------------------------------------------------------------------
 # CLI Entrypoint
@@ -1913,6 +2036,8 @@ def build_parser() -> argparse.ArgumentParser:  # noqa: D401
     )
 
     sub = parser.add_subparsers(dest="command", required=True)
+    # Alias for legacy variable name used further below (bugfix & for EF-97/99)
+    subparsers = sub  # type: ignore  # noqa: F841
 
     # --------------------------- write -----------------------------------
     write = sub.add_parser("write", help="Run full essay workflow (brainstorm → polish)")
@@ -1928,6 +2053,11 @@ def build_parser() -> argparse.ArgumentParser:  # noqa: D401
         "--allow-demo",
         action="store_true",
         help="Allow offline demo run when OPENAI_API_KEY missing",
+    )
+    write.add_argument(
+        "--show-prompts",
+        action="store_true",
+        help="Show planner prompt, JSON plan, and per-tool output during execution",
     )
     write.set_defaults(func=_cmd_write)
 
@@ -2058,7 +2188,16 @@ def build_parser() -> argparse.ArgumentParser:  # noqa: D401
     chat.add_argument("--shortcut", choices=["ideas", "stories", "outline", "draft", "revise", "polish", "status", "help"], 
                   help="Start conversation with a shortcut (e.g., 'outline', 'draft')")
     chat.add_argument("--shortcuts", action="store_true", help="Show available shortcuts")
+    chat.add_argument(
+        "--show-prompts",
+        action="store_true",
+        help="Show planner prompt, JSON plan, and per-tool output during conversation",
+    )
     chat.set_defaults(func=_cmd_chat)
+
+    # --------------------------- frontend ------------------------------
+    if FRONTEND_AVAILABLE:
+        add_frontend_commands(sub)
 
     # --------------------------- agent-status ------------------------------
     agent_status = sub.add_parser("agent-status", help="Show ReAct agent performance metrics")
@@ -2124,6 +2263,22 @@ def build_parser() -> argparse.ArgumentParser:  # noqa: D401
     eval_debug_parser.add_argument('--conversation-id', required=True, help='Conversation ID to debug')
     eval_debug_parser.add_argument('--fix-issues', action='store_true', help='Attempt to fix detected issues')
     eval_debug_parser.set_defaults(func=cmd_eval_debug)
+
+    # ------------------------------------------------------------------
+    # init command (EF-91)
+    # ------------------------------------------------------------------
+    sp_init = subparsers.add_parser("init", help="Interactive onboarding – set college & essay prompt")
+    sp_init.add_argument("--user", required=True, help="User ID")
+    sp_init.add_argument("--college", required=False, help="Target college (e.g., Stanford)")
+    sp_init.add_argument("--essay-prompt", dest="essay_prompt", required=False, help="Essay prompt text")
+    sp_init.add_argument("--resume", action="store_true", help="Skip onboarding if already stored")
+    sp_init.set_defaults(func=_cmd_init)
+
+    # --------------------------- resume (EF-97) -----------------------------
+    resume_cmd = sub.add_parser("resume", help="Resume unfinished essay workflow")
+    resume_cmd.add_argument("--user", required=True, help="User ID to resume workflow for")
+    resume_cmd.add_argument("--json", action="store_true", help="JSON output")
+    resume_cmd.set_defaults(func=_cmd_resume)
 
     return parser
 

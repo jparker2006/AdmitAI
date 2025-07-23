@@ -1,0 +1,45 @@
+{
+  "chat_history": [
+    {
+      "content": "Help me brainstorm ideas for this essay",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "1. None",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "ai",
+      "name": null,
+      "id": null,
+      "example": false,
+      "tool_calls": [],
+      "invalid_tool_calls": []
+    },
+    {
+      "content": "My first (unsuccessful) run for student-council president in 11th grade.",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "{\n  \"ok\": null,\n  \"error\": {\n    \"type\": \"ValueError\",\n    \"message\": \"voice_profile must not be empty.\",\n    \"trace\": \"  File \\\"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\\\", line 132, in ainvoke\\n    result = await coro\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/tasks.py\\\", line 481, in wait_for\\n    return fut.result()\\n  File \\\"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\\\", line 143, in _arun_wrapper\\n    return await asyncio.to_thread(self._run, *args, **kwargs)\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/threads.py\\\", line 25, in to_thread\\n    return await loop.run_in_executor(None, func_call)\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/thread.py\\\", line 52, in run\\n    result = self.fn(*self.args, **self.kwargs)\\n  File \\\"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/draft.py\\\", line 132, in _run\\n    raise ValueError(\\\"voice_profile must not be empty.\\\")\\n\"\n  }\n}",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "ai",
+      "name": null,
+      "id": null,
+      "example": false,
+      "tool_calls": [],
+      "invalid_tool_calls": []
+    }
+  ],
+  "summary": "Help me brainstorm ideas for this essay \n1. None \nMy first (unsuccessful) run for student-council president in 11th grade. \n{\n  \"ok\": null,\n  \"error\": {\n    \"type\": \"ValueError\",\n    \"message\": \"voice_profile must not be empty.\",\n    \"trace\": \"  File \\\"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\\\", line 132, in ainvoke\\n    result = await coro\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/tasks.py\\\", line 481, in wait_for\\n    return fut.result()\\n  File \\\"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/base.py\\\", line 143, in _arun_wrapper\\n    return await asyncio.to_thread(self._run, *args, **kwargs)\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/asyncio/threads.py\\\", line 25, in to_thread\\n    return await loop.run_in_executor(None, func_call)\\n  File \\\"/Library/Developer/CommandLineTools/Library/Frameworks/Python3.framework/Versions/3.9/lib/python3.9/concurrent/futures/thread.py\\\", line 52, in run\\n    result = self.fn(*self.args, **self.kwargs)\\n  File \\\"/Users/jparker/Desktop/AdmitAI/essay_agent/tools/draft.py\\\", line 132, in _run\\n    raise ValueError(\\\"voice_profile must not be empty.\\\")\\n\"\n  }\n}"
+}

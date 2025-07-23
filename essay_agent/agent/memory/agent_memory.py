@@ -205,6 +205,24 @@ class AgentMemory:
         except Exception as e:
             logger.error(f"Error tracking tool execution: {e}")
             return ""
+
+    def get_current_college(self) -> Optional[str]:
+        """Retrieves the college for the current active essay context."""
+        if self.context_manager and self.context_manager.current_essay_id:
+            # Assuming the context manager can provide details for the current essay
+            essay_context = self.hierarchical_memory.get_essay_context(self.context_manager.current_essay_id)
+            return essay_context.get("college_name")
+        return None
+
+    def get_all_essays(self) -> List[Dict[str, Any]]:
+        """Retrieves all essays from the user's portfolio."""
+        if self.hierarchical_memory:
+            return self.hierarchical_memory.get_all_documents_by_type('essay')
+        return []
+
+    # ================================================================
+    # Context Retrieval and Pattern Detection
+    # ================================================================
     
     def get_relevant_context(self, query: str, max_tokens: int = 2000,
                            context_types: Optional[List[str]] = None) -> RetrievedContext:

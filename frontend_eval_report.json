@@ -1,0 +1,110 @@
+{
+  "total_tools": 49,
+  "tools_with_examples": 49,
+  "tools_tested": 10,
+  "successful_tools": 10,
+  "failed_tools": [],
+  "missing_examples": [
+    "brainstorm_specific",
+    "story_development",
+    "story_themes",
+    "chat_response",
+    "clarify",
+    "word_count",
+    "echo",
+    "essay_scoring",
+    "weakness_highlight",
+    "cliche_detection",
+    "alignment_check",
+    "suggest_next_actions",
+    "enhance_vocabulary",
+    "check_consistency",
+    "optimize_word_count",
+    "classify_prompt",
+    "extract_requirements",
+    "suggest_strategy",
+    "detect_overlap",
+    "outline_generator",
+    "structure_validator",
+    "length_optimizer",
+    "modify_selection",
+    "explain_selection",
+    "improve_selection",
+    "rewrite_selection",
+    "expand_selection",
+    "condense_selection",
+    "replace_selection",
+    "smart_autocomplete",
+    "plagiarism_check",
+    "outline_alignment",
+    "final_polish",
+    "comprehensive_validation",
+    "expand_outline_section",
+    "rewrite_paragraph",
+    "improve_opening",
+    "strengthen_voice"
+  ],
+  "invalid_examples": [],
+  "test_results": {
+    "brainstorm": {
+      "success": true,
+      "execution_time": 17.790581941604614,
+      "response_length": 1067,
+      "test_message": "Help me brainstorm essay ideas"
+    },
+    "suggest_stories": {
+      "success": true,
+      "execution_time": 2.9712071418762207,
+      "response_length": 161,
+      "test_message": "Help me with my essay"
+    },
+    "match_story": {
+      "success": true,
+      "execution_time": 0.13814210891723633,
+      "response_length": 161,
+      "test_message": "Help me with my essay"
+    },
+    "expand_story": {
+      "success": true,
+      "execution_time": 1.0083131790161133,
+      "response_length": 161,
+      "test_message": "Help me with my essay"
+    },
+    "brainstorm_specific": {
+      "success": true,
+      "execution_time": 2.0095770359039307,
+      "response_length": 1067,
+      "test_message": "Help me brainstorm essay ideas"
+    },
+    "story_development": {
+      "success": true,
+      "execution_time": 0.9997782707214355,
+      "response_length": 161,
+      "test_message": "Help me with my essay"
+    },
+    "story_themes": {
+      "success": true,
+      "execution_time": 1.0070350170135498,
+      "response_length": 161,
+      "test_message": "Help me with my essay"
+    },
+    "validate_uniqueness": {
+      "success": true,
+      "execution_time": 1.0048227310180664,
+      "response_length": 161,
+      "test_message": "Help me with my essay"
+    },
+    "chat_response": {
+      "success": true,
+      "execution_time": 1.003685712814331,
+      "response_length": 161,
+      "test_message": "Help me with my essay"
+    },
+    "clarify": {
+      "success": true,
+      "execution_time": 1.004289150238037,
+      "response_length": 161,
+      "test_message": "Help me with my essay"
+    }
+  }
+}

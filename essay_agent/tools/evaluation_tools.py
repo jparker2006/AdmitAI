@@ -167,8 +167,13 @@ class EssayScoringTool(ValidatedTool):
             # Parse and validate response
             parser = pydantic_parser(EssayScoringResult)
             parsed = safe_parse(parser, response)
-            
-            return parsed.model_dump()
+
+            # Guarantee plain dict regardless of parser return type ---------
+            from pydantic import BaseModel
+
+            if isinstance(parsed, BaseModel):
+                parsed = parsed.model_dump()
+            return parsed
             
         except Exception as e:
             return {"error": f"Essay scoring failed: {str(e)}"}
@@ -480,3 +485,27 @@ async def test_workflow_integration():
 if __name__ == "__main__":
     import asyncio
     asyncio.run(test_workflow_integration()) 
+
+# ---------------------------------------------------------------------------
+# Legacy convenience wrappers (maintain backward-compat with older tests)
+# ---------------------------------------------------------------------------
+
+def score_essay(*, essay_text: str, essay_prompt: str, **kwargs):  # noqa: D401
+    """Backwards-compat functional alias for EssayScoringTool."""
+    tool = EssayScoringTool()
+    return tool(essay_text=essay_text, essay_prompt=essay_prompt, **kwargs)
+
+
+def highlight_weaknesses(*, essay_text: str, **kwargs):  # noqa: D401
+    tool = WeaknessHighlightTool()
+    return tool(essay_text=essay_text, **kwargs)
+
+
+def detect_cliches(*, essay_text: str, **kwargs):  # noqa: D401
+    tool = ClicheDetectionTool()
+    return tool(essay_text=essay_text, **kwargs)
+
+
+def check_alignment(*, essay_text: str, essay_prompt: str, **kwargs):  # noqa: D401
+    tool = AlignmentCheckTool()
+    return tool(essay_text=essay_text, essay_prompt=essay_prompt, **kwargs) 

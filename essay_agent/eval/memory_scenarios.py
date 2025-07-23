@@ -608,7 +608,6 @@ class MemoryScenarioTester:
             prompt="Test prompt for memory evaluation",
             word_limit=500,
             user_profile=user_profile.profile_id,
-            autonomy_level="collaborative",  # Standard for memory tests
             conversation_flow=[test_phase],
             success_criteria=SuccessCriteria(
                 conversation_turns={"min": 1, "max": 3},
