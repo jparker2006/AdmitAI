@@ -3,85 +3,49 @@
     "name": "Alex Kim",
     "grade": 12,
     "intended_major": "Business Administration",
-    "college_list": [
-      "Wharton",
-      "Stanford",
-      "NYU Stern",
-      "UC Berkeley Haas",
-      "Northwestern Kellogg"
-    ],
-    "platforms": [
-      "Common App"
-    ]
+    "college_list": [],
+    "platforms": []
   },
   "academic_profile": {
-    "gpa": 3.91,
-    "test_scores": {
-      "SAT": 1510,
-      "ACT": 34
-    },
-    "courses": [
-      "AP Economics",
-      "AP Statistics",
-      "AP Calculus BC",
-      "AP Psychology",
-      "AP World History"
-    ],
+    "gpa": null,
+    "test_scores": {},
+    "courses": [],
     "activities": [
       {
         "name": "Student-Run Investment Club",
         "role": "Founder & President",
-        "duration": "2 years",
-        "description": "Founded investment club that manages $10,000 portfolio, teaches financial literacy to peers",
-        "impact": "Portfolio returned 12% annually, taught 50+ students about investing and personal finance"
+        "duration": "N/A",
+        "description": "",
+        "impact": "Portfolio returned 12% annually, taught 50+ students about investing"
       },
       {
         "name": "Local Tutoring Business",
         "role": "Founder & CEO",
-        "duration": "3 years",
-        "description": "Started tutoring business connecting high school students with younger students needing academic help",
-        "impact": "Generated $15,000 revenue, employed 8 tutors, helped 40+ students improve grades by average of 1.2 GPA points"
+        "duration": "N/A",
+        "description": "",
+        "impact": "Generated $15,000 revenue, employed 8 tutors, helped 40+ students improve grades"
       },
       {
-        "name": "Model United Nations",
+        "name": "Model UN Conference",
         "role": "Secretary-General",
-        "duration": "4 years",
-        "description": "Led school's MUN program, organized conferences, specialized in international economic policy",
-        "impact": "Doubled club membership, won best delegation at 5 conferences"
+        "duration": "N/A",
+        "description": "",
+        "impact": "Led 200-person conference, improved international relations understanding"
       }
     ]
   },
   "core_values": [
     {
       "value": "Entrepreneurial Spirit",
-      "description": "Believe in creating opportunities and solutions through innovative business approaches",
-      "evidence": [
-        "Founded investment club",
-        "Started tutoring business",
-        "Built sustainable revenue models"
-      ],
-      "used_in_essays": [],
-      "importance_level": 9
-    },
-    {
-      "value": "Financial Literacy Education",
-      "description": "Passionate about teaching others financial skills and economic understanding",
-      "evidence": [
-        "Investment club education",
-        "Personal finance workshops",
-        "Economic policy advocacy"
-      ],
+      "description": "Building solutions to real problems",
+      "evidence": [],
       "used_in_essays": [],
       "importance_level": 8
     },
     {
-      "value": "Collaborative Leadership",
-      "description": "Believe the best businesses and organizations succeed by empowering others",
-      "evidence": [
-        "Employed fellow students",
-        "Doubled MUN membership",
-        "Mentored younger entrepreneurs"
-      ],
+      "value": "Financial Education",
+      "description": "Empowering others through financial literacy",
+      "evidence": [],
       "used_in_essays": [],
       "importance_level": 8
     }
@@ -89,79 +53,36 @@
   "defining_moments": [
     {
       "title": "Starting a Business During Family Financial Struggles",
-      "description": "When my parents' small business struggled during the pandemic, I launched my tutoring service to help with family finances. I was nervous about balancing schoolwork with entrepreneurship, but the business succeeded beyond my expectations and taught me about resilience and financial planning.",
-      "emotional_impact": "Anxious about family finances, then proud to contribute meaningfully",
-      "lessons_learned": "Sometimes challenges create the best opportunities to discover your capabilities",
+      "description": "Launched tutoring business when family faced financial difficulties",
+      "emotional_impact": "",
+      "lessons_learned": "",
       "used_in_essays": [],
       "themes": [
         "entrepreneurship",
         "family support",
-        "resilience",
-        "financial responsibility"
-      ],
-      "story_category": "accomplishment",
-      "story_weight": 1.2,
-      "college_usage": {}
-    },
-    {
-      "title": "Learning to Balance Profit with Purpose",
-      "description": "Initially, my tutoring business focused purely on profit maximization. However, when I met students who couldn't afford tutoring but desperately needed help, I created a scholarship program funded by higher-paying clients. This taught me that sustainable businesses must balance profit with social impact.",
-      "emotional_impact": "Conflicted between profit and principles, then fulfilled by finding balance",
-      "lessons_learned": "The most sustainable businesses create value for all stakeholders, not just shareholders",
-      "used_in_essays": [],
-      "themes": [
-        "business ethics",
-        "social responsibility",
-        "sustainable growth",
-        "values-driven leadership"
+        "resilience"
       ],
       "story_category": "defining_moment",
       "story_weight": 1.0,
       "college_usage": {}
     },
     {
-      "title": "Teaching Investment Fundamentals to Skeptical Peers",
-      "description": "When I started the investment club, many students thought investing was 'gambling' or only for wealthy people. I had to overcome these misconceptions by starting with basic financial literacy and demonstrating consistent, research-based investment strategies. Seeing classmates become confident investors was incredibly rewarding.",
-      "emotional_impact": "Frustrated by misconceptions, then excited by students' transformation",
-      "lessons_learned": "Education and patience can break down barriers to financial empowerment",
+      "title": "Teaching Investment to Skeptical Peers",
+      "description": "Convinced classmates that young people should invest despite their skepticism",
+      "emotional_impact": "",
+      "lessons_learned": "",
       "used_in_essays": [],
       "themes": [
         "financial education",
-        "misconception challenging",
         "peer teaching",
-        "democratizing finance"
+        "misconception challenging"
       ],
-      "story_category": "leadership",
-      "story_weight": 1.1,
+      "story_category": "defining_moment",
+      "story_weight": 1.0,
       "college_usage": {}
     }
   ],
-  "writing_voice": {
-    "tone_preferences": [
-      "confident",
-      "analytical",
-      "professional"
-    ],
-    "vocabulary_level": "advanced",
-    "sentence_patterns": [
-      "clear",
-      "logical",
-      "structured"
-    ],
-    "stylistic_traits": [
-      "uses_business_terminology",
-      "result_oriented",
-      "strategic_thinking"
-    ]
-  },
+  "writing_voice": null,
   "essay_history": [],
-  "college_story_usage": {},
-  "model_extra": {
-    "onboarding_completed": true,
-    "college": "Stanford",
-    "essay_prompt": "Tell me about a time you faced a challenge, setback, or failure. How did it affect you, and what did you learn from the experience?"
-  },
-  "onboarding_completed": true,
-  "college": "Stanford",
-  "essay_prompt": "Tell me about a time you faced a challenge, setback, or failure. How did it affect you, and what did you learn from the experience?"
+  "college_story_usage": {}
 }

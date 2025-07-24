@@ -69,24 +69,66 @@ def build_params(tool_name: str, *, user_id: str, user_input: str = "", context:
 # ---------------------------------------------------------------------------
 
 async def execute_tool(tool_name: str, **params) -> Dict[str, Any]:  # noqa: D401
-    """Run *tool_name* safely; wrap result in uniform ok/error dict."""
+    """Run *tool_name* safely with comprehensive reliability measures; wrap result in uniform ok/error dict."""
 
-    tool: Optional[ValidatedTool] = TOOL_REGISTRY.get(tool_name)
-    if tool is None:
-        return {"ok": None, "error": f"Tool '{tool_name}' not found"}
-
-    # Attempt async execution path – supports LangChain tools with ainvoke
+    # Use reliability framework for all tool executions  
     try:
-        if hasattr(tool, "ainvoke"):
-            raw = await tool.ainvoke(**params)  # type: ignore[arg-type]
+        from essay_agent.tools.tool_reliability import execute_tool_reliably, ReliabilityLevel
+        
+        # Extract context from params
+        context = params.pop("context", {})
+        user_input = params.pop("user_input", "")
+        
+        # If we have remaining params, add them to context
+        if params:
+            context.update(params)
+        
+        # Execute with reliability framework
+        reliable_result = await execute_tool_reliably(
+            tool_name=tool_name,
+            context=context,
+            user_input=user_input,
+            reliability_level=ReliabilityLevel.STANDARD
+        )
+        
+        # Convert to integration.py format (ok/error dict)
+        if reliable_result.get("success", False):
+            return {
+                "ok": reliable_result.get("result"),
+                "error": None,
+                "metadata": reliable_result.get("metadata", {})
+            }
         else:
-            # Run sync tool in thread to keep agent async-friendly
-            loop = asyncio.get_running_loop()
-            raw = await loop.run_in_executor(None, lambda: tool(**params))
-        return {"ok": raw, "error": None}
+            return {
+                "ok": None,
+                "error": reliable_result.get("error", "Tool execution failed"),
+                "metadata": reliable_result.get("metadata", {})
+            }
+        
+    except ImportError:
+        # Fallback to original execution if reliability framework not available
+        logger.warning("Reliability framework not available, using fallback execution")
+        
+        tool: Optional[ValidatedTool] = TOOL_REGISTRY.get(tool_name)
+        if tool is None:
+            return {"ok": None, "error": f"Tool '{tool_name}' not found"}
+
+        # Attempt async execution path – supports LangChain tools with ainvoke
+        try:
+            if hasattr(tool, "ainvoke"):
+                raw = await tool.ainvoke(**params)  # type: ignore[arg-type]
+            else:
+                # Run sync tool in thread to keep agent async-friendly
+                loop = asyncio.get_running_loop()
+                raw = await loop.run_in_executor(None, lambda: tool(**params))
+            return {"ok": raw, "error": None}
+        except Exception as exc:  # noqa: BLE001
+            logger.error("Tool '%s' failed: %s", tool_name, exc)
+            return {"ok": None, "error": str(exc)}
+    
     except Exception as exc:  # noqa: BLE001
-        logger.error("Tool '%s' failed: %s", tool_name, exc)
-        return {"ok": None, "error": str(exc)}
+        logger.error("Tool execution framework failed for '%s': %s", tool_name, exc)
+        return {"ok": None, "error": f"Framework error: {str(exc)}"}
 
 
 # ---------------------------------------------------------------------------

@@ -25,6 +25,7 @@ from pydantic import BaseModel
 from essay_agent.agent_autonomous import AutonomousEssayAgent
 from essay_agent.memory.smart_memory import SmartMemory
 from essay_agent.intelligence.context_engine import ContextEngine
+from essay_agent.state_manager import EssayStateManager
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -614,6 +615,62 @@ class DebugAgent(AutonomousEssayAgent):
 # Global agent instance
 agent: Optional[DebugAgent] = None
 
+async def process_message_with_unified_state(
+    user_id: str, 
+    message: str, 
+    essay_context: dict
+) -> str:
+    """Process message using unified state approach with enhanced debugging."""
+    global agent
+    
+    try:
+        # Emit debug event for unified state processing
+        await emit_debug_event("unified_state_processing_start", {
+            "user_id": user_id,
+            "message": message,
+            "essay_context": essay_context
+        })
+        
+        # Initialize agent if needed (use the updated AutonomousEssayAgent)
+        if agent is None or agent.user_id != user_id:
+            # Use regular AutonomousEssayAgent instead of DebugAgent for unified state
+            from essay_agent.agent_autonomous import AutonomousEssayAgent
+            agent = AutonomousEssayAgent(user_id)
+            
+            # Set up essay context in agent memory
+            if essay_context.get('college'):
+                agent.memory.set("college", essay_context['college'])
+            if essay_context.get('essay_prompt'):
+                agent.memory.set("essay_prompt", essay_context['essay_prompt'])
+        
+        # Process message through updated agent (now supports unified state)
+        response = await agent.handle_message(message)
+        
+        # Load state for debugging info
+        from essay_agent.state_manager import EssayStateManager
+        manager = EssayStateManager()
+        state = manager.load_state(user_id, "current")
+        
+        # Emit completion event with state info
+        await emit_debug_event("unified_state_processing_complete", {
+            "user_id": user_id,
+            "response_length": len(response),
+            "state_summary": state.get_context_summary() if state else {},
+            "tools_used": agent.last_execution_tools if hasattr(agent, 'last_execution_tools') else []
+        })
+        
+        return response
+        
+    except Exception as e:
+        await emit_debug_event("unified_state_processing_error", {
+            "user_id": user_id,
+            "error": str(e),
+            "traceback": traceback.format_exc()
+        })
+        
+        # Fallback to regular response
+        return f"I encountered an issue processing your request. Let me try to help: {message}"
+
 # Global essay context tracking
 current_essay_context = {
     "user_id": None,
@@ -1086,8 +1143,8 @@ async def websocket_debug_stream(websocket: WebSocket):
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat_endpoint(request: ChatRequest):
-    """Handle chat requests with full user and essay context."""
-    global agent, current_essay_context
+    """Handle chat requests with unified state approach."""
+    global current_essay_context
     
     await emit_debug_event("chat_request_received", {
         "user_id": request.user_id,
@@ -1104,29 +1161,20 @@ async def chat_endpoint(request: ChatRequest):
                 "context": current_essay_context
             })
         
-        # Initialize or reset agent with proper context
-        if agent is None or agent.user_id != request.user_id or request.clear_history:
-            await emit_debug_event("agent_initialization", {
-                "user_id": request.user_id,
-                "reason": "new_agent" if agent is None else "user_change" if agent.user_id != request.user_id else "clear_history"
+        # Clear debug state if requested
+        if request.clear_history:
+            debug_state.clear()
+            debug_state.update({
+                "chat_history": [],
+                "memory_snapshots": [],
+                "planner_calls": [],
+                "tool_executions": [],
+                "error_log": [],
+                "agent_metrics": {},
+                "network_requests": [],
+                "live_events": []
             })
-            
-            agent = DebugAgent(request.user_id)
-            await setup_agent_context(agent, request.user_id, current_essay_context)
-            
-            if request.clear_history:
-                debug_state.clear()
-                debug_state.update({
-                    "chat_history": [],
-                    "memory_snapshots": [],
-                    "planner_calls": [],
-                    "tool_executions": [],
-                    "error_log": [],
-                    "agent_metrics": {},
-                    "network_requests": [],
-                    "live_events": []
-                })
-                await emit_debug_event("debug_state_cleared", {})
+            await emit_debug_event("debug_state_cleared", {})
         
         # Add essay context to the message if available
         contextualized_message = await build_contextualized_message(
@@ -1140,8 +1188,12 @@ async def chat_endpoint(request: ChatRequest):
             "contextualized": contextualized_message
         })
         
-        # Process the message with full context
-        response = await agent.handle_message(contextualized_message)
+        # Use the unified state approach directly
+        response = await process_message_with_unified_state(
+            request.user_id,
+            contextualized_message,
+            current_essay_context
+        )
         
         # Prepare debug data
         debug_data = {
@@ -1150,9 +1202,8 @@ async def chat_endpoint(request: ChatRequest):
             "recent_tools": debug_state["tool_executions"][-5:],  # Last 5 tool calls
             "recent_errors": debug_state["error_log"][-5:],  # Last 5 errors
             "agent_metrics": {
-                "session_start": agent.session_start.isoformat(),
-                "interaction_count": agent.interaction_count,
-                "tools_used": list(set(agent.last_execution_tools)) if agent.last_execution_tools else []
+                "approach": "unified_state",
+                "timestamp": datetime.now().isoformat()
             },
             "live_events": debug_state["live_events"][-10:]  # Last 10 events
         }
@@ -1170,7 +1221,8 @@ async def chat_endpoint(request: ChatRequest):
         
         await emit_debug_event("chat_response_complete", {
             "response_length": len(response),
-            "debug_data_size": len(str(debug_data))
+            "debug_data_size": len(str(debug_data)),
+            "approach": "unified_state"
         })
         
         return ChatResponse(response=response, debug_data=debug_data)
@@ -1220,11 +1272,15 @@ async def get_memory_snapshots(limit: int = 10):
     return {"snapshots": snapshots, "total_count": len(debug_state["memory_snapshots"])}
 
 @app.post("/debug/tools/manual")
-async def manual_tool_execution(tool_name: str, tool_args: dict = {}):
+async def manual_tool_execution(request: dict):
     """Manually execute a tool for testing."""
     try:
-        from essay_agent.tools.smart_orchestrator import SmartOrchestrator
-        orchestrator = SmartOrchestrator()
+        # Extract tool_name and tool_args from request body
+        tool_name = request.get("tool_name")
+        tool_args = request.get("tool_args", {})
+        
+        if not tool_name:
+            raise HTTPException(status_code=400, detail="tool_name is required")
         
         start_time = datetime.now()
         
@@ -1233,7 +1289,59 @@ async def manual_tool_execution(tool_name: str, tool_args: dict = {}):
             "args": tool_args
         })
         
-        result = await orchestrator.execute_tool(tool_name, tool_args)
+        # Check if this is a unified state tool
+        state_based_tools = ['smart_brainstorm', 'smart_outline', 'smart_polish', 'essay_chat']
+        
+        if tool_name in state_based_tools:
+            # Use unified state approach
+            from essay_agent.state_manager import EssayStateManager
+            from essay_agent.tools.independent_tools import SmartBrainstormTool, SmartOutlineTool, SmartPolishTool, EssayChatTool
+            
+            # Map tool names to classes
+            tool_classes = {
+                'smart_brainstorm': SmartBrainstormTool,
+                'smart_outline': SmartOutlineTool, 
+                'smart_polish': SmartPolishTool,
+                'essay_chat': EssayChatTool
+            }
+            
+            # Get or create state for Alex Kim (default test user)
+            user_id = tool_args.get('user_id', 'alex_kim')
+            manager = EssayStateManager()
+            state = manager.load_state(user_id, "current")
+            
+            if not state:
+                # Create test state with provided args
+                essay_prompt = tool_args.get('prompt', 'Tell me about a time you faced a challenge, setback, or failure. How did it affect you, and what did you learn from the experience?')
+                college = tool_args.get('context', 'Stanford').replace(' Challenge Essay', '').replace(' Essay', '')
+                
+                state = manager.create_new_essay(
+                    user_id=user_id,
+                    essay_prompt=essay_prompt,
+                    college=college,
+                    word_limit=650
+                )
+            
+            # Update state with any additional context from args
+            if tool_args.get('selected_text'):
+                state.selected_text = tool_args['selected_text']
+            if tool_args.get('user_input'):
+                state.last_user_input = tool_args['user_input']
+            
+            # Execute the tool with state
+            tool_class = tool_classes[tool_name]
+            tool = tool_class()
+            result = tool._run(state)
+            
+            # Save updated state
+            manager.save_state(state)
+            
+        else:
+            # Use old approach for legacy tools
+            from essay_agent.tools.smart_orchestrator import SmartOrchestrator
+            orchestrator = SmartOrchestrator()
+            result = await orchestrator.execute_tool(tool_name, tool_args)
+        
         execution_time = (datetime.now() - start_time).total_seconds()
         
         execution_result = {
@@ -1242,7 +1350,8 @@ async def manual_tool_execution(tool_name: str, tool_args: dict = {}):
             "result": result,
             "execution_time": execution_time,
             "success": True,
-            "timestamp": start_time.isoformat()
+            "timestamp": start_time.isoformat(),
+            "approach": "unified_state" if tool_name in state_based_tools else "legacy"
         }
         
         await emit_debug_event("manual_tool_execution_complete", execution_result)
@@ -1422,6 +1531,490 @@ async def get_available_tools():
         }
     
     return {"tools": tools_info, "count": len(tools_info)}
+
+# ============= UNIFIED STATE-BASED CHAT ENDPOINT =============
+
+@app.post("/chat/unified")
+async def unified_chat(request: dict):
+    """
+    Unified chat endpoint that uses the EssayStateManager and state-based tools.
+    
+    This replaces the old tool calling approach with the new unified state system.
+    """
+    try:
+        user_id = request.get("user_id", "alex_kim")
+        message = request.get("message", "")
+        
+        # Emit debug event
+        await emit_debug_event("unified_chat_start", {
+            "user_id": user_id,
+            "message": message
+        })
+        
+        # Use the unified state approach
+        from essay_agent.state_manager import cursor_sidebar_agent
+        
+        response = cursor_sidebar_agent(user_id, message)
+        
+        # Emit completion event
+        await emit_debug_event("unified_chat_complete", {
+            "user_id": user_id,
+            "response_length": len(response.get("response", ""))
+        })
+        
+        return {
+            "success": True,
+            "response": response.get("response", ""),
+            "state_summary": response.get("state_summary", {}),
+            "debug_info": {
+                "approach": "unified_state",
+                "tools_used": response.get("tools_used", []),
+                "context_used": response.get("context_used", {})
+            }
+        }
+        
+    except Exception as e:
+        await emit_debug_event("unified_chat_error", {
+            "user_id": request.get("user_id", "unknown"),
+            "error": str(e)
+        })
+        
+        return {
+            "success": False,
+            "error": str(e),
+            "debug_info": {
+                "approach": "unified_state",
+                "error_type": type(e).__name__
+            }
+        }
+
+@app.post("/tools/unified/{tool_name}")
+async def execute_unified_tool(tool_name: str, request: dict):
+    """
+    Execute tools using the unified state approach.
+    
+    This endpoint properly loads the EssayAgentState and calls tools with it.
+    """
+    try:
+        user_id = request.get("user_id", "alex_kim")
+        
+        # Load the unified state
+        from essay_agent.state_manager import EssayStateManager
+        manager = EssayStateManager()
+        state = manager.load_state(user_id, "current")
+        
+        if not state:
+            return {
+                "success": False,
+                "error": f"No active essay session found for user {user_id}",
+                "debug_info": {"missing_state": True}
+            }
+        
+        # Get the tool from registry
+        from essay_agent.tools import REGISTRY as TOOL_REGISTRY
+        if tool_name not in TOOL_REGISTRY:
+            return {
+                "success": False,
+                "error": f"Tool {tool_name} not found in registry",
+                "debug_info": {"available_tools": list(TOOL_REGISTRY.keys())}
+            }
+        
+        tool = TOOL_REGISTRY[tool_name]
+        
+        # Emit debug event
+        await emit_debug_event("unified_tool_start", {
+            "tool_name": tool_name,
+            "user_id": user_id,
+            "state_summary": state.get_context_summary()
+        })
+        
+        # Execute tool with unified state
+        start_time = datetime.now()
+        result = tool._run(state)
+        execution_time = (datetime.now() - start_time).total_seconds() * 1000
+        
+        # Save updated state
+        manager.save_state(state)
+        
+        # Emit completion event
+        await emit_debug_event("unified_tool_complete", {
+            "tool_name": tool_name,
+            "user_id": user_id,
+            "execution_time_ms": execution_time,
+            "result_keys": list(result.keys()) if isinstance(result, dict) else []
+        })
+        
+        return {
+            "success": True,
+            "result": result,
+            "execution_time_ms": execution_time,
+            "state_summary": state.get_context_summary(),
+            "debug_info": {
+                "approach": "unified_state",
+                "tool_name": tool_name,
+                "state_updated": True
+            }
+        }
+        
+    except Exception as e:
+        await emit_debug_event("unified_tool_error", {
+            "tool_name": tool_name,
+            "user_id": request.get("user_id", "unknown"),
+            "error": str(e)
+        })
+        
+        return {
+            "success": False,
+            "error": str(e),
+            "debug_info": {
+                "approach": "unified_state",
+                "tool_name": tool_name,
+                "error_type": type(e).__name__
+            }
+        }
+
+# ============= STATE INSPECTION ENDPOINTS =============
+
+@app.get("/state/{user_id}")
+async def get_user_state(user_id: str):
+    """
+    View complete essay state for debugging.
+    
+    Shows the full EssayAgentState for a user including:
+    - Essay context (prompt, college, word limit)
+    - User profile data
+    - Chat history and tool calls
+    - Current draft and outline
+    - Suggestions and context
+    """
+    try:
+        manager = EssayStateManager()
+        state = manager.load_state(user_id, "current")
+        
+        if not state:
+            return {
+                "error": "No active essay found",
+                "user_id": user_id,
+                "available_actions": [
+                    "POST /state/{user_id}/create - Create new essay session",
+                    "GET /debug/users - View all users"
+                ]
+            }
+        
+        # Emit debug event
+        await emit_debug_event("state_inspection", {
+            "user_id": user_id,
+            "session_id": state.session_id,
+            "has_draft": state.has_draft(),
+            "word_count": state.get_word_count()
+        })
+        
+        return {
+            "user_id": user_id,
+            "session_id": state.session_id,
+            "state_summary": state.get_context_summary(),
+            "essay_context": {
+                "prompt": state.essay_prompt,
+                "college": state.college,
+                "word_limit": state.word_limit,
+                "current_word_count": state.get_word_count()
+            },
+            "user_profile": state.user_profile,
+            "essay_content": {
+                "current_draft": state.current_draft,
+                "outline": state.outline,
+                "brainstormed_ideas": state.brainstormed_ideas,
+                "selected_story": state.selected_story
+            },
+            "interaction_data": {
+                "chat_history": state.chat_history[-10:],  # Last 10 messages
+                "tool_calls": state.tool_calls[-5:],       # Last 5 tool calls
+                "suggestions": [s for s in state.suggestions if not s.get("completed", False)],
+                "current_focus": state.current_focus,
+                "selected_text": state.selected_text
+            },
+            "metadata": {
+                "created_at": state.created_at.isoformat(),
+                "updated_at": state.updated_at.isoformat(),
+                "total_chat_messages": len(state.chat_history),
+                "total_tool_calls": len(state.tool_calls),
+                "total_versions": len(state.versions)
+            }
+        }
+        
+    except Exception as e:
+        await emit_debug_event("state_inspection_error", {
+            "user_id": user_id,
+            "error": str(e)
+        })
+        raise HTTPException(status_code=500, detail=f"State inspection failed: {str(e)}")
+
+@app.post("/state/{user_id}/update")
+async def update_user_state(user_id: str, updates: dict):
+    """
+    Test state updates from cursor sidebar.
+    
+    Simulates cursor interactions like:
+    - Text selection: {"selected_text": "paragraph to polish"}
+    - Focus change: {"current_focus": "revising"}
+    - Draft updates: {"current_draft": "new essay content"}
+    """
+    try:
+        manager = EssayStateManager()
+        state = manager.load_state(user_id, "current")
+        
+        if not state:
+            return {"error": "No active essay found", "user_id": user_id}
+        
+        # Apply updates to state
+        updates_applied = []
+        if "selected_text" in updates:
+            state.selected_text = updates["selected_text"]
+            updates_applied.append("selected_text")
+        
+        if "current_focus" in updates:
+            state.current_focus = updates["current_focus"]
+            updates_applied.append("current_focus")
+        
+        if "current_draft" in updates:
+            state.update_draft(updates["current_draft"], "Updated from frontend")
+            updates_applied.append("current_draft")
+        
+        if "last_user_input" in updates:
+            state.last_user_input = updates["last_user_input"]
+            updates_applied.append("last_user_input")
+        
+        # Save updated state
+        manager.save_state(state)
+        
+        # Emit debug event
+        await emit_debug_event("state_updated", {
+            "user_id": user_id,
+            "updates_applied": updates_applied,
+            "new_context": state.get_context_summary()
+        })
+        
+        return {
+            "success": True,
+            "user_id": user_id,
+            "updates_applied": updates_applied,
+            "new_state_summary": state.get_context_summary(),
+            "message": f"Applied {len(updates_applied)} updates to essay state"
+        }
+        
+    except Exception as e:
+        await emit_debug_event("state_update_error", {
+            "user_id": user_id,
+            "error": str(e)
+        })
+        raise HTTPException(status_code=500, detail=f"State update failed: {str(e)}")
+
+@app.post("/state/{user_id}/create")
+async def create_new_essay_session(user_id: str, essay_data: dict):
+    """
+    Create new essay session for testing.
+    
+    Required fields:
+    - essay_prompt: str
+    - college: str (optional)
+    - word_limit: int (optional, default 650)
+    """
+    try:
+        manager = EssayStateManager()
+        
+        # Extract essay data
+        essay_prompt = essay_data.get("essay_prompt")
+        if not essay_prompt:
+            raise HTTPException(status_code=400, detail="essay_prompt is required")
+        
+        college = essay_data.get("college", "")
+        word_limit = essay_data.get("word_limit", 650)
+        
+        # Create new essay session
+        state = manager.create_new_essay(
+            user_id=user_id,
+            essay_prompt=essay_prompt,
+            college=college,
+            word_limit=word_limit
+        )
+        
+        # Add user profile if provided
+        if "user_profile" in essay_data:
+            state.user_profile = essay_data["user_profile"]
+            manager.save_state(state)
+        
+        # Emit debug event
+        await emit_debug_event("new_essay_created", {
+            "user_id": user_id,
+            "session_id": state.session_id,
+            "college": college,
+            "prompt_length": len(essay_prompt)
+        })
+        
+        return {
+            "success": True,
+            "user_id": user_id,
+            "session_id": state.session_id,
+            "essay_context": {
+                "prompt": essay_prompt,
+                "college": college,
+                "word_limit": word_limit
+            },
+            "state_summary": state.get_context_summary(),
+            "message": f"Created new essay session for {user_id}"
+        }
+        
+    except Exception as e:
+        await emit_debug_event("essay_creation_error", {
+            "user_id": user_id,
+            "error": str(e)
+        })
+        raise HTTPException(status_code=500, detail=f"Essay creation failed: {str(e)}")
+
+@app.get("/debug/users")
+async def list_all_users():
+    """List all users with essay sessions."""
+    try:
+        manager = EssayStateManager()
+        memory_store_path = manager.memory_store_path
+        
+        users = []
+        for item in memory_store_path.iterdir():
+            if item.is_file() and item.name.endswith('.json'):
+                # Check if it's a state file
+                try:
+                    with open(item, 'r') as f:
+                        data = json.load(f)
+                    if 'user_id' in data and 'essay_prompt' in data:
+                        users.append({
+                            "user_id": data['user_id'],
+                            "file": item.name,
+                            "college": data.get('college', ''),
+                            "word_count": len(data.get('current_draft', '').split()) if data.get('current_draft') else 0,
+                            "updated_at": data.get('updated_at', ''),
+                            "has_profile": bool(data.get('user_profile', {}))
+                        })
+                except:
+                    continue
+        
+        return {
+            "users": users,
+            "count": len(users),
+            "memory_store_path": str(memory_store_path)
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"User listing failed: {str(e)}")
+
+@app.get("/state/{user_id}/context")
+async def get_cursor_context(user_id: str, selected_text: str = "", user_input: str = ""):
+    """
+    Get complete context for cursor sidebar agent.
+    
+    This endpoint simulates what the cursor sidebar would receive.
+    """
+    try:
+        manager = EssayStateManager()
+        context = manager.get_context_for_cursor(user_id, selected_text, user_input)
+        
+        # Emit debug event
+        await emit_debug_event("cursor_context_request", {
+            "user_id": user_id,
+            "has_selected_text": bool(selected_text),
+            "has_user_input": bool(user_input),
+            "has_active_essay": context.get("has_active_essay", False)
+        })
+        
+        return context
+        
+    except Exception as e:
+        await emit_debug_event("cursor_context_error", {
+            "user_id": user_id,
+            "error": str(e)
+        })
+        raise HTTPException(status_code=500, detail=f"Context retrieval failed: {str(e)}")
+
+@app.get("/debug/agent-state/{user_id}")
+async def get_agent_state_debug(user_id: str):
+    """Get complete EssayAgentState for debug visualization."""
+    try:
+        from essay_agent.state_manager import EssayStateManager
+        
+        manager = EssayStateManager()
+        state = manager.load_state(user_id, "current")
+        
+        if not state:
+            return {
+                "has_state": False,
+                "user_id": user_id,
+                "message": "No active essay session found"
+            }
+        
+        # Emit debug event
+        await emit_debug_event("agent_state_debug_view", {
+            "user_id": user_id,
+            "state_id": state.session_id,
+            "word_count": state.get_word_count()
+        })
+        
+        return {
+            "has_state": True,
+            "user_id": user_id,
+            "session_id": state.session_id,
+            
+            # Core essay context
+            "essay_context": {
+                "prompt": state.essay_prompt,
+                "college": state.college,
+                "word_limit": state.word_limit,
+                "essay_type": state.essay_type,
+                "current_word_count": state.get_word_count(),
+                "word_percentage": round((state.get_word_count() / state.word_limit) * 100, 1) if state.word_limit > 0 else 0
+            },
+            
+            # User profile (structured)  
+            "user_profile": {
+                "basic_info": state.user_profile.get("user_info", {}),
+                "academic_profile": state.user_profile.get("academic_profile", {}),
+                "core_values": state.user_profile.get("core_values", []),
+                "defining_moments": state.user_profile.get("defining_moments", []),
+                "profile_completeness": len(state.user_profile.keys()) if state.user_profile else 0
+            },
+            
+            # Current context & focus
+            "current_context": {
+                "selected_text": state.selected_text,
+                "current_focus": state.current_focus,
+                "last_user_input": state.last_user_input,
+                "primary_text": state.primary_text,
+                "working_notes": state.working_notes,
+                "content_types": list(state.content_library.keys()),
+                "activities_done": [activity["action"] for activity in state.activity_log[-5:]] if state.activity_log else []
+            },
+            
+            # Flexible content library
+            "content_library": {
+                category: {
+                    "count": len(content) if isinstance(content, list) else 1,
+                    "latest": content[-1] if isinstance(content, list) and content else content,
+                    "total_items": len(content) if isinstance(content, list) else 1
+                }
+                for category, content in state.content_library.items()
+            },
+            
+            # Activity timeline
+            "activity_timeline": state.activity_log[-10:] if state.activity_log else [],
+            
+            # Quick summary for display
+            "quick_summary": state.get_context_summary()
+        }
+        
+    except Exception as e:
+        await emit_debug_event("agent_state_debug_error", {
+            "user_id": user_id,
+            "error": str(e)
+        })
+        raise HTTPException(status_code=500, detail=f"Failed to get agent state: {str(e)}")
 
 # Static files for CSS/JS
 frontend_dir = Path(__file__).parent

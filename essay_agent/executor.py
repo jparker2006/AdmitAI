@@ -12,7 +12,8 @@ from langgraph.graph import StateGraph, END
 from tenacity import AsyncRetrying, stop_after_attempt, wait_exponential
 
 from essay_agent.tools import REGISTRY as TOOL_REGISTRY
-from .models import EssayPlanner, EssayPlan, Phase, _phase_from_tool
+# Legacy imports commented out - using unified state approach
+# from .models import EssayPlanner, EssayPlan, Phase, _phase_from_tool
 from time import time as _time
 from essay_agent.utils.logging import tool_trace
 

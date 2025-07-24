@@ -1,0 +1,112 @@
+{
+  "essay_prompt": "Tell us about a time you were challenged by a perspective that differed from your own.",
+  "college": "Stanford",
+  "word_limit": 650,
+  "essay_type": "personal_statement",
+  "user_id": "alex_kim",
+  "user_profile": {
+    "user_info": {
+      "name": "Alex Kim",
+      "grade": 12,
+      "intended_major": "Business Administration",
+      "college_list": [],
+      "platforms": []
+    },
+    "academic_profile": {
+      "gpa": null,
+      "test_scores": {},
+      "courses": [],
+      "activities": [
+        {
+          "name": "Student-Run Investment Club",
+          "role": "Founder & President",
+          "duration": "N/A",
+          "description": "",
+          "impact": "Portfolio returned 12% annually, taught 50+ students about investing"
+        },
+        {
+          "name": "Local Tutoring Business",
+          "role": "Founder & CEO",
+          "duration": "N/A",
+          "description": "",
+          "impact": "Generated $15,000 revenue, employed 8 tutors, helped 40+ students improve grades"
+        },
+        {
+          "name": "Model UN Conference",
+          "role": "Secretary-General",
+          "duration": "N/A",
+          "description": "",
+          "impact": "Led 200-person conference, improved international relations understanding"
+        }
+      ]
+    },
+    "core_values": [
+      {
+        "value": "Entrepreneurial Spirit",
+        "description": "Building solutions to real problems",
+        "evidence": [],
+        "used_in_essays": [],
+        "importance_level": 8
+      },
+      {
+        "value": "Financial Education",
+        "description": "Empowering others through financial literacy",
+        "evidence": [],
+        "used_in_essays": [],
+        "importance_level": 8
+      }
+    ],
+    "defining_moments": [
+      {
+        "title": "Starting a Business During Family Financial Struggles",
+        "description": "Launched tutoring business when family faced financial difficulties",
+        "emotional_impact": "",
+        "lessons_learned": "",
+        "used_in_essays": [],
+        "themes": [
+          "entrepreneurship",
+          "family support",
+          "resilience"
+        ],
+        "story_category": "defining_moment",
+        "story_weight": 1.0,
+        "college_usage": {}
+      },
+      {
+        "title": "Teaching Investment to Skeptical Peers",
+        "description": "Convinced classmates that young people should invest despite their skepticism",
+        "emotional_impact": "",
+        "lessons_learned": "",
+        "used_in_essays": [],
+        "themes": [
+          "financial education",
+          "peer teaching",
+          "misconception challenging"
+        ],
+        "story_category": "defining_moment",
+        "story_weight": 1.0,
+        "college_usage": {}
+      }
+    ],
+    "writing_voice": null,
+    "essay_history": [],
+    "college_story_usage": {}
+  },
+  "preferences": {},
+  "primary_text": "",
+  "working_notes": "",
+  "content_library": {},
+  "activity_log": [],
+  "versions": [],
+  "feedback_history": [],
+  "selected_text": "",
+  "cursor_position": 0,
+  "last_user_input": "",
+  "current_focus": "brainstorming",
+  "chat_history": [],
+  "tool_calls": [],
+  "suggestions": [],
+  "session_id": "477cb16e-5d1d-465f-8a95-097e2a6a626f",
+  "created_at": "2025-07-24T03:16:44.331199",
+  "updated_at": "2025-07-24T03:16:44.331238"
+}

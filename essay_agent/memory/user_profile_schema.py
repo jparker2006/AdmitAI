@@ -14,15 +14,15 @@ from pydantic import BaseModel, Field, field_validator
 class Activity(BaseModel):
     name: str
     role: str
-    duration: str
-    description: str
+    duration: str = Field(default="N/A")  # Make optional with default
+    description: str = Field(default="")  # Make optional with default  
     impact: str
 
 
 class AcademicProfile(BaseModel):
-    gpa: Optional[float]
-    test_scores: Dict[str, Optional[int]]
-    courses: List[str]
+    gpa: Optional[float] = None  # Make optional
+    test_scores: Dict[str, Optional[int]] = Field(default_factory=dict)  # Make optional
+    courses: List[str] = Field(default_factory=list)  # Make optional
     activities: List[Activity]
 
 
@@ -36,17 +36,17 @@ class CoreValue(BaseModel):
 
 class UserInfo(BaseModel):
     name: str
-    grade: int
+    grade: int = Field(default=12)  # Make optional with default
     intended_major: str
-    college_list: List[str]
-    platforms: List[str]
+    college_list: List[str] = Field(default_factory=list)  # Make optional
+    platforms: List[str] = Field(default_factory=list)  # Make optional
 
 
 class DefiningMoment(BaseModel):
     title: str
     description: str
-    emotional_impact: str
-    lessons_learned: str
+    emotional_impact: str = Field(default="")  # Make optional with default
+    lessons_learned: str = Field(default="")  # Make optional with default
     used_in_essays: List[str] = Field(default_factory=list)
     themes: List[str] = Field(default_factory=list)
     story_category: str = Field(
@@ -65,7 +65,17 @@ class DefiningMoment(BaseModel):
     @field_validator('story_category')
     @classmethod
     def validate_story_category(cls, v: str) -> str:
-        """Validate and migrate story categories to match brainstorm tool expectations."""
+        """Validate and migrate story categories to new schema.
+        
+        This function ensures backward compatibility by automatically converting
+        old category names to new ones when loading existing profiles.
+        
+        Args:
+            profile: UserProfile with potentially old story categories
+            
+        Returns:
+            UserProfile with updated story categories
+        """
         # Map old categories to new brainstorm tool categories
         category_mapping = {
             # Old schema -> New schema (aligned with brainstorm tool)

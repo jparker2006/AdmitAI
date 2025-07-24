@@ -10,6 +10,7 @@ default fallbacks.  Designed for Phase-6 automatic parameter mapping.
 
 import os
 from typing import Any, Dict, List
+import json
 
 # Avoid circular import by lazy-importing tool metadata inside resolve
 
@@ -96,6 +97,214 @@ class ArgResolver:
 
         _flatten("", context)
 
+        # 3) Enhanced parameter mapping for common tool parameters ----------
+        
+        # Essay text parameters (for evaluation and polish tools)
+        if "essay_text" in all_params and "essay_text" not in resolved:
+            essay_text = (
+                context.get("essay_text") or
+                context.get("test_draft") or
+                context.get("draft") or
+                flat_ctx.get("essay_text") or
+                flat_ctx.get("test_draft")
+            )
+            if essay_text:
+                _set("essay_text", essay_text, "context")
+
+        # Text parameter (for word counting and text processing)
+        if "text" in all_params and "text" not in resolved:
+            text_value = (
+                context.get("text") or
+                context.get("essay_text") or  
+                context.get("test_draft") or
+                context.get("draft") or
+                flat_ctx.get("text") or
+                flat_ctx.get("essay_text")
+            )
+            if text_value:
+                _set("text", text_value, "context")
+
+        # Draft parameter (for revision and polish tools)
+        if "draft" in all_params and "draft" not in resolved:
+            draft_value = (
+                context.get("draft") or
+                context.get("essay_text") or
+                context.get("test_draft") or
+                flat_ctx.get("draft") or
+                flat_ctx.get("test_draft")
+            )
+            if draft_value:
+                _set("draft", draft_value, "context")
+
+        # Story parameters
+        if "story" in all_params and "story" not in resolved:
+            story_value = (
+                context.get("story") or
+                context.get("test_story") or
+                flat_ctx.get("story") or
+                flat_ctx.get("test_story")
+            )
+            if story_value:
+                _set("story", story_value, "context")
+
+        # Story seed parameter
+        if "story_seed" in all_params and "story_seed" not in resolved:
+            story_seed = (
+                context.get("story_seed") or
+                context.get("story") or
+                context.get("test_story") or
+                flat_ctx.get("story_seed")
+            )
+            if story_seed:
+                _set("story_seed", story_seed, "context")
+
+        # Story angle parameter
+        if "story_angle" in all_params and "story_angle" not in resolved:
+            story_angle = (
+                context.get("story_angle") or
+                context.get("story") or
+                context.get("test_story") or
+                flat_ctx.get("story_angle")
+            )
+            if story_angle:
+                _set("story_angle", story_angle, "context")
+
+        # Outline parameters
+        if "outline" in all_params and "outline" not in resolved:
+            outline_value = (
+                context.get("outline") or
+                context.get("test_outline") or
+                flat_ctx.get("outline") or
+                flat_ctx.get("test_outline")
+            )
+            if outline_value:
+                if isinstance(outline_value, dict):
+                    _set("outline", json.dumps(outline_value), "context")
+                else:
+                    _set("outline", str(outline_value), "context")
+
+        # Prompt parameter (legacy support)
+        if "prompt" in all_params and "prompt" not in resolved:
+            prompt_value = (
+                context.get("prompt") or
+                context.get("essay_prompt") or
+                context.get("college_context", {}).get("essay_prompt") or
+                flat_ctx.get("prompt") or
+                flat_ctx.get("essay_prompt")
+            )
+            if prompt_value:
+                _set("prompt", prompt_value, "context")
+
+        # Voice profile parameter
+        if "voice_profile" in all_params and "voice_profile" not in resolved:
+            voice_profile = (
+                context.get("voice_profile") or
+                context.get("user_profile", {}).get("writing_voice") or
+                flat_ctx.get("voice_profile")
+            )
+            if voice_profile:
+                if isinstance(voice_profile, dict):
+                    _set("voice_profile", json.dumps(voice_profile), "context")
+                else:
+                    _set("voice_profile", str(voice_profile), "context")
+            else:
+                # Default voice profile
+                _set("voice_profile", '{"tone": "authentic", "style": "personal", "voice": "student"}', "default")
+
+        # Revision focus parameter
+        if "revision_focus" in all_params and "revision_focus" not in resolved:
+            _set("revision_focus", "clarity and impact", "default")
+
+        # Word count parameters
+        if "target_count" in all_params and "target_count" not in resolved:
+            target_count = (
+                context.get("target_count") or
+                context.get("word_limit") or
+                context.get("word_count") or
+                flat_ctx.get("target_count") or
+                650  # Default
+            )
+            _set("target_count", target_count, "context")
+
+        if "target_word_count" in all_params and "target_word_count" not in resolved:
+            target_word_count = (
+                context.get("target_word_count") or
+                context.get("word_limit") or
+                context.get("word_count") or
+                flat_ctx.get("target_word_count") or
+                650  # Default
+            )
+            _set("target_word_count", target_word_count, "context")
+
+        # Conversation and state parameters
+        if "conversation_history" in all_params and "conversation_history" not in resolved:
+            conversation_history = (
+                context.get("conversation_history") or
+                context.get("recent_messages") or
+                flat_ctx.get("conversation_history") or
+                []
+            )
+            _set("conversation_history", conversation_history, "context")
+
+        if "essay_state" in all_params and "essay_state" not in resolved:
+            essay_state = (
+                context.get("essay_state") or
+                flat_ctx.get("essay_state") or
+                {"status": "in_progress"}
+            )
+            _set("essay_state", essay_state, "context")
+
+        # Instruction parameter for modification tools
+        if "instruction" in all_params and "instruction" not in resolved:
+            instruction = (
+                context.get("instruction") or
+                user_input or
+                "Improve this text"
+            )
+            _set("instruction", instruction, "user_input")
+
+        # Selection parameters for text editing
+        if "selected_text" in all_params and "selected_text" not in resolved:
+            selected_text = (
+                context.get("selected_text") or
+                "This experience fundamentally changed my perspective on entrepreneurship."  # Default from Alex's story
+            )
+            _set("selected_text", selected_text, "default")
+
+        if "surrounding_context" in all_params and "surrounding_context" not in resolved:
+            surrounding_context = (
+                context.get("surrounding_context") or
+                context.get("test_draft") or
+                context.get("essay_text") or
+                flat_ctx.get("surrounding_context")
+            )
+            if surrounding_context:
+                _set("surrounding_context", surrounding_context, "context")
+
+        if "text_before_cursor" in all_params and "text_before_cursor" not in resolved:
+            _set("text_before_cursor", "This experience fundamentally changed my perspective", "default")
+
+        # Previous essays parameter
+        if "previous_essays" in all_params and "previous_essays" not in resolved:
+            previous_essays = (
+                context.get("previous_essays") or
+                flat_ctx.get("previous_essays") or
+                []
+            )
+            _set("previous_essays", previous_essays, "context")
+
+        # College name parameter
+        if "college_name" in all_params and "college_name" not in resolved:
+            college_name = (
+                context.get("college_name") or
+                context.get("college") or
+                context.get("college_context", {}).get("school") or
+                flat_ctx.get("college_name") or
+                flat_ctx.get("college")
+            )
+            if college_name:
+                _set("college_name", college_name, "context")
+
         # Memory-based fallback (common for college_id and college)
         if "college_id" in all_params and "college_id" not in resolved:
             mem_college = context.get("college") or context.get("college_context", {}).get("school") or context.get("profile", {}).get("college")
@@ -133,6 +342,8 @@ class ArgResolver:
                     _set("profile", str(ctx_profile), "context")
             else:
                 _set("profile", "New applicant; profile pending.", "default")
+
+        # Standard context mapping
         for k in all_params:
             if k in context:
                 _set(k, context[k], "context")

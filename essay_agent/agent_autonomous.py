@@ -234,7 +234,7 @@ class AutonomousEssayAgent:
             return await self._execute_conversation(reasoning)
     
     async def _execute_tool(self, reasoning: Dict[str, Any], user_input: str = "") -> Dict[str, Any]:
-        """Execute a tool from the registry.
+        """Execute a tool using unified EssayAgentState approach.
         
         Args:
             reasoning: Reasoning result with tool information
@@ -252,11 +252,15 @@ class AutonomousEssayAgent:
             }
         
         try:
-            tool_params = build_params(tool_name, user_id=self.user_id, user_input=user_input, context=reasoning.get("tool_args", {}))
+            # Use unified state approach for supported tools
+            state_based_tools = ['smart_brainstorm', 'smart_outline', 'smart_polish', 'essay_chat']
             
-            # Execute tool
-            logger.info(f"Executing tool: {tool_name}")
-            result = await execute_tool(tool_name, **tool_params)
+            if tool_name in state_based_tools:
+                result = await self._execute_with_unified_state(tool_name, user_input, reasoning)
+            else:
+                # Fallback to old parameter mapping for legacy tools
+                tool_params = build_params(tool_name, user_id=self.user_id, user_input=user_input, context=reasoning.get("tool_args", {}))
+                result = await execute_tool(tool_name, **tool_params)
             
             # Track tool usage for evaluation
             self.last_execution_tools = [tool_name]
@@ -269,6 +273,63 @@ class AutonomousEssayAgent:
                 "type": "error", 
                 "message": f"I had trouble using the {tool_name} tool. Let me try to help you directly."
             }
+    
+    async def _execute_with_unified_state(self, tool_name: str, user_input: str, reasoning: Dict[str, Any]) -> Dict[str, Any]:
+        """Execute tool using unified EssayAgentState approach."""
+        from essay_agent.state_manager import EssayStateManager
+        from essay_agent.models.agent_state import EssayAgentState
+        
+        # Get or create state manager
+        manager = EssayStateManager()
+        
+        # Try to load existing state, or create new one
+        state = manager.load_state(self.user_id, "current")
+        
+        if not state:
+            # Create initial state from current context
+            essay_prompt = self.memory.get("essay_prompt", "")
+            college = self.memory.get("college", "")
+            
+            # If no prompt in memory, try to extract from user input or reasoning
+            if not essay_prompt:
+                essay_prompt = reasoning.get("tool_args", {}).get("prompt", user_input)
+            
+            state = manager.create_new_essay(
+                user_id=self.user_id,
+                essay_prompt=essay_prompt,
+                college=college,
+                word_limit=650
+            )
+        
+        # Update state with current context
+        state.last_user_input = user_input
+        if hasattr(self, '_latest_context') and self._latest_context:
+            # Extract relevant context updates
+            context = self._latest_context
+            if context.get("selected_text"):
+                state.selected_text = context["selected_text"]
+            if context.get("current_focus"):
+                state.current_focus = context["current_focus"]
+        
+        # Get the tool and execute with state
+        tool = self.tools[tool_name]
+        logger.info(f"Executing {tool_name} with unified state approach")
+        
+        try:
+            result = tool._run(state)
+            
+            # Save updated state
+            manager.save_state(state)
+            
+            # Add state summary to result for debugging
+            result["state_summary"] = state.get_context_summary()
+            result["unified_state_used"] = True
+            
+            return {"ok": result, "error": None}
+            
+        except Exception as e:
+            logger.error(f"Unified state execution failed for {tool_name}: {e}")
+            return {"ok": None, "error": str(e)}
 
     # ------------------------------------------------------------------
     # Section 3.1 – Orchestrated multi-tool execution

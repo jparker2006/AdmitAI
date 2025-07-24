@@ -14,6 +14,7 @@ strict guard-rails on JSON structure and retries.
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
 from typing import Any, Dict, List, Optional
 import os
@@ -234,12 +235,73 @@ class SmartOrchestrator:  # pylint: disable=too-few-public-methods
             # ------------------------------------------------------------------
             result_dict: Dict[str, Any] | None = None
             error: Optional[str] = None
+            
+            # Check if this is a unified state tool
+            state_based_tools = ['smart_brainstorm', 'smart_outline', 'smart_polish', 'essay_chat']
+            
             for attempt in range(1, self.MAX_RETRIES + 2):
-                result_dict = await execute_tool(tool_name, **params)
-                error = result_dict.get("error")
+                if tool_name in state_based_tools:
+                    # Use unified state approach
+                    try:
+                        from essay_agent.state_manager import EssayStateManager
+                        from essay_agent.tools.independent_tools import SmartBrainstormTool, SmartOutlineTool, SmartPolishTool, EssayChatTool
+                        
+                        # Map tool names to classes
+                        tool_classes = {
+                            'smart_brainstorm': SmartBrainstormTool,
+                            'smart_outline': SmartOutlineTool,
+                            'smart_polish': SmartPolishTool,
+                            'essay_chat': EssayChatTool
+                        }
+                        
+                        # Get or create state
+                        manager = EssayStateManager()
+                        state = manager.load_state(self.user_id, "current")
+                        
+                        if not state:
+                            # Create state from current context
+                            essay_prompt = current_context.get("essay_prompt", planner_args.get("prompt", ""))
+                            college = current_context.get("college", planner_args.get("context", "").replace(" Essay", "").replace(" Challenge", ""))
+                            
+                            state = manager.create_new_essay(
+                                user_id=self.user_id,
+                                essay_prompt=essay_prompt,
+                                college=college,
+                                word_limit=650
+                            )
+                        
+                        # Update state with current context
+                        if user_input:
+                            state.last_user_input = user_input
+                        if planner_args.get("selected_text"):
+                            state.selected_text = planner_args["selected_text"]
+                        
+                        # Execute the tool with state
+                        tool_class = tool_classes[tool_name]
+                        tool = tool_class()
+                        result = tool._run(state)
+                        
+                        # Save updated state
+                        manager.save_state(state)
+                        
+                        # Format result for orchestrator
+                        result_dict = {"ok": result, "error": None}
+                        error = None
+                        
+                    except Exception as e:
+                        error = str(e)
+                        result_dict = {"ok": None, "error": error}
+                        logger.warning("Unified state tool %s failed (attempt %s/%s): %s", tool_name, attempt, self.MAX_RETRIES + 1, error)
+                else:
+                    # Use old approach for legacy tools
+                    result_dict = await execute_tool(tool_name, **params)
+                    error = result_dict.get("error")
+                    
                 if not error:
                     break  # success!
-                logger.warning("Tool %s failed (attempt %s/%s): %s", tool_name, attempt, self.MAX_RETRIES + 1, error)
+                    
+                if tool_name not in state_based_tools:
+                    logger.warning("Tool %s failed (attempt %s/%s): %s", tool_name, attempt, self.MAX_RETRIES + 1, error)
             # After retries, proceed regardless – error information is valuable
 
             history.append({

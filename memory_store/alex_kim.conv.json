@@ -10,7 +10,7 @@
       "example": false
     },
     {
-      "content": "Understood. I'm helping Alex Kim with their essay work. \nUser Profile - Alex Kim:\n- Academic: GPA 3.91, AP Economics, AP Statistics, AP Calculus BC\n- Target Colleges: Wharton, Stanford, NYU Stern\n- Core Values: Entrepreneurial Spirit, Financial Literacy Education, Collaborative Leadership\n\nCurrent Essay Context:\n- College: Stanford\n- Essay: Stanford Challenge Essay\n- User ID: alex_kim\n",
+      "content": "Understood. I'm helping Alex Kim with their essay work. \nUser Profile - Alex Kim:\n- Academic: GPA 3.9, AP Economics, AP Calculus BC, AP Computer Science\n- Target Colleges: Stanford, Harvard, MIT\n- Core Values: Education & Empowerment, Analytical Problem-Solving, Entrepreneurial Innovation\n\nCurrent Essay Context:\n- College: Stanford\n- Essay: Stanford Challenge Essay\n- User ID: alex_kim\n",
       "additional_kwargs": {},
       "response_metadata": {},
       "type": "ai",
@@ -41,5 +41,5 @@
       "invalid_tool_calls": []
     }
   ],
-  "summary": "Context setup \nUnderstood. I'm helping Alex Kim with their essay work. \nUser Profile - Alex Kim:\n- Academic: GPA 3.91, AP Economics, AP Statistics, AP Calculus BC\n- Target Colleges: Wharton, Stanford, NYU Stern\n- Core Values: Entrepreneurial Spirit, Financial Literacy Education, Collaborative Leadership\n\nCurrent Essay Context:\n- College: Stanford\n- Essay: Stanford Challenge Essay\n- User ID: alex_kim\n \nSetup: Tell me about a time you faced a challenge, setback, or failure. How did it affect you, and what did you learn from the experience? \nReady to help with your Stanford essay!"
+  "summary": "Context setup \nUnderstood. I'm helping Alex Kim with their essay work. \nUser Profile - Alex Kim:\n- Academic: GPA 3.9, AP Economics, AP Calculus BC, AP Computer Science\n- Target Colleges: Stanford, Harvard, MIT\n- Core Values: Education & Empowerment, Analytical Problem-Solving, Entrepreneurial Innovation\n\nCurrent Essay Context:\n- College: Stanford\n- Essay: Stanford Challenge Essay\n- User ID: alex_kim\n \nSetup: Tell me about a time you faced a challenge, setback, or failure. How did it affect you, and what did you learn from the experience? \nReady to help with your Stanford essay!"
 }

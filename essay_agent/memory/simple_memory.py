@@ -58,43 +58,32 @@ class SimpleMemory:  # pylint: disable=too-few-public-methods
         if legacy_container:
             unknown.update(legacy_container)
 
-        if unknown:
-            # Ensure legacy container is a dict even if file contained null/other
-            if not isinstance(raw.get("model_extra"), dict):
-                raw["model_extra"] = {}
-            raw["model_extra"].update(unknown)  # type: ignore[attr-defined]
-
+        # Attempt parsing with debugging for validation errors
         try:
-            prof = UserProfile.model_validate(raw)  # type: ignore[attr-defined]
-        except ValidationError as exc:  # pragma: no cover
+            parsed = UserProfile.model_validate(raw, strict=False)
+            
+            # Preserve unknown fields for backward compatibility
+            if unknown:
+                if not hasattr(parsed, 'model_extra'):
+                    parsed.model_extra = {}
+                parsed.model_extra.update(unknown)
+            
+            print(f"✅ Successfully loaded profile for {user_id}")
+            return parsed
+            
+        except ValidationError as exc:
+            print(f"❌ UserProfile validation failed for {user_id}:")
+            print(f"📋 Raw profile keys: {list(raw.keys())}")
+            print(f"🔍 Validation errors: {exc}")
+            
+            # Try to understand what's missing/wrong
+            for error in exc.errors():
+                print(f"   - {error['loc']}: {error['msg']}")
+            
+            # For debugging, let's see the actual data
+            print(f"📄 Raw profile data: {json.dumps(raw, indent=2)}")
+            
             raise ValueError("Corrupt user profile JSON") from exc
-
-        # ------------------------------------------------------------------
-        # Keep **one** flat copy of extras on both containers so that callers
-        # can safely access them regardless of the pydantic version they use.
-        # ------------------------------------------------------------------
-
-        base_extras = getattr(prof, "model_extra", None)
-        if not isinstance(base_extras, dict):
-            base_extras = {}
-
-        merged_extras: dict[str, Any] = {**base_extras}  # type: ignore[var-annotated]
-
-        # Merge any new unknown keys discovered above
-        merged_extras.update(unknown)
-
-        # Ensure legacy container exists ------------------------------------
-        try:
-            object.__setattr__(prof, "model_extra", merged_extras)  # type: ignore[attr-defined]
-        except Exception:
-            pass
-
-        # Mirror into pydantic-v2 extras container --------------------------
-        try:
-            object.__setattr__(prof, "__pydantic_extra__", merged_extras)
-        except Exception:
-            pass
-        return prof
 
     @staticmethod
     def save(user_id: str, profile: UserProfile) -> None:  # noqa: D401
