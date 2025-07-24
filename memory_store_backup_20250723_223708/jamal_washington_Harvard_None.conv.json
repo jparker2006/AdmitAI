@@ -1,0 +1,29 @@
+{
+  "chat_history": [
+    {
+      "user": "Help me brainstorm ideas for this essay",
+      "agent": "I'm here to assist you with your essay. What specific aspect would you like to focus on?",
+      "timestamp": "2025-07-23T21:45:31.432177"
+    },
+    {
+      "user": "Help me brainstorm ideas for this essay",
+      "agent": "I'm here to assist you with your essay. What specific aspect would you like to focus on?",
+      "timestamp": "2025-07-23T21:45:47.707355",
+      "essay_context": {
+        "user_id": "jamal_washington",
+        "college": "Harvard",
+        "essay_id": null,
+        "essay_title": null,
+        "essay_prompt": "How do you hope to use your Harvard education in the future?"
+      }
+    }
+  ],
+  "context": {
+    "user_id": "jamal_washington",
+    "college": "Harvard",
+    "essay_id": null,
+    "essay_title": null,
+    "essay_prompt": "How do you hope to use your Harvard education in the future?"
+  },
+  "last_updated": "2025-07-23T21:45:47.707378"
+}

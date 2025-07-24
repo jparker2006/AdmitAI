@@ -304,7 +304,8 @@ class SpecificBrainstormTool(ValidatedTool):
         try:
             prompt_text = render_template(
                 SPECIFIC_BRAINSTORM_PROMPT,
-                topic=effective_topic
+                topic=effective_topic,
+                user_input=user_input  # Template expects both topic and user_input
             )
         except ValueError:
             prompt_text = (

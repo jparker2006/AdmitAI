@@ -96,17 +96,41 @@ class ArgResolver:
 
         _flatten("", context)
 
-        # Memory-based fallback (common for college_id)
+        # Memory-based fallback (common for college_id and college)
         if "college_id" in all_params and "college_id" not in resolved:
             mem_college = context.get("college") or context.get("college_context", {}).get("school") or context.get("profile", {}).get("college")
             if mem_college:
                 _set("college_id", mem_college, "memory")
+        
+        # Enhanced college context resolution 
+        if "college" in all_params and "college" not in resolved:
+            college_value = (
+                context.get("college") or 
+                context.get("college_context", {}).get("school") or
+                flat_ctx.get("college") or
+                flat_ctx.get("college_context_school")
+            )
+            if college_value:
+                _set("college", college_value, "context")
+            else:
+                _set("college", "this college", "default")
 
         # Default profile fallback to avoid tool failure
         if "profile" in all_params and "profile" not in resolved:
-            ctx_profile = context.get("profile")
+            # Try multiple context keys for user profile data
+            ctx_profile = (
+                context.get("profile") or 
+                context.get("user_profile") or
+                flat_ctx.get("user_profile")
+            )
+            
             if ctx_profile:
-                _set("profile", ctx_profile, "context")
+                # Format rich profile data for tool consumption
+                if isinstance(ctx_profile, dict):
+                    formatted_profile = self._format_profile_for_tools(ctx_profile)
+                    _set("profile", formatted_profile, "context")
+                else:
+                    _set("profile", str(ctx_profile), "context")
             else:
                 _set("profile", "New applicant; profile pending.", "default")
         for k in all_params:
@@ -118,6 +142,21 @@ class ArgResolver:
         # 3) User input heuristics (simple) ---------------------------------
         if user_input and "selection" in all_params and "selection" not in resolved:
             _set("selection", user_input, "user_input")
+        
+        # Map user_input for tools that need it (like clarify)
+        if user_input and "user_input" in all_params and "user_input" not in resolved:
+            _set("user_input", user_input, "user_input")
+        
+        # Enhanced essay_prompt resolution
+        if "essay_prompt" in all_params and "essay_prompt" not in resolved:
+            essay_prompt_value = (
+                context.get("essay_prompt") or
+                context.get("college_context", {}).get("essay_prompt") or
+                flat_ctx.get("essay_prompt") or
+                flat_ctx.get("college_context_essay_prompt")
+            )
+            if essay_prompt_value:
+                _set("essay_prompt", essay_prompt_value, "context")
 
         # 4) Defaults -------------------------------------------------------
         for k in all_params:
@@ -154,3 +193,70 @@ class ArgResolver:
             print(pformat({"resolved": resolved, "sources": diagnostics}))
 
         return resolved 
+
+    def _format_profile_for_tools(self, profile_dict: Dict[str, Any]) -> str:
+        """Format rich user profile data into a concise string for tool consumption.
+        
+        Args:
+            profile_dict: Full user profile dictionary
+            
+        Returns:
+            Formatted profile string with key details for brainstorming
+        """
+        try:
+            # Extract key profile sections
+            user_info = profile_dict.get("user_info", {})
+            activities = profile_dict.get("academic_profile", {}).get("activities", [])
+            defining_moments = profile_dict.get("defining_moments", [])
+            core_values = profile_dict.get("core_values", [])
+            
+            # Build formatted profile string
+            parts = []
+            
+            # Basic info
+            name = user_info.get("name", "Student")
+            major = user_info.get("intended_major", "")
+            if major:
+                parts.append(f"{name}: {major}-focused student")
+            else:
+                parts.append(name)
+            
+            # Key activities (top 3)
+            if activities:
+                activity_summaries = []
+                for activity in activities[:3]:
+                    role = activity.get("role", "")
+                    name_act = activity.get("name", "")
+                    impact = activity.get("impact", "")
+                    if role and name_act:
+                        if impact:
+                            activity_summaries.append(f"{role} of {name_act} ({impact[:50]}...)")
+                        else:
+                            activity_summaries.append(f"{role} of {name_act}")
+                
+                if activity_summaries:
+                    parts.append(f"Activities: {', '.join(activity_summaries)}")
+            
+            # Defining moments with relevant themes
+            if defining_moments:
+                moment_themes = []
+                for moment in defining_moments[:3]:
+                    title = moment.get("title", "")
+                    themes = moment.get("themes", [])
+                    if title and themes:
+                        moment_themes.append(f"{title} (themes: {', '.join(themes[:2])})")
+                
+                if moment_themes:
+                    parts.append(f"Key experiences: {'; '.join(moment_themes)}")
+            
+            # Core values (top 2)
+            if core_values:
+                value_names = [v.get("value", "") for v in core_values[:2] if v.get("value")]
+                if value_names:
+                    parts.append(f"Core values: {', '.join(value_names)}")
+            
+            return ". ".join(parts) + "."
+            
+        except Exception as e:
+            # Fallback to basic string representation
+            return f"Student profile: {str(profile_dict)[:200]}..." 

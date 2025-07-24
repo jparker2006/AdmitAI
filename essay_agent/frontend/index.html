@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Essay Agent Debug Interface</title>
+    <title>Essay Agent Debug Dashboard</title>
     <style>
         * {
             margin: 0;
@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #1a1a1a;
+            background: #0a0a0a;
             color: #e0e0e0;
             height: 100vh;
             display: flex;
@@ -21,570 +21,2238 @@
         }
 
         .header {
-            background: #2d2d2d;
-            padding: 10px 20px;
-            border-bottom: 1px solid #444;
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            padding: 12px 24px;
+            border-bottom: 2px solid #4a9eff;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 10px rgba(74, 158, 255, 0.3);
         }
 
         .header h1 {
             color: #4a9eff;
-            font-size: 1.5em;
+            font-size: 1.8em;
+            font-weight: 600;
+            text-shadow: 0 0 10px rgba(74, 158, 255, 0.5);
         }
 
         .controls {
             display: flex;
-            gap: 10px;
+            gap: 12px;
             align-items: center;
         }
 
+        .connection-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid #333;
+        }
+
+        .connection-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ff4a4a;
+            transition: background-color 0.3s;
+        }
+
+        .connection-dot.connected {
+            background: #4aff4a;
+            box-shadow: 0 0 8px rgba(74, 255, 74, 0.6);
+        }
+
         .btn {
-            background: #4a9eff;
+            background: linear-gradient(135deg, #4a9eff, #3a8eef);
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
+            padding: 10px 18px;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(74, 158, 255, 0.3);
         }
 
         .btn:hover {
-            background: #3a8eef;
+            background: linear-gradient(135deg, #3a8eef, #2a7edf);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(74, 158, 255, 0.4);
         }
 
         .btn.danger {
-            background: #ff4a4a;
+            background: linear-gradient(135deg, #ff4a4a, #ef3a3a);
         }
 
         .btn.danger:hover {
-            background: #ef3a3a;
+            background: linear-gradient(135deg, #ef3a3a, #df2a2a);
+        }
+
+        .btn.success {
+            background: linear-gradient(135deg, #4aff4a, #3aef3a);
         }
 
         .main-container {
             flex: 1;
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            grid-template-rows: 60% 40%;
-            gap: 1px;
+            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-rows: 1fr 1fr;
+            gap: 2px;
             background: #333;
+            overflow: hidden;
         }
 
         .panel {
-            background: #252525;
+            background: linear-gradient(135deg, #1a1a1a, #252525);
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            border: 1px solid #333;
+            border-radius: 8px;
+            margin: 1px;
         }
 
         .panel-header {
-            background: #333;
-            padding: 8px 12px;
-            border-bottom: 1px solid #444;
+            background: linear-gradient(135deg, #2d2d2d, #3d3d3d);
+            padding: 10px 16px;
+            border-bottom: 1px solid #4a9eff;
             font-weight: bold;
             color: #4a9eff;
-            font-size: 0.9em;
+            font-size: 0.95em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .mini-btn {
+            background: rgba(74, 158, 255, 0.2);
+            border: 1px solid #4a9eff;
+            color: #4a9eff;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mini-btn:hover {
+            background: rgba(74, 158, 255, 0.4);
         }
 
         .panel-content {
             flex: 1;
             overflow-y: auto;
-            padding: 10px;
+            padding: 12px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.85em;
+            line-height: 1.4;
         }
 
-        /* Chat Panel */
+        /* Chat Panel - spans full height */
         .chat-panel {
             grid-row: 1 / 3;
+            display: flex;
+            flex-direction: column;
         }
 
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            padding: 16px;
+            background: linear-gradient(135deg, #1a1a1a, #2a2a2a);
+            border-radius: 8px;
+            margin: 8px;
         }
 
         .message {
-            padding: 10px;
-            border-radius: 8px;
-            max-width: 80%;
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            max-width: 85%;
+            word-wrap: break-word;
+            position: relative;
         }
 
         .message.user {
-            background: #3a3a3a;
-            align-self: flex-end;
+            background: linear-gradient(135deg, #4a9eff, #3a8eef);
+            color: white;
             margin-left: auto;
+            text-align: right;
         }
 
         .message.agent {
-            background: #2a4a6a;
-            align-self: flex-start;
+            background: linear-gradient(135deg, #2d4a2d, #3d5a3d);
+            color: #e0e0e0;
+            border: 1px solid #4aff4a;
+        }
+
+        .message.system {
+            background: linear-gradient(135deg, #4a2d2d, #5a3d3d);
+            color: #ffaaaa;
+            border: 1px solid #ff4a4a;
+            text-align: center;
+            margin: 8px auto;
+            max-width: 95%;
         }
 
         .message-time {
-            font-size: 0.7em;
+            font-size: 0.75em;
             opacity: 0.7;
-            margin-top: 5px;
+            margin-top: 6px;
+        }
+
+        .chat-input-container {
+            padding: 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid #333;
+        }
+
+        .chat-input-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
         }
 
         .chat-input {
-            display: flex;
-            gap: 10px;
-            padding: 10px;
-            background: #2d2d2d;
-            border-top: 1px solid #444;
-        }
-
-        .chat-input input {
             flex: 1;
-            padding: 10px;
-            background: #3a3a3a;
-            border: 1px solid #555;
-            border-radius: 4px;
+            padding: 12px 16px;
+            border: 2px solid #333;
+            border-radius: 25px;
+            background: rgba(255, 255, 255, 0.05);
             color: #e0e0e0;
-            font-size: 0.9em;
+            font-size: 0.95em;
+            transition: border-color 0.3s;
         }
 
-        .chat-input input:focus {
+        .chat-input:focus {
             outline: none;
+            border-color: #4a9eff;
+            box-shadow: 0 0 15px rgba(74, 158, 255, 0.3);
+        }
+
+        .chat-status {
+            padding: 8px 16px;
+            text-align: center;
+            font-size: 0.85em;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            margin: 8px 16px;
+        }
+
+        .status-ready { color: #4aff4a; }
+        .status-processing { color: #ffaa4a; }
+        .status-error { color: #ff4a4a; }
+
+        /* Debug Panels */
+        .debug-item {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid #333;
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 8px;
+            transition: all 0.2s;
+        }
+
+        .debug-item:hover {
+            background: rgba(255, 255, 255, 0.05);
             border-color: #4a9eff;
         }
 
-        /* Memory Panel */
-        .memory-item {
-            background: #2a2a2a;
-            padding: 8px;
-            margin-bottom: 8px;
-            border-radius: 4px;
-            border-left: 3px solid #4a9eff;
-        }
-
-        .memory-label {
-            font-weight: bold;
-            color: #4a9eff;
-            margin-bottom: 4px;
-            font-size: 0.8em;
-        }
-
-        .memory-value {
-            font-size: 0.8em;
-            color: #ccc;
-            word-break: break-word;
-        }
-
-        /* Tool Panel */
-        .tool-execution {
-            background: #2a2a2a;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            border-left: 3px solid #4a9eff;
-        }
-
-        .tool-execution.success {
-            border-left-color: #4ade80;
-        }
-
-        .tool-execution.error {
-            border-left-color: #f87171;
-        }
-
-        .tool-header {
+        .debug-item-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
-        .tool-name {
-            font-weight: bold;
-            color: #4a9eff;
-        }
-
-        .tool-time {
-            font-size: 0.7em;
-            opacity: 0.7;
-        }
-
-        .tool-args, .tool-result {
-            background: #1a1a1a;
-            padding: 8px;
-            border-radius: 4px;
-            margin-top: 8px;
-            font-family: 'Courier New', monospace;
-            font-size: 0.75em;
-            overflow-x: auto;
-        }
-
-        .tool-args {
-            border: 1px solid #555;
-        }
-
-        .tool-result {
-            border: 1px solid #4a9eff;
-        }
-
-        .tool-result.error {
-            border-color: #f87171;
-            background: #2a1a1a;
-        }
-
-        /* Error Panel */
-        .error-entry {
-            background: #3a1a1a;
-            padding: 10px;
-            margin-bottom: 10px;
-            border-radius: 4px;
-            border-left: 3px solid #f87171;
-        }
-
-        .error-time {
-            font-size: 0.7em;
-            color: #f87171;
-            margin-bottom: 5px;
-        }
-
-        .error-message {
-            font-family: 'Courier New', monospace;
-            font-size: 0.8em;
-            color: #ffaaaa;
-            white-space: pre-wrap;
-        }
-
-        /* Planner Panel */
-        .planner-section {
-            margin-bottom: 15px;
-        }
-
-        .planner-label {
-            font-weight: bold;
-            color: #4a9eff;
-            margin-bottom: 5px;
+        .debug-timestamp {
+            color: #888;
             font-size: 0.8em;
         }
 
-        .planner-content {
-            background: #1a1a1a;
-            padding: 8px;
-            border-radius: 4px;
-            font-family: 'Courier New', monospace;
+        .debug-type {
+            background: rgba(74, 158, 255, 0.2);
+            color: #4a9eff;
+            padding: 2px 8px;
+            border-radius: 12px;
             font-size: 0.75em;
-            border: 1px solid #555;
+            font-weight: bold;
+        }
+
+        .debug-content {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.8em;
             white-space: pre-wrap;
-            max-height: 150px;
+            max-height: 120px;
             overflow-y: auto;
         }
 
-        .plan-step {
-            background: #2a2a2a;
-            padding: 8px;
-            margin-bottom: 8px;
-            border-radius: 4px;
-            border-left: 3px solid #4a9eff;
+        .tool-execution {
+            border-left: 4px solid #4aff4a;
+            padding-left: 12px;
         }
 
-        /* Status indicators */
-        .status-indicator {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
+        .tool-execution.error {
+            border-left-color: #ff4a4a;
+        }
+
+        .error-item {
+            border-left: 4px solid #ff4a4a;
+            background: rgba(255, 74, 74, 0.1);
+        }
+
+        .memory-item {
+            border-left: 4px solid #ffaa4a;
+        }
+
+        .network-item {
+            border-left: 4px solid #aa4aff;
+        }
+
+        /* Tabs for multi-view panels */
+        .panel-tabs {
+            display: flex;
+            background: rgba(0, 0, 0, 0.2);
+            border-bottom: 1px solid #333;
+        }
+
+        .panel-tab {
+            padding: 8px 16px;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            font-size: 0.85em;
+        }
+
+        .panel-tab.active {
+            border-bottom-color: #4a9eff;
+            background: rgba(74, 158, 255, 0.1);
+            color: #4a9eff;
+        }
+
+        .panel-tab:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Loading and status indicators */
+        .loading-spinner {
+            border: 2px solid #333;
+            border-top: 2px solid #4a9eff;
             border-radius: 50%;
+            width: 16px;
+            height: 16px;
+            animation: spin 1s linear infinite;
             margin-right: 8px;
         }
 
-        .status-indicator.success {
-            background: #4ade80;
-        }
-
-        .status-indicator.error {
-            background: #f87171;
-        }
-
-        .status-indicator.pending {
-            background: #fbbf24;
-        }
-
-        /* Loading spinner */
-        .loading {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #333;
-            border-radius: 50%;
-            border-top-color: #4a9eff;
-            animation: spin 1s ease-in-out infinite;
-        }
-
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
-        /* Scrollbar styling */
-        ::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #1a1a1a;
-        }
-
-        ::-webkit-scrollbar-thumb {
+        .badge {
             background: #4a9eff;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: bold;
+        }
+
+        .badge.success { background: #4aff4a; color: #000; }
+        .badge.error { background: #ff4a4a; }
+        .badge.warning { background: #ffaa4a; color: #000; }
+
+        /* Interactive debugging controls */
+        .debug-controls {
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.3);
+            border-top: 1px solid #333;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .debug-input {
+            padding: 6px 12px;
+            border: 1px solid #333;
             border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            color: #e0e0e0;
+            font-size: 0.85em;
+            min-width: 120px;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: #3a8eef;
+        /* Responsive design */
+        @media (max-width: 1400px) {
+            .main-container {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: 1fr 1fr 1fr;
+            }
+            
+            .chat-panel {
+                grid-row: 1 / 2;
+            }
         }
 
-        /* Onboarding Styles */
-        .onboarding-container {
-            flex: 1;
+        @media (max-width: 900px) {
+            .main-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: repeat(6, 1fr);
+            }
+            
+            .chat-panel {
+                grid-row: 1 / 3;
+            }
+        }
+
+        /* JSON viewer styles */
+        .json-viewer {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.8em;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+            padding: 8px;
+            margin: 4px 0;
+            max-height: 200px;
+            overflow: auto;
+        }
+
+        .json-key {
+            color: #4aff4a;
+        }
+
+        .json-string {
+            color: #ffaa4a;
+        }
+
+        .json-number {
+            color: #aa4aff;
+        }
+
+        .json-boolean {
+            color: #4a9eff;
+        }
+
+        /* Setup overlay */
+        .setup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-            background: #1a1a1a;
+            z-index: 1000;
         }
 
-        .onboarding-panel {
-            background: #252525;
+        .setup-dialog {
+            background: linear-gradient(135deg, #1a1a1a, #2d2d2d);
+            padding: 32px;
             border-radius: 12px;
-            padding: 40px;
+            border: 2px solid #4a9eff;
             max-width: 600px;
-            width: 100%;
-            border: 1px solid #444;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
         }
 
-        .onboarding-header h2 {
+        .setup-dialog h2 {
             color: #4a9eff;
-            margin-bottom: 10px;
-            font-size: 1.8em;
-        }
-
-        .onboarding-header p {
-            color: #ccc;
-            margin-bottom: 30px;
-            line-height: 1.5;
+            margin-bottom: 24px;
+            text-align: center;
         }
 
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
-            color: #4a9eff;
-            font-weight: bold;
             margin-bottom: 8px;
-            font-size: 0.95em;
+            color: #ccc;
+            font-weight: 500;
         }
 
-        .form-group input,
-        .form-group textarea {
+        .form-group input, .form-group textarea, .form-group select {
             width: 100%;
-            padding: 12px;
-            background: #1a1a1a;
-            border: 2px solid #444;
-            border-radius: 6px;
+            padding: 12px 16px;
+            border: 2px solid #333;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
             color: #e0e0e0;
             font-size: 0.95em;
-            transition: border-color 0.3s ease;
-            resize: vertical;
+            transition: border-color 0.3s;
         }
 
-        .form-group input:focus,
-        .form-group textarea:focus {
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
             outline: none;
             border-color: #4a9eff;
-            box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
+            box-shadow: 0 0 15px rgba(74, 158, 255, 0.3);
         }
 
-        .word-counter {
-            text-align: right;
-            margin-top: 5px;
-            font-size: 0.8em;
-            color: #999;
-        }
-
-        .word-counter.warning {
-            color: #fbbf24;
-        }
-
-        .word-counter.error {
-            color: #f87171;
-        }
-
-        .form-actions {
-            margin-top: 30px;
-            text-align: center;
-        }
-
-        .btn-primary {
-            background: #4a9eff;
-            color: white;
-            border: none;
-            padding: 14px 30px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 1em;
-            font-weight: bold;
-            transition: background-color 0.3s ease;
-            min-width: 200px;
-        }
-
-        .btn-primary:hover {
-            background: #3a8eef;
-        }
-
-        .btn-primary:disabled {
-            background: #666;
-            cursor: not-allowed;
-        }
-
-        .error-message {
-            background: #3a1a1a;
-            color: #f87171;
-            padding: 12px;
-            border-radius: 6px;
-            margin-top: 15px;
-            border: 1px solid #f87171;
-            font-size: 0.9em;
-        }
-
-        /* Responsive adjustments */
-        @media (max-width: 1200px) {
-            .main-container {
-                grid-template-columns: 1fr;
-                grid-template-rows: 40% 20% 20% 20%;
-            }
-            
-            .chat-panel {
-                grid-row: 1;
-            }
-            
-            .onboarding-panel {
-                padding: 30px 20px;
-                margin: 10px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .onboarding-panel {
-                padding: 20px;
-            }
-            
-            .onboarding-header h2 {
-                font-size: 1.5em;
-            }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
         }
     </style>
 </head>
 <body>
+    <!-- Header -->
     <div class="header">
-        <h1>🤖 Essay Agent Debug Interface</h1>
+        <h1>🛠️ Essay Agent Debug Dashboard</h1>
         <div class="controls">
-            <span id="status">Ready</span>
-            <button class="btn" onclick="exportDebugData()">Export Debug Data</button>
-            <button class="btn danger" onclick="clearHistory()">Clear History</button>
-        </div>
-    </div>
-
-    <!-- Onboarding Screen -->
-    <div class="onboarding-container" id="onboarding-container">
-        <div class="onboarding-panel">
-            <div class="onboarding-header">
-                <h2>🎯 Essay Agent Setup</h2>
-                <p>Let's get started with your essay. Please provide some basic information:</p>
+            <div class="connection-status">
+                <div class="connection-dot" id="connectionDot"></div>
+                <span id="connectionText">Connecting...</span>
             </div>
-            <form class="onboarding-form" id="onboarding-form">
-                <div class="form-group">
-                    <label for="essay-prompt">What's your essay prompt?</label>
-                    <textarea 
-                        id="essay-prompt" 
-                        name="essay_prompt" 
-                        rows="4" 
-                        placeholder="Enter your essay prompt here (max 650 words)..."
-                        required
-                    ></textarea>
-                    <div class="word-counter">
-                        <span id="word-count">0</span> words
-                    </div>
-                </div>
-                
-                <div class="form-group">
-                    <label for="school">Which school is this for?</label>
-                    <input 
-                        type="text" 
-                        id="school" 
-                        name="school" 
-                        placeholder="e.g., Stanford University, Harvard, MIT..."
-                        required
-                    >
-                </div>
-                
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary" id="setup-btn">
-                        Start Essay Session
-                    </button>
-                </div>
-                
-                <div class="error-message" id="setup-error" style="display: none;"></div>
-            </form>
+            <button class="btn" onclick="clearDebugState()">Clear Debug</button>
+            <button class="btn success" onclick="exportDebugData()">Export Data</button>
+            <button class="btn danger" onclick="restartAgent()">Restart Agent</button>
         </div>
     </div>
 
-    <div class="main-container" id="main-container" style="display: none;">
+    <!-- Main Debug Interface -->
+    <div class="main-container">
         <!-- Chat Panel -->
         <div class="panel chat-panel">
-            <div class="panel-header">💬 Chat Interface</div>
-            <div class="chat-messages" id="chat-messages">
-                <div class="message agent">
-                    <div>Welcome to the Essay Agent Debug Interface! I can help you with essay writing.</div>
-                    <div class="message-time">Ready to start</div>
+            <div class="panel-header">
+                💬 Chat Interface
+                <div class="panel-controls">
+                    <span class="badge" id="messageCount">0 messages</span>
                 </div>
             </div>
-            <div class="chat-input">
-                <input type="text" id="message-input" placeholder="Type your message here..." onkeypress="handleKeyPress(event)">
-                <button class="btn" onclick="sendMessage()">Send</button>
+            
+            <div class="chat-status" id="chatStatus">
+                <span class="status-ready">Ready to chat</span>
+            </div>
+            
+            <div class="chat-messages" id="chatMessages"></div>
+            
+            <div class="chat-input-container">
+                <div class="chat-input-group">
+                    <input 
+                        type="text" 
+                        class="chat-input" 
+                        id="messageInput" 
+                        placeholder="Type your message here..."
+                        onkeypress="handleEnterKey(event)"
+                    >
+                    <button class="btn" onclick="sendMessage()" id="sendButton">
+                        Send
+                    </button>
+                </div>
             </div>
         </div>
 
-        <!-- Memory Panel -->
+        <!-- Real-Time Events Panel -->
         <div class="panel">
-            <div class="panel-header">🧠 Memory State</div>
-            <div class="panel-content" id="memory-content">
-                <div class="memory-item">
-                    <div class="memory-label">Status</div>
-                    <div class="memory-value">No conversation started</div>
+            <div class="panel-header">
+                ⚡ Live Events
+                <div class="panel-controls">
+                    <button class="mini-btn" onclick="pauseEvents()">Pause</button>
+                    <button class="mini-btn" onclick="clearEvents()">Clear</button>
+                    <span class="badge" id="eventsCount">0 events</span>
                 </div>
             </div>
+            <div class="panel-content" id="liveEvents"></div>
         </div>
 
         <!-- Tool Execution Panel -->
         <div class="panel">
-            <div class="panel-header">🔧 Tool Executions</div>
-            <div class="panel-content" id="tools-content">
-                <div style="text-align: center; opacity: 0.6; padding: 20px;">
-                    No tools executed yet
+            <div class="panel-header">
+                🔧 Tool Executions
+                <div class="panel-controls">
+                    <button class="mini-btn" onclick="showManualTool()">Manual Test</button>
+                    <span class="badge" id="toolsCount">0 tools</span>
                 </div>
+            </div>
+            
+            <div class="panel-tabs">
+                <div class="panel-tab active" onclick="switchToolTab('executions')">Executions</div>
+                <div class="panel-tab" onclick="switchToolTab('available')">Available</div>
+            </div>
+            
+            <div class="panel-content" id="toolExecutions"></div>
+            <div class="panel-content" style="display: none;" id="availableTools"></div>
+            
+            <div class="debug-controls">
+                <input type="text" class="debug-input" id="manualToolName" placeholder="Tool name">
+                <input type="text" class="debug-input" id="manualToolArgs" placeholder="Args (JSON)">
+                <button class="mini-btn" onclick="executeManualTool()">Execute</button>
             </div>
         </div>
 
-        <!-- Error Log Panel -->
+        <!-- Memory & Context Panel -->
         <div class="panel">
-            <div class="panel-header">⚠️ Error Log</div>
-            <div class="panel-content" id="errors-content">
-                <div style="text-align: center; opacity: 0.6; padding: 20px;">
-                    No errors logged
+            <div class="panel-header">
+                🧠 Memory & Context
+                <div class="panel-controls">
+                    <button class="mini-btn" onclick="inspectMemory()">Inspect</button>
+                    <span class="badge" id="memoryCount">0 snapshots</span>
                 </div>
             </div>
+            
+            <div class="panel-tabs">
+                <div class="panel-tab active" onclick="switchMemoryTab('snapshots')">Snapshots</div>
+                <div class="panel-tab" onclick="switchMemoryTab('current')">Current State</div>
+            </div>
+            
+            <div class="panel-content" id="memorySnapshots"></div>
+            <div class="panel-content" style="display: none;" id="currentMemory"></div>
+        </div>
+
+        <!-- Errors & Issues Panel -->
+        <div class="panel">
+            <div class="panel-header">
+                🚨 Errors & Issues
+                <div class="panel-controls">
+                    <button class="mini-btn" onclick="clearErrors()">Clear</button>
+                    <span class="badge error" id="errorsCount">0 errors</span>
+                </div>
+            </div>
+            <div class="panel-content" id="errorsList"></div>
+        </div>
+
+        <!-- Network & API Panel -->
+        <div class="panel">
+            <div class="panel-header">
+                📡 Network & API
+                <div class="panel-controls">
+                    <button class="mini-btn" onclick="clearNetwork()">Clear</button>
+                    <span class="badge" id="networkCount">0 requests</span>
+                </div>
+            </div>
+            
+            <div class="panel-tabs">
+                <div class="panel-tab active" onclick="switchNetworkTab('requests')">Requests</div>
+                <div class="panel-tab" onclick="switchNetworkTab('websocket')">WebSocket</div>
+            </div>
+            
+            <div class="panel-content" id="networkRequests"></div>
+            <div class="panel-content" style="display: none;" id="websocketLogs"></div>
         </div>
     </div>
 
+    <!-- Setup Overlay -->
+    <div class="setup-overlay" id="setupOverlay" style="display: none;">
+        <div class="setup-dialog">
+            <h2>🎓 Setup Essay Session</h2>
+            
+            <div class="form-group">
+                <label for="userSelect">Select User Profile:</label>
+                <select id="userSelect" onchange="loadUserProfile()">
+                    <option value="">Choose a user...</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="schoolInput">Target School:</label>
+                <input type="text" id="schoolInput" placeholder="e.g., Stanford University">
+            </div>
+            
+            <div class="form-group">
+                <label for="promptInput">Essay Prompt:</label>
+                <textarea id="promptInput" placeholder="Paste the essay prompt here..."></textarea>
+                <small style="color: #888;">Recommended: Under 650 words</small>
+            </div>
+            
+            <div style="text-align: center; margin-top: 24px;">
+                <button class="btn" onclick="startSession()">Start Session</button>
+                <button class="btn" onclick="skipSetup()" style="margin-left: 12px;">Skip Setup</button>
+            </div>
+            
+            <div id="setupError" style="color: #ff4a4a; text-align: center; margin-top: 16px; display: none;"></div>
+        </div>
+    </div>
+
+    <script>
+/**
+ * Essay Agent Debug Frontend JavaScript
+ * Handles chat interface and debug data visualization
+ */
+
+// Global state
+let isLoading = false;
+let debugHistory = [];
+let isOnboarded = false;
+let currentUserId = 'debug_user'; // Default user ID
+let availableUsers = [];
+let currentEssayContext = null;
+
+// DOM elements
+const chatMessages = document.getElementById('chatMessages');
+const messageInput = document.getElementById('messageInput');
+const memoryContent = document.getElementById('memorySnapshots'); // Changed to snapshots
+const toolsContent = document.getElementById('toolExecutions');
+const errorsContent = document.getElementById('errorsList');
+const statusElement = document.getElementById('connectionText'); // Changed to connectionText
+
+// Onboarding elements
+const onboardingContainer = document.getElementById('setupOverlay');
+const mainContainer = document.getElementById('main-container');
+const onboardingForm = document.getElementById('setupDialog'); // Changed to setupDialog
+const essayPromptInput = document.getElementById('promptInput');
+const schoolInput = document.getElementById('schoolInput');
+const wordCountElement = document.getElementById('word-count'); // This element is no longer used
+const setupError = document.getElementById('setupError');
+
+// User selection elements
+const userTypeSelect = document.getElementById('userSelect');
+const existingUserGroup = document.getElementById('userSelect'); // Changed to userSelect
+const newUserGroup = document.getElementById('userSelect'); // Changed to userSelect
+const existingUserSelect = document.getElementById('userSelect');
+const newUserIdInput = document.getElementById('userSelect'); // Changed to userSelect
+const userPreview = document.getElementById('userPreview'); // This element is no longer used
+const userContinueBtn = document.getElementById('userContinueBtn'); // Changed to startSession
+const onboardingTitle = document.getElementById('onboarding-title'); // Changed to setupDialog h2
+const onboardingSubtitle = document.getElementById('onboarding-subtitle'); // This element is no longer used
+
+// WebSocket connection
+let ws = null;
+
+// Initialize the interface
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('Essay Agent Debug Interface initialized');
+    updateStatus('Connecting...', 'pending');
+    
+    // Setup WebSocket connection
+    setupWebSocket();
+
+    // Check if already onboarded
+    checkOnboardingStatus();
+    
+    // Setup onboarding event listeners
+    setupOnboardingListeners();
+    
+    // Load available users
+    loadAvailableUsers();
+    
+    // Load any existing debug state
+    loadDebugState();
+});
+
+/**
+ * Handle enter key press in message input
+ */
+function handleEnterKey(event) {
+    if (event.key === 'Enter' && !event.shiftKey) {
+        event.preventDefault();
+        sendMessage();
+    }
+}
+
+/**
+ * Setup WebSocket connection
+ */
+function setupWebSocket() {
+    const wsUrl = window.location.origin.replace('http', 'ws') + '/ws/debug';
+    ws = new WebSocket(wsUrl);
+
+    ws.onopen = () => {
+        console.log('WebSocket connection established');
+        updateStatus('Connected', 'success');
+        document.getElementById('connectionDot').classList.add('connected');
+        document.getElementById('connectionText').textContent = 'Connected';
+        // Attempt to reconnect if connection is lost
+        setInterval(() => {
+            if (ws.readyState !== WebSocket.OPEN) {
+                console.warn('WebSocket connection lost, attempting to reconnect...');
+                setupWebSocket();
+            }
+        }, 10000); // Reconnect every 10 seconds
+    };
+
+    ws.onclose = (event) => {
+        console.warn('WebSocket connection closed:', event.code, event.reason);
+        updateStatus('Disconnected', 'error');
+        document.getElementById('connectionDot').classList.remove('connected');
+        document.getElementById('connectionText').textContent = 'Disconnected';
+        setTimeout(setupWebSocket, 5000); // Attempt to reconnect after 5 seconds
+    };
+
+    ws.onerror = (error) => {
+        console.error('WebSocket error:', error);
+        updateStatus('Error', 'error');
+        document.getElementById('connectionDot').classList.remove('connected');
+        document.getElementById('connectionText').textContent = 'Error';
+    };
+
+    ws.onmessage = (event) => {
+        try {
+            const data = JSON.parse(event.data);
+            if (data.type === 'debug_message') {
+                addMessageToChat('system', data.message);
+            } else if (data.type === 'debug_data') {
+                updateDebugPanels(data.data);
+            } else if (data.type === 'error') {
+                addErrorToLog(data.message, data.user_input);
+            } else if (data.type === 'tool_execution') {
+                updateToolsPanel([data]);
+            } else if (data.type === 'memory_snapshot') {
+                updateMemoryPanel(data.data);
+            } else if (data.type === 'network_request') {
+                updateNetworkRequests(data);
+            } else if (data.type === 'websocket_log') {
+                updateWebSocketLogs(data);
+            } else if (data.type === 'event') {
+                updateLiveEvents(data);
+            }
+        } catch (e) {
+            console.error('Error parsing WebSocket message:', e);
+        }
+    };
+}
+
+/**
+ * Check onboarding status and show appropriate interface
+ */
+async function checkOnboardingStatus() {
+    try {
+        const response = await fetch('/debug/full-state');
+        if (response.ok) {
+            const debugState = await response.json();
+            
+            // Check if user has completed onboarding
+            const latestMemory = debugState.memory_snapshots?.[debugState.memory_snapshots.length - 1];
+            if (latestMemory?.onboarding_completed) {
+                isOnboarded = true;
+                showChatInterface();
+                updateStatus('Ready', 'success');
+            } else {
+                showOnboardingInterface();
+            }
+        } else {
+            showOnboardingInterface();
+        }
+    } catch (error) {
+        console.log('No existing session found, showing onboarding');
+        showOnboardingInterface();
+    }
+}
+
+/**
+ * Load available users from backend
+ */
+async function loadAvailableUsers() {
+    try {
+        updateStatus('Loading users...', 'pending');
+        const response = await fetch('/api/users');
+        if (response.ok) {
+            const data = await response.json();
+            availableUsers = data.users || [];
+            
+            // Populate existing user dropdown
+            userTypeSelect.innerHTML = '<option value="">Select a user...</option>';
+            
+            if (availableUsers.length === 0) {
+                userTypeSelect.innerHTML = '<option value="">No users found - create a new one</option>';
+                console.warn('No users found in memory store');
+            } else {
+                availableUsers.forEach(user => {
+                    const option = document.createElement('option');
+                    option.value = user.user_id;
+                    option.textContent = `${user.name} (${user.user_id})`;
+                    option.dataset.userInfo = JSON.stringify(user);
+                    userTypeSelect.appendChild(option);
+                });
+                console.log(`Loaded ${availableUsers.length} users:`, availableUsers.map(u => u.user_id));
+            }
+            updateStatus('Users loaded', 'success');
+        } else {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+    } catch (error) {
+        console.error('Error loading users:', error);
+        userTypeSelect.innerHTML = '<option value="">Error loading users - check console</option>';
+        updateStatus('Error loading users', 'error');
+        
+        // Show error details to user
+        showSetupError(`Failed to load users: ${error.message}. Please check the server is running.`);
+    }
+}
+
+/**
+ * Toggle user selection options
+ */
+function toggleUserSelection() {
+    const userType = userTypeSelect.value;
+    
+    existingUserGroup.style.display = userType === 'existing' ? 'block' : 'none';
+    newUserGroup.style.display = userType === 'new' ? 'block' : 'none';
+    userPreview.style.display = 'none';
+    userPreview.classList.remove('show');
+    
+    // Update continue button state
+    updateContinueButtonState();
+    
+    if (userType === 'existing') {
+        existingUserSelect.focus();
+    } else if (userType === 'new') {
+        newUserIdInput.focus();
+    }
+}
+
+/**
+ * Show user preview when existing user selected
+ */
+function showUserPreview() {
+    const selectedUserId = existingUserSelect.value;
+    if (!selectedUserId) {
+        userPreview.style.display = 'none';
+        userPreview.classList.remove('show');
+        return;
+    }
+    
+    try {
+        const userInfo = JSON.parse(existingUserSelect.selectedOptions[0].dataset.userInfo);
+        
+        let previewHtml = `<h4>${userInfo.name}</h4>`;
+        previewHtml += `<p><strong>User ID:</strong> ${userInfo.user_id}</p>`;
+        
+        // Show essay portfolio in file system format
+        if (userInfo.essay_portfolio && Object.keys(userInfo.essay_portfolio).length > 0) {
+            previewHtml += `<div class="essay-portfolio">`;
+            previewHtml += `<div class="portfolio-header">📁 Essay Portfolio</div>`;
+            
+            // Sort colleges alphabetically
+            const colleges = Object.keys(userInfo.essay_portfolio).sort();
+            
+            for (const college of colleges) {
+                const essays = userInfo.essay_portfolio[college];
+                previewHtml += `<div class="college-folder">`;
+                previewHtml += `<div class="college-folder-header" onclick="toggleFolder('${college.replace(/[^a-zA-Z0-9]/g, '')}')">`;
+                previewHtml += `<span class="folder-icon">📁</span>`;
+                previewHtml += `<span>${college} (${essays.length})</span>`;
+                previewHtml += `</div>`;
+                
+                previewHtml += `<div class="college-folder-content" id="folder-${college.replace(/[^a-zA-Z0-9]/g, '')}">`;
+                
+                for (const essay of essays) {
+                    const icon = essay.type === 'essay' ? '📄' : '📖';
+                    const essayId = essay.title.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+                    previewHtml += `<div class="essay-file" onclick="selectEssay('${userInfo.user_id}', '${college}', '${essayId}', '${essay.title}', '${essay.status}')">`;
+                    previewHtml += `<span class="file-icon ${essay.type}">${icon}</span>`;
+                    previewHtml += `<div class="file-details">`;
+                    previewHtml += `<div class="file-name">${essay.title}</div>`;
+                    if (essay.prompt) {
+                        previewHtml += `<div class="file-prompt">${essay.prompt}</div>`;
+                    }
+                    previewHtml += `</div>`;
+                    previewHtml += `<span class="file-status ${essay.status}">${essay.status}</span>`;
+                    previewHtml += `</div>`;
+                }
+                
+                previewHtml += `</div></div>`;
+            }
+            
+            // Portfolio stats
+            if (userInfo.stats) {
+                previewHtml += `<div class="portfolio-stats">`;
+                previewHtml += `<span class="stat-item">Essays: <span class="stat-value">${userInfo.stats.total_essays}</span></span>`;
+                previewHtml += `<span class="stat-item">Colleges: <span class="stat-value">${userInfo.stats.colleges.length}</span></span>`;
+                previewHtml += `</div>`;
+            }
+            
+            previewHtml += `</div>`;
+        } else {
+            // No portfolio data
+            if (userInfo.has_data) {
+                previewHtml += `<div class="user-meta has-data">✅ This user has profile data</div>`;
+            } else {
+                previewHtml += `<div class="user-meta new-user">📝 New user profile</div>`;
+            }
+        }
+        
+        userPreview.innerHTML = previewHtml;
+        userPreview.style.display = 'block';
+        userPreview.classList.add('show');
+        
+    } catch (error) {
+        console.error('Error showing user preview:', error);
+    }
+    
+    updateContinueButtonState();
+}
+
+/**
+ * Toggle folder open/closed in file system view
+ */
+function toggleFolder(folderId) {
+    const folder = document.getElementById(`folder-${folderId}`);
+    if (folder) {
+        folder.style.display = folder.style.display === 'none' ? 'block' : 'none';
+    }
+}
+
+/**
+ * Select and switch to a specific essay
+ */
+async function selectEssay(userId, college, essayId, essayTitle, status) {
+    try {
+        updateStatus('Switching essay...', 'pending');
+        
+        // Switch essay context
+        const response = await fetch('/api/switch-essay', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: userId,
+                college: college,
+                essay_id: essayId,
+                essay_title: essayTitle
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+        currentEssayContext = result.context;
+        
+        // Update UI to show active essay
+        updateActiveEssayDisplay();
+        
+        // Load essay-specific conversation
+        if (result.chat_history && result.chat_history.length > 0) {
+            loadEssayConversation(result.chat_history);
+            updateStatus(`Loaded ${result.conversation_length} messages`, 'success');
+        } else {
+            clearChatHistory();
+            updateStatus('Started new essay conversation', 'success');
+        }
+        
+        // Show chat interface if not already shown
+        if (onboardingContainer.style.display !== 'none') {
+            showChatInterface();
+        }
+        
+        // Add welcome message for new essays
+        if (result.chat_history.length === 0) {
+            addMessageToChat('agent', `Welcome! I'm ready to help you with your ${essayTitle} for ${college}. What would you like to work on?`);
+        }
+        
+        console.log(`✅ Switched to ${essayTitle} for ${college}`);
+        
+    } catch (error) {
+        console.error('Error switching essay:', error);
+        updateStatus('Error switching essay', 'error');
+        showSetupError(`Failed to switch essay: ${error.message}`);
+    }
+}
+
+/**
+ * Update UI to show current active essay
+ */
+function updateActiveEssayDisplay() {
+    // Remove previous active indicators
+    document.querySelectorAll('.essay-file.active-essay').forEach(el => {
+        el.classList.remove('active-essay');
+    });
+    
+    // Add essay context header to chat
+    if (currentEssayContext && chatMessages) {
+        const existingHeader = document.querySelector('.essay-context-header');
+        if (existingHeader) {
+            existingHeader.remove();
+        }
+        
+        const contextHeader = document.createElement('div');
+        contextHeader.className = 'essay-context-header';
+        contextHeader.innerHTML = `
+            <div class="context-title">📄 ${currentEssayContext.essay_title}</div>
+            <div class="context-details">🏫 ${currentEssayContext.college} • 👤 ${currentEssayContext.user_id}</div>
+        `;
+        
+        chatMessages.insertBefore(contextHeader, chatMessages.firstChild);
+    }
+}
+
+/**
+ * Load essay-specific conversation history
+ */
+function loadEssayConversation(chatHistory) {
+    clearChatHistory();
+    
+    chatHistory.forEach(exchange => {
+        if (exchange.user) {
+            addMessageToChat('user', exchange.user);
+        }
+        if (exchange.agent) {
+            addMessageToChat('agent', exchange.agent);
+        }
+    });
+    
+    // Scroll to bottom
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+/**
+ * Clear chat history display
+ */
+function clearChatHistory() {
+    if (chatMessages) {
+        // Keep the context header if it exists
+        const contextHeader = chatMessages.querySelector('.essay-context-header');
+        chatMessages.innerHTML = '';
+        if (contextHeader) {
+            chatMessages.appendChild(contextHeader);
+        }
+    }
+}
+
+/**
+ * Save current conversation to essay-specific file
+ */
+async function saveEssayConversation() {
+    if (!currentEssayContext) {
+        console.log('No active essay context to save');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/save-essay-conversation', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' }
+        });
+        
+        const result = await response.json();
+        if (result.status === 'saved') {
+            console.log(`✅ Conversation saved for ${currentEssayContext.essay_title}`);
+        }
+    } catch (error) {
+        console.error('Error saving conversation:', error);
+    }
+}
+
+/**
+ * Update continue button state
+ */
+function updateContinueButtonState() {
+    const userType = userTypeSelect.value;
+    let canContinue = false;
+    
+    if (userType === 'existing') {
+        canContinue = existingUserSelect.value !== '';
+    } else if (userType === 'new') {
+        const newUserId = newUserIdInput.value.trim();
+        canContinue = newUserId.length >= 3 && /^[a-zA-Z0-9_-]+$/.test(newUserId);
+    }
+    
+    userContinueBtn.disabled = !canContinue;
+}
+
+/**
+ * Continue to essay setup step
+ */
+function continueToEssaySetup() {
+    const userType = userTypeSelect.value;
+    
+    if (userType === 'existing') {
+        currentUserId = existingUserSelect.value;
+    } else if (userType === 'new') {
+        currentUserId = newUserIdInput.value.trim();
+    }
+    
+    // Hide user selection step
+    document.getElementById('user-selection-step').style.display = 'none';
+    onboardingForm.style.display = 'block';
+    
+    // Update header
+    onboardingTitle.textContent = '🎯 Essay Agent Setup';
+    onboardingSubtitle.textContent = `Setting up essay workspace for: ${currentUserId}`;
+    
+    // Focus on essay prompt
+    if (essayPromptInput) {
+        essayPromptInput.focus();
+    }
+}
+
+/**
+ * Show onboarding interface
+ */
+function showOnboardingInterface() {
+    onboardingContainer.style.display = 'flex';
+    mainContainer.style.display = 'none';
+    updateStatus('Setup Required', 'pending');
+    
+    // Reset to user selection step
+    document.getElementById('user-selection-step').style.display = 'block';
+    onboardingForm.style.display = 'none';
+    onboardingTitle.textContent = '👤 Select User';
+    onboardingSubtitle.textContent = 'Choose an existing user or create a new one:';
+    
+    // Focus on user type select
+    if (userTypeSelect) {
+        userTypeSelect.focus();
+    }
+}
+
+/**
+ * Show chat interface
+ */
+function showChatInterface() {
+    onboardingContainer.style.display = 'none';
+    mainContainer.style.display = 'grid';
+    updateStatus('Ready', 'success');
+    
+    // Focus on chat input
+    if (messageInput) {
+        messageInput.focus();
+    }
+}
+
+/**
+ * Setup onboarding event listeners
+ */
+function setupOnboardingListeners() {
+    // Word count for essay prompt
+    if (essayPromptInput && wordCountElement) {
+        essayPromptInput.addEventListener('input', updateWordCount);
+    }
+    
+    // Form submission
+    if (onboardingForm) {
+        onboardingForm.addEventListener('submit', handleSetupSubmission);
+    }
+    
+    // User selection listeners
+    if (existingUserSelect) {
+        existingUserSelect.addEventListener('change', showUserPreview);
+    }
+    
+    if (newUserIdInput) {
+        newUserIdInput.addEventListener('input', updateContinueButtonState);
+    }
+}
+
+/**
+ * Update word count display
+ */
+function updateWordCount() {
+    const text = essayPromptInput.value.trim();
+    const words = text ? text.split(/\s+/).length : 0;
+    
+    wordCountElement.textContent = words;
+    
+    // Add warning/error classes
+    wordCountElement.className = '';
+    if (words > 650) {
+        wordCountElement.className = 'error';
+    } else if (words > 600) {
+        wordCountElement.className = 'warning';
+    }
+}
+
+/**
+ * Handle setup form submission
+ */
+async function handleSetupSubmission(event) {
+    event.preventDefault();
+    
+    const essayPrompt = essayPromptInput.value.trim();
+    const school = schoolInput.value.trim();
+    
+    // Clear any previous errors
+    hideSetupError();
+    
+    // Show the current user being set up
+    console.log(`Setting up essay session for user: ${currentUserId}`);
+    
+    // Validate inputs
+    if (!essayPrompt) {
+        showSetupError('Please enter your essay prompt');
+        return;
+    }
+    
+    if (!school) {
+        showSetupError('Please enter the school name');
+        return;
+    }
+    
+    // Check word count
+    const words = essayPrompt.split(/\s+/).length;
+    if (words > 650) {
+        showSetupError(`Essay prompt is too long (${words} words). Please keep it under 650 words.`);
+        return;
+    }
+    
+    // Submit setup
+    await submitSetup(essayPrompt, school);
+}
+
+/**
+ * Submit setup data to backend
+ */
+async function submitSetup(essayPrompt, school) {
+    const setupBtn = document.getElementById('setupBtn'); // Changed to startSession
+    
+    try {
+        // Show loading state
+        setupBtn.disabled = true;
+        setupBtn.innerHTML = '<div class="loading-spinner"></div> Setting up...';
+        
+        const response = await fetch('/api/setup', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                essay_prompt: essayPrompt,
+                school: school,
+                user_id: currentUserId
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            isOnboarded = true;
+            showChatInterface();
+            
+            // Add welcome message to chat
+            addMessageToChat('agent', `Great! I'm ready to help you with your ${school} essay. What would you like to work on first?`);
+            
+            // Update memory panel with setup info
+            updateMemoryPanel({
+                essay_prompt: essayPrompt,
+                college: school,
+                onboarding_completed: true
+            });
+            
+        } else {
+            showSetupError(data.detail || 'Setup failed. Please try again.');
+        }
+        
+    } catch (error) {
+        console.error('Setup error:', error);
+        showSetupError('Network error. Please check your connection and try again.');
+    } finally {
+        // Restore button state
+        setupBtn.disabled = false;
+        setupBtn.innerHTML = 'Start Essay Session';
+    }
+}
+
+/**
+ * Show setup error message
+ */
+function showSetupError(message) {
+    setupError.textContent = message;
+    setupError.style.display = 'block';
+}
+
+/**
+ * Hide setup error message
+ */
+function hideSetupError() {
+    setupError.style.display = 'none';
+}
+
+/**
+ * Send a message to the agent
+ */
+async function sendMessage() {
+    if (!isOnboarded) {
+        showSetupError('Please complete setup first');
+        return;
+    }
+    
+    const message = messageInput.value.trim();
+    if (!message || isLoading) return;
+    
+    // Auto-save conversation before processing new message
+    await saveEssayConversation();
+    
+    // Add user message to chat
+    addMessageToChat('user', message);
+    
+    // Clear input
+    messageInput.value = '';
+    
+    // Show loading state
+    setLoading(true);
+    updateStatus('Processing...', 'pending');
+    
+    try {
+        const response = await fetch('/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                message: message,
+                user_id: currentUserId,
+                essay_context: currentEssayContext
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        
+        // Add agent response to chat
+        addMessageToChat('agent', data.response);
+        
+        // Update debug panels with the received data
+        updateDebugPanels(data.debug_data);
+        
+        // Store in debug history
+        debugHistory.push({
+            timestamp: new Date().toISOString(),
+            user_message: message,
+            agent_response: data.response,
+            debug_data: data.debug_data
+        });
+        
+        updateStatus('Ready', 'success');
+        
+    } catch (error) {
+        console.error('Error sending message:', error);
+        addMessageToChat('system', `Error: ${error.message}`);
+        updateStatus('Error', 'error');
+        
+        // Add to error log
+        addErrorToLog(error.message, message);
+    } finally {
+        setLoading(false);
+        messageInput.focus();
+    }
+}
+
+/**
+ * Add a message to the chat display
+ */
+function addMessageToChat(type, content) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${type}`;
+    
+    const contentDiv = document.createElement('div');
+    contentDiv.textContent = content;
+    
+    const timeDiv = document.createElement('div');
+    timeDiv.className = 'message-time';
+    timeDiv.textContent = new Date().toLocaleTimeString();
+    
+    messageDiv.appendChild(contentDiv);
+    messageDiv.appendChild(timeDiv);
+    
+    chatMessages.appendChild(messageDiv);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+/**
+ * Update all debug panels with new data
+ */
+function updateDebugPanels(debugData) {
+    updateMemoryPanel(debugData.current_memory);
+    updateToolsPanel(debugData.recent_tools);
+    updateErrorsPanel(debugData.recent_errors);
+}
+
+/**
+ * Update the memory panel
+ */
+function updateMemoryPanel(memoryData) {
+    if (!memoryData || Object.keys(memoryData).length === 0) {
+        memoryContent.innerHTML = `
+            <div class="memory-item">
+                <div class="memory-label">Status</div>
+                <div class="memory-value">No memory data available</div>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    
+    // Working memory
+    if (memoryData.working_memory && memoryData.working_memory.length > 0) {
+        html += `
+            <div class="memory-item">
+                <div class="memory-label">Recent Chat (${memoryData.working_memory.length} messages)</div>
+                <div class="memory-value">${memoryData.working_memory.slice(-3).join(' | ')}</div>
+            </div>
+        `;
+    }
+    
+    // Profile data
+    if (memoryData.profile) {
+        html += `
+            <div class="memory-item">
+                <div class="memory-label">College</div>
+                <div class="memory-value">${memoryData.profile || 'Not set'}</div>
+            </div>
+        `;
+    }
+    
+    if (memoryData.essay_prompt) {
+        html += `
+            <div class="memory-item">
+                <div class="memory-label">Essay Prompt</div>
+                <div class="memory-value">${truncateText(memoryData.essay_prompt, 100)}</div>
+            </div>
+        `;
+    }
+    
+    // Conversation stats
+    if (memoryData.conversation_count !== undefined) {
+        html += `
+            <div class="memory-item">
+                <div class="memory-label">Total Messages</div>
+                <div class="memory-value">${memoryData.conversation_count}</div>
+            </div>
+        `;
+    }
+    
+    if (!html) {
+        html = `
+            <div class="memory-item">
+                <div class="memory-label">Status</div>
+                <div class="memory-value">Memory initialized</div>
+            </div>
+        `;
+    }
+    
+    memoryContent.innerHTML = html;
+}
+
+/**
+ * Update the tools panel
+ */
+function updateToolsPanel(toolsData) {
+    if (!toolsData || toolsData.length === 0) {
+        toolsContent.innerHTML = `
+            <div style="text-align: center; opacity: 0.6; padding: 20px;">
+                No tools executed yet
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    
+    toolsData.forEach((tool, index) => {
+        const successClass = tool.success ? 'success' : 'error';
+        const statusIcon = tool.success ? '✅' : '❌';
+        
+        html += `
+            <div class="tool-execution ${successClass}">
+                <div class="tool-header">
+                    <span class="tool-name">${statusIcon} ${tool.tool_name || 'Unknown Tool'}</span>
+                    <span class="tool-time">${tool.execution_time ? (tool.execution_time * 1000).toFixed(0) + 'ms' : 'N/A'}</span>
+                </div>
+                
+                ${tool.tool_args && Object.keys(tool.tool_args).length > 0 ? `
+                    <div class="tool-args">
+                        <strong>Args:</strong> ${JSON.stringify(tool.tool_args, null, 2)}
+                    </div>
+                ` : ''}
+                
+                ${tool.result ? `
+                    <div class="tool-result ${tool.success ? '' : 'error'}">
+                        <strong>Result:</strong> ${formatToolResult(tool.result)}
+                    </div>
+                ` : ''}
+                
+                ${tool.error ? `
+                    <div class="tool-result error">
+                        <strong>Error:</strong> ${tool.error}
+                    </div>
+                ` : ''}
+            </div>
+        `;
+    });
+    
+    toolsContent.innerHTML = html;
+}
+
+/**
+ * Update the errors panel
+ */
+function updateErrorsPanel(errorsData) {
+    if (!errorsData || errorsData.length === 0) {
+        errorsContent.innerHTML = `
+            <div style="text-align: center; opacity: 0.6; padding: 20px;">
+                No errors logged
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    
+    errorsData.forEach(error => {
+        const timestamp = error.timestamp || new Date().toISOString();
+        const errorMsg = error.error || error.message || 'Unknown error';
+        
+        html += `
+            <div class="error-item">
+                <div class="error-time">${new Date(timestamp).toLocaleString()}</div>
+                <div class="error-message">${escapeHtml(errorMsg)}</div>
+            </div>
+        `;
+    });
+    
+    errorsContent.innerHTML = html;
+}
+
+/**
+ * Add an error to the log
+ */
+function addErrorToLog(errorMessage, userInput = '') {
+    const errorEntry = {
+        timestamp: new Date().toISOString(),
+        error: errorMessage,
+        user_input: userInput
+    };
+    
+    updateErrorsPanel([errorEntry]);
+}
+
+/**
+ * Format tool results for display
+ */
+function formatToolResult(result) {
+    if (typeof result === 'string') {
+        return truncateText(result, 200);
+    }
+    
+    if (typeof result === 'object') {
+        try {
+            return JSON.stringify(result, null, 2);
+        } catch (e) {
+            return String(result);
+        }
+    }
+    
+    return String(result);
+}
+
+/**
+ * Update loading state
+ */
+function setLoading(loading) {
+    isLoading = loading;
+    const sendButton = document.querySelector('.chat-input-group .btn'); // Changed to sendButton
+    
+    if (loading) {
+        sendButton.innerHTML = '<div class="loading-spinner"></div>';
+        sendButton.disabled = true;
+        messageInput.disabled = true;
+    } else {
+        sendButton.innerHTML = 'Send';
+        sendButton.disabled = false;
+        messageInput.disabled = false;
+    }
+}
+
+/**
+ * Update status indicator
+ */
+function updateStatus(text, type) {
+    statusElement.textContent = text;
+    statusElement.className = `status-${type}`;
+}
+
+/**
+ * Clear chat history and debug state
+ */
+async function clearHistory() {
+    if (!confirm('Are you sure you want to clear all history and return to setup?')) {
+        return;
+    }
+    
+    try {
+        const response = await fetch('/debug/clear', {
+            method: 'POST'
+        });
+        
+        if (response.ok) {
+            // Reset onboarding state
+            isOnboarded = false;
+            
+            // Clear form inputs
+            if (essayPromptInput) essayPromptInput.value = '';
+            if (schoolInput) schoolInput.value = '';
+            updateWordCount();
+            hideSetupError();
+            
+            // Show onboarding interface
+            showOnboardingInterface();
+            
+            // Clear debug history
+            debugHistory = [];
+        }
+    } catch (error) {
+        console.error('Error clearing history:', error);
+        addErrorToLog(`Failed to clear history: ${error.message}`);
+    }
+}
+
+/**
+ * Export debug data
+ */
+function exportDebugData() {
+    const exportData = {
+        timestamp: new Date().toISOString(),
+        debug_history: debugHistory,
+        current_state: {
+            chat_messages: Array.from(chatMessages.children).map(msg => ({
+                type: msg.className.replace('message ', ''),
+                content: msg.textContent
+            }))
+        }
+    };
+    
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `essay-agent-debug-${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    
+    URL.revokeObjectURL(url);
+    
+    updateStatus('Debug data exported', 'success');
+}
+
+/**
+ * Load existing debug state from server
+ */
+async function loadDebugState() {
+    try {
+        const response = await fetch('/debug/full-state');
+        if (response.ok) {
+            const debugState = await response.json();
+            
+            // Load chat history if available
+            if (debugState.chat_history && debugState.chat_history.length > 0) {
+                chatMessages.innerHTML = ''; // Clear welcome message
+                
+                debugState.chat_history.forEach(exchange => {
+                    addMessageToChat('user', exchange.user);
+                    addMessageToChat('agent', exchange.agent);
+                });
+            }
+            
+            // Update debug panels
+            if (debugState.memory_snapshots && debugState.memory_snapshots.length > 0) {
+                updateMemoryPanel(debugState.memory_snapshots[debugState.memory_snapshots.length - 1]);
+            }
+            
+            if (debugState.tool_executions) {
+                updateToolsPanel(debugState.tool_executions.slice(-5));
+            }
+            
+            if (debugState.error_log) {
+                updateErrorsPanel(debugState.error_log.slice(-5));
+            }
+        }
+    } catch (error) {
+        console.log('No existing debug state found:', error);
+    }
+}
+
+/**
+ * Utility functions
+ */
+function truncateText(text, maxLength) {
+    if (typeof text !== 'string') return String(text);
+    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// Auto-refresh debug state periodically
+setInterval(async () => {
+    if (!isLoading) {
+        try {
+            const response = await fetch('/debug/tools');
+            if (response.ok) {
+                const data = await response.json();
+                // Could update tool count in header or show available tools
+                console.log(`Available tools: ${data.count}`);
+            }
+        } catch (error) {
+            // Silently ignore refresh errors
+        }
+    }
+}, 30000); // Refresh every 30 seconds
+
+/**
+ * Enhanced debug panel functions
+ */
+
+/**
+ * Update live events panel with real-time events
+ */
+function updateLiveEvents(event) {
+    const eventsContainer = document.getElementById('liveEvents');
+    const eventsCount = document.getElementById('eventsCount');
+    
+    if (!eventsContainer) return;
+    
+    const eventDiv = document.createElement('div');
+    eventDiv.className = 'debug-item';
+    eventDiv.innerHTML = `
+        <div class="debug-item-header">
+            <span class="debug-type">${event.event_type}</span>
+            <span class="debug-timestamp">${new Date(event.timestamp).toLocaleTimeString()}</span>
+        </div>
+        <div class="debug-content">${formatEventData(event.data)}</div>
+    `;
+    
+    eventsContainer.insertBefore(eventDiv, eventsContainer.firstChild);
+    
+    // Keep only last 50 events
+    while (eventsContainer.children.length > 50) {
+        eventsContainer.removeChild(eventsContainer.lastChild);
+    }
+    
+    // Update count
+    eventsCount.textContent = `${eventsContainer.children.length} events`;
+}
+
+/**
+ * Format event data for display
+ */
+function formatEventData(data) {
+    if (typeof data === 'object') {
+        return `<div class="json-viewer">${syntaxHighlightJSON(JSON.stringify(data, null, 2))}</div>`;
+    }
+    return escapeHtml(String(data));
+}
+
+/**
+ * Add syntax highlighting to JSON
+ */
+function syntaxHighlightJSON(json) {
+    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+        let cls = 'json-number';
+        if (/^"/.test(match)) {
+            if (/:$/.test(match)) {
+                cls = 'json-key';
+            } else {
+                cls = 'json-string';
+            }
+        } else if (/true|false/.test(match)) {
+            cls = 'json-boolean';
+        } else if (/null/.test(match)) {
+            cls = 'json-null';
+        }
+        return '<span class="' + cls + '">' + match + '</span>';
+    });
+}
+
+// Tab switching functions
+function switchToolTab(tab) {
+    document.querySelectorAll('#toolExecutions').parent().querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    document.getElementById('toolExecutions').style.display = tab === 'executions' ? 'block' : 'none';
+    document.getElementById('availableTools').style.display = tab === 'available' ? 'block' : 'none';
+    
+    if (tab === 'available') {
+        loadAvailableTools();
+    }
+}
+
+function switchMemoryTab(tab) {
+    document.querySelectorAll('#memorySnapshots').parent().querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    document.getElementById('memorySnapshots').style.display = tab === 'snapshots' ? 'block' : 'none';
+    document.getElementById('currentMemory').style.display = tab === 'current' ? 'block' : 'none';
+    
+    if (tab === 'current') {
+        inspectMemory();
+    }
+}
+
+function switchNetworkTab(tab) {
+    document.querySelectorAll('#networkRequests').parent().querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    document.getElementById('networkRequests').style.display = tab === 'requests' ? 'block' : 'none';
+    document.getElementById('websocketLogs').style.display = tab === 'websocket' ? 'block' : 'none';
+}
+
+// Control functions
+async function clearDebugState() {
+    if (!confirm('Are you sure you want to clear all debug data?')) {
+        return;
+    }
+    
+    try {
+        await fetch('/debug/clear', { method: 'POST' });
+        
+        // Clear all panels
+        document.getElementById('liveEvents').innerHTML = '';
+        document.getElementById('toolExecutions').innerHTML = '';
+        document.getElementById('memorySnapshots').innerHTML = '';
+        document.getElementById('errorsList').innerHTML = '';
+        document.getElementById('networkRequests').innerHTML = '';
+        document.getElementById('websocketLogs').innerHTML = '';
+        
+        // Reset counts
+        document.getElementById('eventsCount').textContent = '0 events';
+        document.getElementById('toolsCount').textContent = '0 tools';
+        document.getElementById('memoryCount').textContent = '0 snapshots';
+        document.getElementById('errorsCount').textContent = '0 errors';
+        document.getElementById('networkCount').textContent = '0 requests';
+        
+        addMessageToChat('system', 'Debug state cleared');
+        
+    } catch (error) {
+        console.error('Error clearing debug state:', error);
+        addErrorToLog(`Failed to clear debug state: ${error.message}`, 'clear_debug');
+    }
+}
+
+async function restartAgent() {
+    if (!confirm('Are you sure you want to restart the agent? This will clear the current session.')) {
+        return;
+    }
+    
+    try {
+        await fetch('/debug/clear', { method: 'POST' });
+        
+        // Reset UI state
+        isOnboarded = false;
+        currentUserId = null;
+        currentEssayContext = {};
+        
+        // Clear chat
+        chatMessages.innerHTML = '';
+        document.getElementById('messageCount').textContent = '0 messages';
+        
+        // Show setup overlay
+        document.getElementById('setupOverlay').style.display = 'flex';
+        
+        addMessageToChat('system', 'Agent restarted. Please complete setup to continue.');
+        
+    } catch (error) {
+        console.error('Error restarting agent:', error);
+        addErrorToLog(`Restart failed: ${error.message}`, 'restart_agent');
+    }
+}
+
+let eventsPaused = false;
+function pauseEvents() {
+    eventsPaused = !eventsPaused;
+    const btn = event.target;
+    btn.textContent = eventsPaused ? 'Resume' : 'Pause';
+    btn.classList.toggle('warning', eventsPaused);
+}
+
+function clearEvents() {
+    document.getElementById('liveEvents').innerHTML = '';
+    document.getElementById('eventsCount').textContent = '0 events';
+}
+
+function clearErrors() {
+    document.getElementById('errorsList').innerHTML = '';
+    document.getElementById('errorsCount').textContent = '0 errors';
+}
+
+function clearNetwork() {
+    document.getElementById('networkRequests').innerHTML = '';
+    document.getElementById('websocketLogs').innerHTML = '';
+    document.getElementById('networkCount').textContent = '0 requests';
+}
+
+function showManualTool() {
+    const toolName = prompt('Enter tool name:');
+    if (toolName) {
+        document.getElementById('manualToolName').value = toolName;
+        document.getElementById('manualToolArgs').focus();
+    }
+}
+
+async function loadAvailableTools() {
+    try {
+        const response = await fetch('/debug/tools');
+        const data = await response.json();
+        
+        const toolsContainer = document.getElementById('availableTools');
+        if (!toolsContainer) return;
+        
+        toolsContainer.innerHTML = '';
+        
+        Object.entries(data.tools).forEach(([name, tool]) => {
+            const toolDiv = document.createElement('div');
+            toolDiv.className = 'debug-item';
+            toolDiv.innerHTML = `
+                <div class="debug-item-header">
+                    <span class="debug-type">${name}</span>
+                    <button class="mini-btn" onclick="setManualTool('${name}')">Select</button>
+                </div>
+                <div class="debug-content">
+                    ${escapeHtml(tool.description)}
+                    ${tool.timeout ? `<br><small>Timeout: ${tool.timeout}s</small>` : ''}
+                </div>
+            `;
+            toolsContainer.appendChild(toolDiv);
+        });
+        
+    } catch (error) {
+        console.error('Error loading available tools:', error);
+    }
+}
+
+function setManualTool(toolName) {
+    document.getElementById('manualToolName').value = toolName;
+}
+
+async function executeManualTool() {
+    const toolName = document.getElementById('manualToolName').value.trim();
+    const toolArgsStr = document.getElementById('manualToolArgs').value.trim();
+    
+    if (!toolName) {
+        alert('Please enter a tool name');
+        return;
+    }
+    
+    let toolArgs = {};
+    if (toolArgsStr) {
+        try {
+            toolArgs = JSON.parse(toolArgsStr);
+        } catch (e) {
+            alert('Invalid JSON in tool args');
+            return;
+        }
+    }
+    
+    try {
+        const response = await fetch('/debug/tools/manual', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ tool_name: toolName, tool_args: toolArgs })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+        
+        const result = await response.json();
+        updateToolsPanel([result]);
+        
+    } catch (error) {
+        console.error('Error executing manual tool:', error);
+        addErrorToLog(`Manual tool execution failed: ${error.message}`, `${toolName}(${JSON.stringify(toolArgs)})`);
+    }
+}
+
+async function inspectMemory() {
+    try {
+        const response = await fetch('/debug/memory/inspect', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_id: currentUserId || 'debug_user' })
+        });
+        
+        const memoryData = await response.json();
+        
+        const currentMemoryContainer = document.getElementById('currentMemory');
+        if (currentMemoryContainer) {
+            currentMemoryContainer.innerHTML = `
+                <div class="debug-item memory-item">
+                    <div class="debug-item-header">
+                        <span class="debug-type">Current Memory State</span>
+                        <span class="debug-timestamp">${new Date().toLocaleTimeString()}</span>
+                    </div>
+                    <div class="debug-content">
+                        <div class="json-viewer">${syntaxHighlightJSON(JSON.stringify(memoryData, null, 2))}</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+    } catch (error) {
+        console.error('Error inspecting memory:', error);
+        addErrorToLog(`Memory inspection failed: ${error.message}`, 'memory_inspection');
+    }
+}
+
+function loadUserProfile() {
+    const select = document.getElementById('userSelect');
+    const selectedOption = select.options[select.selectedIndex];
+    
+    if (selectedOption && selectedOption.dataset.userInfo) {
+        const userInfo = JSON.parse(selectedOption.dataset.userInfo);
+        currentUserId = userInfo.user_id;
+        
+        // Pre-fill college if available
+        if (userInfo.college) {
+            document.getElementById('schoolInput').value = userInfo.college;
+        }
+        
+        console.log('Selected user:', userInfo);
+    }
+}
+
+async function startSession() {
+    const school = document.getElementById('schoolInput').value.trim();
+    const prompt = document.getElementById('promptInput').value.trim();
+    
+    if (!currentUserId) {
+        showSetupError('Please select a user first');
+        return;
+    }
+    
+    if (!school) {
+        showSetupError('Please enter a target school');
+        return;
+    }
+    
+    if (!prompt) {
+        showSetupError('Please enter an essay prompt');
+        return;
+    }
+    
+    try {
+        hideSetupError();
+        const response = await fetch('/api/setup', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                user_id: currentUserId,
+                school: school,
+                essay_prompt: prompt
+            })
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.detail || `HTTP ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Update essay context
+        currentEssayContext = {
+            user_id: currentUserId,
+            college: school,
+            essay_prompt: prompt
+        };
+        
+        // Hide setup overlay and show main interface
+        document.getElementById('setupOverlay').style.display = 'none';
+        isOnboarded = true;
+        
+        // Add welcome message
+        addMessageToChat('system', `Session started for ${school}. Ready to help with your essay!`);
+        updateStatus('Ready', 'success');
+        
+        // Focus on message input
+        messageInput.focus();
+        
+    } catch (error) {
+        console.error('Setup error:', error);
+        showSetupError(error.message);
+    }
+}
+
+function skipSetup() {
+    currentUserId = 'debug_user';
+    isOnboarded = true;
+    document.getElementById('setupOverlay').style.display = 'none';
+    addMessageToChat('system', 'Setup skipped. You can start chatting directly.');
+    updateStatus('Ready', 'success');
+    messageInput.focus();
+}
+
+function showSetupError(message) {
+    const setupError = document.getElementById('setupError');
+    setupError.textContent = message;
+    setupError.style.display = 'block';
+}
+
+function hideSetupError() {
+    const setupError = document.getElementById('setupError');
+    setupError.style.display = 'none';
+}
+
+// Handle WebSocket events in real-time
+if (ws) {
+    const originalOnMessage = ws.onmessage;
+    ws.onmessage = function(event) {
+        try {
+            const data = JSON.parse(event.data);
+            
+            if (!eventsPaused) {
+                switch (data.event_type) {
+                    case 'http_request':
+                    case 'http_response':
+                    case 'http_error':
+                        updateNetworkRequests(data.data);
+                        break;
+                        
+                    case 'tool_execution_start':
+                    case 'tool_execution_complete':
+                    case 'tool_execution_error':
+                        updateToolsPanel([{
+                            tool: data.data.tool,
+                            args: data.data.args,
+                            result: data.data.result,
+                            error: data.data.error,
+                            success: !data.data.error,
+                            execution_time: data.data.execution_time,
+                            timestamp: data.timestamp
+                        }]);
+                        break;
+                        
+                    case 'memory_snapshot':
+                        updateMemoryPanel(data.data);
+                        break;
+                        
+                    case 'agent_error':
+                        addErrorToLog(data.data.error, data.data.user_input || 'system');
+                        break;
+                        
+                    default:
+                        updateLiveEvents(data);
+                        break;
+                }
+            }
+            
+        } catch (e) {
+            console.error('Error handling WebSocket message:', e);
+        }
+    };
+}
+
+// Initialize message count
+let messageCount = 0;
+const originalAddMessage = addMessageToChat;
+addMessageToChat = function(type, content) {
+    originalAddMessage(type, content);
+    messageCount++;
+    document.getElementById('messageCount').textContent = `${messageCount} messages`;
+};
+
+    </script>
 </body>
 </html> 

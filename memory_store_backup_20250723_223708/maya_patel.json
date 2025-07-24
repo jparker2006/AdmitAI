@@ -1,0 +1,168 @@
+{
+  "user_info": {
+    "name": "Maya Patel",
+    "grade": 12,
+    "intended_major": "Environmental Science",
+    "college_list": [
+      "Stanford",
+      "UC Berkeley",
+      "MIT",
+      "Yale",
+      "University of Washington"
+    ],
+    "platforms": [
+      "Common App",
+      "UC Application"
+    ]
+  },
+  "academic_profile": {
+    "gpa": 3.96,
+    "test_scores": {
+      "SAT": 1560,
+      "ACT": 35
+    },
+    "courses": [
+      "AP Environmental Science",
+      "AP Chemistry",
+      "AP Biology",
+      "AP Calculus BC",
+      "AP Research"
+    ],
+    "activities": [
+      {
+        "name": "Local Water Quality Research Project",
+        "role": "Lead Researcher",
+        "duration": "2 years",
+        "description": "Conducted independent research on microplastic contamination in local waterways, presented findings to city council",
+        "impact": "Research influenced new water treatment protocols, findings published in state environmental journal"
+      },
+      {
+        "name": "Environmental Justice Club",
+        "role": "Co-Founder & President",
+        "duration": "3 years",
+        "description": "Founded club focused on environmental issues affecting underrepresented communities",
+        "impact": "Organized 5 community cleanups, raised $3,000 for environmental organizations, increased environmental awareness in low-income neighborhoods"
+      },
+      {
+        "name": "Youth Climate Action Network",
+        "role": "Regional Coordinator",
+        "duration": "2 years",
+        "description": "Coordinated climate action events across 10 high schools, lobbied state representatives on environmental policy",
+        "impact": "Engaged 500+ students in climate activism, contributed to passage of state renewable energy bill"
+      }
+    ]
+  },
+  "core_values": [
+    {
+      "value": "Environmental Justice",
+      "description": "Believe environmental protection must address impacts on all communities, especially the most vulnerable",
+      "evidence": [
+        "Environmental justice club",
+        "Research on community impacts",
+        "Advocacy for policy change"
+      ],
+      "used_in_essays": [],
+      "importance_level": 10
+    },
+    {
+      "value": "Scientific Rigor",
+      "description": "Committed to evidence-based solutions and methodical research approaches",
+      "evidence": [
+        "Independent water quality research",
+        "Published findings",
+        "Data-driven advocacy"
+      ],
+      "used_in_essays": [],
+      "importance_level": 9
+    },
+    {
+      "value": "Youth Empowerment",
+      "description": "Believe young people have both the responsibility and power to address environmental challenges",
+      "evidence": [
+        "Youth climate network",
+        "Peer education",
+        "Student mobilization"
+      ],
+      "used_in_essays": [],
+      "importance_level": 8
+    }
+  ],
+  "defining_moments": [
+    {
+      "title": "Discovering Microplastics in My Childhood Creek",
+      "description": "The creek where I played as a child always seemed pristine, but when I tested it for my research project, I found alarming levels of microplastic contamination. This discovery transformed my understanding of how environmental damage can be invisible yet pervasive, and motivated my commitment to environmental research and advocacy.",
+      "emotional_impact": "Shocked and saddened by the contamination, then determined to understand and address it",
+      "lessons_learned": "Environmental problems often hide in plain sight, requiring scientific investigation to uncover and address",
+      "used_in_essays": [],
+      "themes": [
+        "environmental awareness",
+        "scientific discovery",
+        "childhood connections",
+        "research motivation"
+      ],
+      "story_category": "defining_moment",
+      "story_weight": 1.4,
+      "college_usage": {}
+    },
+    {
+      "title": "Presenting Research to Skeptical City Council Members",
+      "description": "When I presented my water quality findings to the city council, several members questioned both my methodology and my age. I had to defend my research rigorously while maintaining composure. Eventually, my data convinced them to implement new monitoring protocols, teaching me the power of well-conducted science to drive policy change.",
+      "emotional_impact": "Nervous and frustrated by skepticism, then validated when research was accepted",
+      "lessons_learned": "Strong data and clear communication can overcome age-based bias and create real change",
+      "used_in_essays": [],
+      "themes": [
+        "scientific communication",
+        "overcoming bias",
+        "policy advocacy",
+        "persistence"
+      ],
+      "story_category": "accomplishment",
+      "story_weight": 1.3,
+      "college_usage": {}
+    },
+    {
+      "title": "Organizing Environmental Justice in Low-Income Neighborhoods",
+      "description": "Working with the environmental justice club, I learned that pollution disproportionately affects communities of color and low-income areas. Organizing cleanups in these neighborhoods taught me that environmental science must address social inequity, not just technical problems.",
+      "emotional_impact": "Angry about environmental inequality, then motivated to work toward justice",
+      "lessons_learned": "Environmental science without social justice is incomplete\u2014we must address both technical and equity challenges",
+      "used_in_essays": [],
+      "themes": [
+        "environmental justice",
+        "social equity",
+        "community organizing",
+        "intersectional thinking"
+      ],
+      "story_category": "service",
+      "story_weight": 1.2,
+      "college_usage": {}
+    }
+  ],
+  "writing_voice": {
+    "tone_preferences": [
+      "thoughtful",
+      "urgent",
+      "scientific"
+    ],
+    "vocabulary_level": "advanced",
+    "sentence_patterns": [
+      "detailed",
+      "logical",
+      "evidence-based"
+    ],
+    "stylistic_traits": [
+      "uses_scientific_evidence",
+      "environmentally_conscious",
+      "solution_oriented"
+    ]
+  },
+  "essay_history": [],
+  "college_story_usage": {},
+  "model_extra": {
+    "essay_prompt": "How do you hope to use your Harvard education in the future?",
+    "college": "Harvard",
+    "onboarding_completed": true
+  },
+  "essay_prompt": "How do you hope to use your Harvard education in the future?",
+  "college": "Harvard",
+  "onboarding_completed": true
+}

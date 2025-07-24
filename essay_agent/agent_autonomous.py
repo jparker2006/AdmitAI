@@ -96,7 +96,7 @@ class AutonomousEssayAgent:
             context = await self._observe(user_input)
             reasoning = await self._reason(user_input, context)
             action_result = await self._act(reasoning, user_input)
-            response = self._respond(action_result, user_input)
+            response = await self._respond(action_result, user_input)
             
             # === POST-RESPONSE MEMORY UPDATE ===
             # Save the agent's response to complete the conversation turn.
@@ -214,6 +214,11 @@ class AutonomousEssayAgent:
                 user_input=user_input,
                 context=self._latest_context or {},
             )
+            # DEFENSIVE: Handle case where orchestration_result might not be a dict
+            if not isinstance(orchestration_result, dict):
+                logger.warning("orchestration_result is not a dict: %s", type(orchestration_result))
+                return {"type": "conversation", "message": "I had trouble planning the right approach. Let me help you directly."}
+            
             steps = orchestration_result.get("steps", [])
             if not steps:
                 return {"type": "conversation", "message": "I'm not sure what tool to use next. Could you rephrase?"}
@@ -275,9 +280,17 @@ class AutonomousEssayAgent:
             plan = await self.orchestrator.select_tools(reasoning, self._latest_context or {})
             orchestration_result = await self.orchestrator.execute_plan(
                 plan,
-                original_user_input=user_input,
+                user_input=user_input,
                 context=self._latest_context or {},
             )
+
+            # DEFENSIVE: Handle case where orchestration_result might not be a dict
+            if not isinstance(orchestration_result, dict):
+                logger.warning("orchestration_result is not a dict in _execute_orchestrated: %s", type(orchestration_result))
+                return {
+                    "type": "error",
+                    "message": "I had trouble with the tool orchestration. Let's discuss your essay directly."
+                }
 
             steps = orchestration_result.get("steps", [])
             if not steps:
@@ -323,8 +336,13 @@ class AutonomousEssayAgent:
             exec_res = await self._execute_tool(single_reasoning, user_input)
             results.append(exec_res)
 
-            if exec_res.get("type") == "error":
+            # DEFENSIVE: Handle case where exec_res might be a string instead of dict
+            if isinstance(exec_res, dict) and exec_res.get("type") == "error":
                 # Stop chain on first error
+                break
+            elif not isinstance(exec_res, dict):
+                # If exec_res is not a dict, treat as potential error and stop
+                logger.warning("exec_res is not a dict in sequence: %s", type(exec_res))
                 break
 
         self.last_execution_tools = seq
@@ -348,7 +366,7 @@ class AutonomousEssayAgent:
             "message": "I'm here to help you with your essay. What specific aspect would you like to work on? I can help with brainstorming ideas, creating outlines, drafting, revising, or polishing your essay."
         }
     
-    def _respond(self, action_result: Dict[str, Any], user_input: str) -> str:
+    async def _respond(self, action_result: Dict[str, Any], user_input: str) -> str:
         """Generate natural language response from action result.
         
         Args:
@@ -358,21 +376,38 @@ class AutonomousEssayAgent:
         Returns:
             Natural language response
         """
+        # DEFENSIVE: Handle case where action_result might be a string instead of dict
+        if isinstance(action_result, str):
+            logger.warning("action_result is unexpectedly a string: %s", action_result)
+            return action_result
+        
+        if not isinstance(action_result, dict):
+            logger.warning("action_result is not a dict: %s", type(action_result))
+            return str(action_result)
+        
         result_type = action_result.get("type")
         
         if result_type == "tool_result":
             tool_name = action_result.get("tool_name")
             result = action_result.get("result")
             
-            # Format tool result into natural response
-            return format_tool_result(tool_name, result)
+            # Use contextual composition instead of simple formatting
+            return await self._compose_response(
+                tool_name=tool_name,
+                tool_result=result,
+                user_input=user_input
+            )
                 
         elif result_type == "tool_result_sequence":
-            # Return formatted list of results (use last tool formatter)
+            # Use composition for sequence results (use last successful tool)
             last_ok = next((r for r in reversed(action_result["results"]) if r["type"] == "tool_result"), None)
             if last_ok:
-                return format_tool_result(last_ok["tool_name"], last_ok["result"])
-            return "I ran several tools but didn’t get useful output. Let’s discuss further."
+                return await self._compose_response(
+                    tool_name=last_ok["tool_name"],
+                    tool_result=last_ok["result"],
+                    user_input=user_input
+                )
+            return "I ran several tools but didn't get useful output. Let's discuss further."
         elif result_type == "conversation":
             return action_result.get("message", "How can I help you with your essay?")
             
@@ -381,6 +416,133 @@ class AutonomousEssayAgent:
             
         else:
             return "I'm here to help you with your essay writing. What would you like to work on?"
+    
+    async def _compose_response(self, tool_name: str, tool_result: Dict[str, Any], user_input: str) -> str:
+        """Compose a natural, contextual response using tool results and full context.
+        
+        Args:
+            tool_name: Name of the tool that was executed
+            tool_result: Structured result from the tool
+            user_input: Original user input
+            
+        Returns:
+            Natural language response composed with full context
+        """
+        try:
+            # Gather all available context
+            from essay_agent.memory import load_user_profile
+            user_profile = load_user_profile(self.user_id)
+            essay_prompt = self.memory.get("essay_prompt", "")
+            college = self.memory.get("college", "")
+            recent_chat = self.memory.get_recent_chat(k=3)
+            
+            # Create comprehensive composition prompt
+            composition_prompt = self._build_composition_prompt(
+                tool_name=tool_name,
+                tool_result=tool_result,
+                user_input=user_input,
+                user_profile=user_profile,
+                essay_prompt=essay_prompt,
+                college=college,
+                recent_chat=recent_chat
+            )
+            
+            # Generate contextual response using LLM
+            response = await self.llm.apredict(composition_prompt)
+            return response
+            
+        except Exception as e:
+            logger.error(f"Response composition failed: {e}")
+            # Fallback to simple formatting if composition fails
+            from essay_agent.tools.integration import format_tool_result
+            return format_tool_result(tool_name, tool_result)
+    
+    def _build_composition_prompt(
+        self,
+        tool_name: str,
+        tool_result: Dict[str, Any],
+        user_input: str,
+        user_profile: Dict[str, Any],
+        essay_prompt: str,
+        college: str,
+        recent_chat: list
+    ) -> str:
+        """Build a comprehensive prompt for response composition.
+        
+        Args:
+            tool_name: Name of the executed tool
+            tool_result: Structured tool output
+            user_input: User's original request
+            user_profile: User's profile and background
+            essay_prompt: Current essay prompt
+            college: Target college
+            recent_chat: Recent conversation history
+            
+        Returns:
+            Formatted prompt for LLM composition
+        """
+        # Extract user details safely
+        user_info = user_profile.get("user_info", {})
+        user_name = user_info.get("name", "the student")
+        intended_major = user_info.get("intended_major", "")
+        
+        # Extract defining moments and activities
+        defining_moments = user_profile.get("defining_moments", [])
+        activities = user_profile.get("academic_profile", {}).get("activities", [])
+        
+        # Build context sections
+        user_context = f"""
+USER PROFILE:
+- Name: {user_name}
+- Intended Major: {intended_major}
+- Target College: {college}
+- Key Activities: {', '.join([act.get('name', '') for act in activities[:3]])}
+- Notable Experiences: {len(defining_moments)} defining moments in profile
+"""
+        
+        essay_context = f"""
+ESSAY CONTEXT:
+- College: {college}
+- Prompt: "{essay_prompt}"
+- Type: College application essay
+"""
+        
+        tool_context = f"""
+TOOL EXECUTION:
+- Tool Used: {tool_name}
+- User Request: "{user_input}"
+- Tool Output: {tool_result}
+"""
+        
+        conversation_context = ""
+        if recent_chat:
+            conversation_context = f"""
+RECENT CONVERSATION:
+{chr(10).join([f"- {msg}" for msg in recent_chat[-3:]])}
+"""
+        
+        prompt = f"""You are an expert college essay coach having a personalized conversation with a student. 
+
+{user_context}
+
+{essay_context}
+
+{tool_context}
+
+{conversation_context}
+
+TASK: Compose a natural, helpful response that:
+1. Acknowledges the student's background and goals
+2. References the specific essay prompt and college
+3. Presents the tool results in a conversational, coach-like manner
+4. Provides guidance and next steps
+5. Feels personal and authentic, not robotic
+
+The response should sound like an experienced counselor who knows this student well, not like a tool output formatter.
+
+RESPONSE:"""
+        
+        return prompt
     
     def _update_memory(self, user_input: str, response: str) -> None:
         """Update memory with this interaction.

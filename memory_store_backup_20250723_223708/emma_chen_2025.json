@@ -1,0 +1,165 @@
+{
+  "user_info": {
+    "name": "Emma Chen",
+    "grade": 12,
+    "intended_major": "Computer Science",
+    "college_list": [
+      "Stanford",
+      "MIT",
+      "Carnegie Mellon",
+      "UC Berkeley",
+      "Harvard"
+    ],
+    "platforms": [
+      "Common App",
+      "UC Application"
+    ]
+  },
+  "academic_profile": {
+    "gpa": 3.95,
+    "test_scores": {
+      "SAT": 1540,
+      "ACT": 35
+    },
+    "courses": [
+      "AP Computer Science A",
+      "AP Calculus BC",
+      "AP Physics 1",
+      "AP English Literature",
+      "AP Statistics"
+    ],
+    "activities": [
+      {
+        "name": "Girls Who Code Club",
+        "role": "Founder & President",
+        "duration": "2 years",
+        "description": "Founded school's first Girls Who Code chapter, growing membership from 5 to 40 students",
+        "impact": "Increased female participation in computer science courses by 200%"
+      },
+      {
+        "name": "Regional Science Fair",
+        "role": "Participant",
+        "duration": "3 years",
+        "description": "Developed AI-powered app for detecting early signs of depression in social media posts",
+        "impact": "Won 1st place regionally, 3rd place at state level"
+      },
+      {
+        "name": "Local Food Bank",
+        "role": "Volunteer Coordinator",
+        "duration": "4 years",
+        "description": "Organized weekly volunteer shifts and developed digital inventory system",
+        "impact": "Improved efficiency by 40% and served 500+ additional families monthly"
+      }
+    ]
+  },
+  "core_values": [
+    {
+      "value": "Empowerment through Technology",
+      "description": "Believe technology should be accessible and used to uplift underrepresented communities",
+      "evidence": [
+        "Founded Girls Who Code chapter",
+        "Created mental health detection app"
+      ],
+      "used_in_essays": [],
+      "importance_level": 9
+    },
+    {
+      "value": "Community Service",
+      "description": "Committed to giving back and making tangible impact in local community",
+      "evidence": [
+        "4 years at food bank",
+        "Improved food bank operations"
+      ],
+      "used_in_essays": [],
+      "importance_level": 8
+    },
+    {
+      "value": "Innovation",
+      "description": "Passionate about creating solutions to real-world problems",
+      "evidence": [
+        "AI mental health app",
+        "Digital inventory system"
+      ],
+      "used_in_essays": [],
+      "importance_level": 9
+    }
+  ],
+  "defining_moments": [
+    {
+      "title": "Starting Girls Who Code in a Skeptical Environment",
+      "description": "When I proposed starting a Girls Who Code chapter, several teachers and students questioned whether there was actually interest. I persisted, starting with just 5 members and growing to 40 through grassroots outreach and creating an inclusive environment.",
+      "emotional_impact": "Initially discouraged by skepticism, but felt validated and empowered when the club flourished",
+      "lessons_learned": "Sometimes you have to create the change you want to see, even when others doubt its necessity",
+      "used_in_essays": [],
+      "themes": [
+        "leadership",
+        "persistence",
+        "gender equality",
+        "community building"
+      ],
+      "story_category": "leadership",
+      "story_weight": 1.3,
+      "college_usage": {}
+    },
+    {
+      "title": "Building an AI App for Mental Health Detection",
+      "description": "After my cousin struggled with depression, I developed an AI tool that analyzes social media posts for early warning signs. The project taught me that technology isn't just about coding\u2014it's about understanding human needs and creating meaningful solutions.",
+      "emotional_impact": "Felt helpless watching my cousin struggle, then empowered when I realized I could help",
+      "lessons_learned": "The most meaningful technology solutions come from personal experiences and genuine desire to help others",
+      "used_in_essays": [],
+      "themes": [
+        "innovation",
+        "family",
+        "mental health",
+        "technology for good"
+      ],
+      "story_category": "accomplishment",
+      "story_weight": 1.2,
+      "college_usage": {}
+    },
+    {
+      "title": "Transforming the Food Bank's Operations",
+      "description": "When I saw the food bank struggling with paper-based inventory that led to waste and shortages, I developed a digital system. However, training older volunteers required patience and empathy\u2014I learned that innovation must be accessible to succeed.",
+      "emotional_impact": "Frustrated by inefficiency, then proud when the system helped serve more families",
+      "lessons_learned": "True innovation isn't just about the technology\u2014it's about ensuring everyone can benefit from it",
+      "used_in_essays": [],
+      "themes": [
+        "problem-solving",
+        "empathy",
+        "service",
+        "bridging generational gaps"
+      ],
+      "story_category": "service",
+      "story_weight": 1.0,
+      "college_usage": {}
+    }
+  ],
+  "writing_voice": {
+    "tone_preferences": [
+      "thoughtful",
+      "analytical",
+      "empowering"
+    ],
+    "vocabulary_level": "advanced",
+    "sentence_patterns": [
+      "varied",
+      "complex",
+      "structured"
+    ],
+    "stylistic_traits": [
+      "detail_oriented",
+      "uses_specific_examples",
+      "reflective"
+    ]
+  },
+  "essay_history": [],
+  "college_story_usage": {},
+  "model_extra": {
+    "essay_prompt": "How do you hope to use your Harvard education in the future?",
+    "college": "Harvard",
+    "onboarding_completed": true
+  },
+  "essay_prompt": "How do you hope to use your Harvard education in the future?",
+  "college": "Harvard",
+  "onboarding_completed": true
+}

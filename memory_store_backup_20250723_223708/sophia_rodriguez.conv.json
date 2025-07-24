@@ -1,0 +1,34 @@
+{
+  "chat_history": [
+    {
+      "content": "Setup: Briefly describe extracurricular, work, travel, or family responsibilities that shaped you.",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    },
+    {
+      "content": "Ready to help with your Harvard essay!",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "ai",
+      "name": null,
+      "id": null,
+      "example": false,
+      "tool_calls": [],
+      "invalid_tool_calls": []
+    },
+    {
+      "content": "Setup: How do you hope to use your Harvard education in the future?",
+      "additional_kwargs": {},
+      "response_metadata": {},
+      "type": "human",
+      "name": null,
+      "id": null,
+      "example": false
+    }
+  ],
+  "summary": "Setup: Briefly describe extracurricular, work, travel, or family responsibilities that shaped you. \nReady to help with your Harvard essay! \nSetup: How do you hope to use your Harvard education in the future? \nReady to help with your Harvard essay!"
+}

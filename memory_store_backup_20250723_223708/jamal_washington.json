@@ -1,0 +1,167 @@
+{
+  "user_info": {
+    "name": "Jamal Washington",
+    "grade": 12,
+    "intended_major": "Biology (Pre-Med)",
+    "college_list": [
+      "Harvard",
+      "Johns Hopkins",
+      "Duke",
+      "Morehouse",
+      "Howard"
+    ],
+    "platforms": [
+      "Common App"
+    ]
+  },
+  "academic_profile": {
+    "gpa": 3.89,
+    "test_scores": {
+      "SAT": 1450,
+      "ACT": 33
+    },
+    "courses": [
+      "AP Biology",
+      "AP Chemistry",
+      "AP Calculus AB",
+      "AP Psychology",
+      "AP U.S. History"
+    ],
+    "activities": [
+      {
+        "name": "Free Clinic Volunteer",
+        "role": "Medical Assistant Volunteer",
+        "duration": "3 years",
+        "description": "Provided support to underserved patients at community health clinic, translating for Spanish-speaking patients",
+        "impact": "Assisted over 200 patients annually, improved clinic efficiency by 25%"
+      },
+      {
+        "name": "Youth Mentorship Program",
+        "role": "Mentor & Program Leader",
+        "duration": "4 years",
+        "description": "Mentored middle school students from underrepresented backgrounds in STEM subjects",
+        "impact": "15 of my 20 mentees advanced to honors science courses in high school"
+      },
+      {
+        "name": "School Debate Team",
+        "role": "Team Captain",
+        "duration": "3 years",
+        "description": "Led team to state championships, specialized in policy debate on healthcare reform",
+        "impact": "Team ranked #2 in state, won 3 regional tournaments"
+      }
+    ]
+  },
+  "core_values": [
+    {
+      "value": "Healthcare Equity",
+      "description": "Believe everyone deserves access to quality healthcare regardless of socioeconomic status",
+      "evidence": [
+        "3 years at free clinic",
+        "Advocacy through debate",
+        "Community health outreach"
+      ],
+      "used_in_essays": [],
+      "importance_level": 10
+    },
+    {
+      "value": "Mentorship & Empowerment",
+      "description": "Committed to lifting up the next generation, especially underrepresented students in STEM",
+      "evidence": [
+        "4 years mentoring middle schoolers",
+        "STEM advocacy",
+        "Peer tutoring"
+      ],
+      "used_in_essays": [],
+      "importance_level": 9
+    },
+    {
+      "value": "Cultural Bridge-Building",
+      "description": "Using my multilingual skills and cultural awareness to connect diverse communities",
+      "evidence": [
+        "Spanish translation at clinic",
+        "Multicultural student alliance",
+        "Community outreach"
+      ],
+      "used_in_essays": [],
+      "importance_level": 8
+    }
+  ],
+  "defining_moments": [
+    {
+      "title": "Witnessing Healthcare Disparities at the Free Clinic",
+      "description": "Working at the free clinic, I saw patients who delayed seeking care due to cost, language barriers, or distrust of the medical system. One elderly woman came in with advanced diabetes complications that could have been prevented with earlier intervention. This experience crystallized my commitment to addressing healthcare inequity.",
+      "emotional_impact": "Felt anger at systemic inequities, then determination to be part of the solution",
+      "lessons_learned": "Healthcare is a human right, and addressing disparities requires both systemic change and individual commitment",
+      "used_in_essays": [],
+      "themes": [
+        "healthcare equity",
+        "social justice",
+        "empathy",
+        "systemic change"
+      ],
+      "story_category": "defining_moment",
+      "story_weight": 1.4,
+      "college_usage": {}
+    },
+    {
+      "title": "Helping My Mentee Overcome Academic Struggles",
+      "description": "Marcus, one of my middle school mentees, was failing science due to lack of confidence and support at home. I spent extra time working with him, connecting science to his interests in music and sports. Seeing him eventually make honor roll taught me the power of believing in someone's potential.",
+      "emotional_impact": "Frustrated initially, then overjoyed at his transformation and success",
+      "lessons_learned": "Sometimes the most important thing you can give someone is belief in their abilities",
+      "used_in_essays": [],
+      "themes": [
+        "mentorship",
+        "education equity",
+        "persistence",
+        "empowerment"
+      ],
+      "story_category": "service",
+      "story_weight": 1.2,
+      "college_usage": {}
+    },
+    {
+      "title": "Leading Debate on Healthcare Reform",
+      "description": "When our debate team tackled healthcare policy, I drew on my clinic experience to bring real stories to policy arguments. However, I learned that winning debates isn't just about facts\u2014it's about making judges feel the human impact of policy decisions.",
+      "emotional_impact": "Passionate about the topic, then strategic about effective communication",
+      "lessons_learned": "Personal experience combined with rigorous research creates the most compelling arguments",
+      "used_in_essays": [],
+      "themes": [
+        "communication",
+        "policy advocacy",
+        "research",
+        "personal experience"
+      ],
+      "story_category": "leadership",
+      "story_weight": 1.1,
+      "college_usage": {}
+    }
+  ],
+  "writing_voice": {
+    "tone_preferences": [
+      "passionate",
+      "persuasive",
+      "empathetic"
+    ],
+    "vocabulary_level": "advanced",
+    "sentence_patterns": [
+      "varied",
+      "impactful",
+      "narrative"
+    ],
+    "stylistic_traits": [
+      "uses_personal_anecdotes",
+      "socially_conscious",
+      "optimistic"
+    ]
+  },
+  "essay_history": [],
+  "college_story_usage": {},
+  "model_extra": {
+    "essay_prompt": "How do you hope to use your Harvard education in the future?",
+    "college": "Harvard",
+    "onboarding_completed": true
+  },
+  "essay_prompt": "How do you hope to use your Harvard education in the future?",
+  "college": "Harvard",
+  "onboarding_completed": true
+}

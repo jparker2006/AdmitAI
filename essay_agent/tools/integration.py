@@ -109,7 +109,15 @@ def format_tool_result(tool_name: str, result_dict: Dict[str, Any]) -> str:  # n
     err = result_dict.get("error")
 
     if err:
-        msg = safe_model_to_dict(err).get("message", str(err))
+        # DEFENSIVE: Handle both string errors and dict errors
+        if isinstance(err, dict):
+            msg = err.get("message", str(err))
+        else:
+            err_dict = safe_model_to_dict(err)
+            if isinstance(err_dict, dict):
+                msg = err_dict.get("message", str(err))
+            else:
+                msg = str(err)
         return f"⚠️  {tool_name} error: {msg}"
 
     # Convert any Pydantic/BaseModel or complex objects to plain dicts first
@@ -119,7 +127,7 @@ def format_tool_result(tool_name: str, result_dict: Dict[str, Any]) -> str:  # n
     lname = tool_name.lower()
 
     # ------------------------------------------------------------------
-    # 1) Brainstorm → numbered list
+    # 1) Brainstorm → formatted story list with rich details
     # ------------------------------------------------------------------
     if "brainstorm" in lname:
         ideas: Any = ok
@@ -131,13 +139,41 @@ def format_tool_result(tool_name: str, result_dict: Dict[str, Any]) -> str:  # n
                 or ok.get("results")
                 or ok.get("result")
             )
+        
         if not isinstance(ideas, list):
             # Attempt to split string into lines
             if isinstance(ideas, str):
                 ideas = [line.strip("- ").strip() for line in ideas.split("\n") if line.strip()]
             else:
                 ideas = [str(ideas)]
-        return "\n".join(f"{idx + 1}. {item}" for idx, item in enumerate(ideas))
+        
+        # Format rich story objects with title, description, and insights
+        formatted_stories = []
+        for idx, item in enumerate(ideas):
+            if isinstance(item, dict):
+                # Rich story object with title, description, etc.
+                title = item.get("title", f"Story {idx + 1}")
+                description = item.get("description", "")
+                prompt_fit = item.get("prompt_fit", "")
+                insights = item.get("insights", [])
+                themes = item.get("themes", [])
+                
+                story_text = f"**{title}**: {description}"
+                if prompt_fit:
+                    story_text += f" {prompt_fit}"
+                if insights:
+                    insights_text = ", ".join(insights) if isinstance(insights, list) else str(insights)
+                    story_text += f" Insights include {insights_text.lower()}"
+                if themes:
+                    themes_text = " and ".join(themes) if isinstance(themes, list) else str(themes)
+                    story_text += f", with themes of {themes_text}"
+                    
+                formatted_stories.append(f"{idx + 1}. {story_text}.")
+            else:
+                # Simple string item
+                formatted_stories.append(f"{idx + 1}. {item}")
+        
+        return "\n\n".join(formatted_stories)
 
     # ------------------------------------------------------------------
     # 2) Outline → nested bullets (basic one-level)
@@ -166,7 +202,12 @@ def format_tool_result(tool_name: str, result_dict: Dict[str, Any]) -> str:  # n
     # ------------------------------------------------------------------
     if any(kw in lname for kw in {"validator", "validate", "check"}):
         # Expecting list of checks [{'name': str, 'status': 'pass'/'fail', 'message': str}]
-        checks = ok.get("checks") if isinstance(ok, dict) else ok
+        # DEFENSIVE: Check if ok is dict before calling .get()
+        if isinstance(ok, dict):
+            checks = ok.get("checks")
+        else:
+            checks = ok
+            
         if isinstance(checks, dict):
             checks = list(checks.values())
         if not isinstance(checks, list):

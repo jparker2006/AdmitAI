@@ -1,0 +1,168 @@
+{
+  "user_info": {
+    "name": "Sophia Rodriguez",
+    "grade": 12,
+    "intended_major": "Mechanical Engineering",
+    "college_list": [
+      "UCLA",
+      "UC San Diego",
+      "Cal Poly SLO",
+      "USC",
+      "Stanford"
+    ],
+    "platforms": [
+      "UC Application",
+      "Common App"
+    ]
+  },
+  "academic_profile": {
+    "gpa": 3.82,
+    "test_scores": {
+      "SAT": 1380,
+      "ACT": 31
+    },
+    "courses": [
+      "AP Physics C",
+      "AP Calculus BC",
+      "AP Spanish Language",
+      "AP Environmental Science",
+      "Honors Engineering Design"
+    ],
+    "activities": [
+      {
+        "name": "Robotics Team",
+        "role": "Mechanical Design Lead",
+        "duration": "3 years",
+        "description": "Led mechanical design for competitive robotics team, specializing in automated systems",
+        "impact": "Team advanced to state championships, won innovation award for sustainable design"
+      },
+      {
+        "name": "First-Gen College Prep Program",
+        "role": "Student Ambassador",
+        "duration": "2 years",
+        "description": "Helped other first-generation students navigate college application process and scholarship opportunities",
+        "impact": "Assisted 25+ students, increased college enrollment from program by 40%"
+      },
+      {
+        "name": "Family Restaurant",
+        "role": "Assistant Manager",
+        "duration": "4 years",
+        "description": "Helped manage family's small restaurant, handling inventory, scheduling, and customer service",
+        "impact": "Increased efficiency and reduced food waste by 30% through better inventory systems"
+      }
+    ]
+  },
+  "core_values": [
+    {
+      "value": "Family & Community",
+      "description": "Strong commitment to supporting family business and helping other first-generation students succeed",
+      "evidence": [
+        "4 years helping family restaurant",
+        "Mentoring first-gen students",
+        "Community volunteer work"
+      ],
+      "used_in_essays": [],
+      "importance_level": 10
+    },
+    {
+      "value": "Practical Innovation",
+      "description": "Believe in creating solutions that are both technically sound and practically useful",
+      "evidence": [
+        "Restaurant efficiency improvements",
+        "Sustainable robotics design",
+        "Problem-solving approach"
+      ],
+      "used_in_essays": [],
+      "importance_level": 8
+    },
+    {
+      "value": "Educational Access",
+      "description": "Passionate about making college and STEM fields more accessible to underrepresented students",
+      "evidence": [
+        "First-gen mentoring",
+        "Outreach to Latino students",
+        "Scholarship advocacy"
+      ],
+      "used_in_essays": [],
+      "importance_level": 9
+    }
+  ],
+  "defining_moments": [
+    {
+      "title": "Balancing Family Obligations with Academic Dreams",
+      "description": "When my father's restaurant struggled during COVID, I had to work 25+ hours per week while maintaining my grades and robotics commitments. I felt torn between family loyalty and my own aspirations, but eventually found ways to apply my engineering skills to help the restaurant become more efficient.",
+      "emotional_impact": "Stressed and conflicted initially, then proud to find solutions that helped both goals",
+      "lessons_learned": "Sometimes the best way to pursue your dreams is to find ways they can also help your family",
+      "used_in_essays": [],
+      "themes": [
+        "family obligations",
+        "work-life balance",
+        "practical problem-solving",
+        "cultural values"
+      ],
+      "story_category": "obstacle",
+      "story_weight": 1.5,
+      "college_usage": {}
+    },
+    {
+      "title": "Being the Only Latina on the Robotics Team",
+      "description": "Starting robotics as a sophomore, I was intimidated being the only Latina girl on a team of mostly white and Asian boys. However, I discovered my unique perspective on design and problem-solving was valuable. I learned to speak up confidently and eventually became mechanical design lead.",
+      "emotional_impact": "Felt out of place initially, then empowered as I found my voice and contribution",
+      "lessons_learned": "Diversity of perspective makes teams stronger, and representation matters for future students",
+      "used_in_essays": [],
+      "themes": [
+        "representation",
+        "confidence building",
+        "leadership",
+        "overcoming intimidation"
+      ],
+      "story_category": "heritage",
+      "story_weight": 1.3,
+      "college_usage": {}
+    },
+    {
+      "title": "Helping Other First-Gen Students Navigate College Applications",
+      "description": "When I became a first-gen ambassador, I met students who had higher grades than me but less knowledge about college opportunities. I realized how much my parents' lack of college experience had been a barrier, but also how much I could help others by sharing what I'd learned.",
+      "emotional_impact": "Frustrated by systemic barriers, then motivated to help change them",
+      "lessons_learned": "Knowledge and opportunity should be shared, not hoarded\u2014lifting others up lifts everyone",
+      "used_in_essays": [],
+      "themes": [
+        "first-generation challenges",
+        "mentorship",
+        "educational equity",
+        "paying it forward"
+      ],
+      "story_category": "service",
+      "story_weight": 1.2,
+      "college_usage": {}
+    }
+  ],
+  "writing_voice": {
+    "tone_preferences": [
+      "authentic",
+      "determined",
+      "relatable"
+    ],
+    "vocabulary_level": "strong",
+    "sentence_patterns": [
+      "clear",
+      "direct",
+      "personal"
+    ],
+    "stylistic_traits": [
+      "uses_family_references",
+      "practical_examples",
+      "resilient"
+    ]
+  },
+  "essay_history": [],
+  "college_story_usage": {},
+  "model_extra": {
+    "essay_prompt": "Briefly describe extracurricular, work, travel, or family responsibilities that shaped you.",
+    "college": "Harvard",
+    "onboarding_completed": true
+  },
+  "essay_prompt": "Briefly describe extracurricular, work, travel, or family responsibilities that shaped you.",
+  "college": "Harvard",
+  "onboarding_completed": true
+}

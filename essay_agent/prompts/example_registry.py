@@ -19,35 +19,52 @@ __all__ = ["EXAMPLE_REGISTRY"]
 # ---------------------------------------------------------------------------
 
 import json as _json
-from essay_agent.tools import REGISTRY as _TOOLS
-
 
 def _make_stub(name: str) -> str:  # noqa: D401
     """Return a minimal example for *name* tool (≤250 chars)."""
-
     stub = {"result": f"stub for {name}"}
     return _json.dumps(stub, ensure_ascii=False)
 
+def _populate_missing_examples():
+    """Populate missing examples after tools are loaded (lazy import to avoid circular dependencies)."""
+    try:
+        # Use lazy import to avoid circular dependency during module initialization
+        from essay_agent.tools import REGISTRY as _TOOLS
+        
+        for _tool_name in _TOOLS:
+            if _tool_name not in EXAMPLE_REGISTRY:
+                EXAMPLE_REGISTRY[_tool_name] = _make_stub(_tool_name)
+        
+        # Keep registry sorted for readability
+        sorted_registry = dict(sorted(EXAMPLE_REGISTRY.items()))
+        EXAMPLE_REGISTRY.clear()
+        EXAMPLE_REGISTRY.update(sorted_registry)
+        
+    except ImportError:
+        # Tools may not be available during partial initialization
+        pass
 
-for _tool_name in _TOOLS:
-    if _tool_name not in EXAMPLE_REGISTRY:
-        EXAMPLE_REGISTRY[_tool_name] = _make_stub(_tool_name)
+def _setup_tool_registration_hook():
+    """Set up hook for future tool registrations (lazy import to avoid circular dependencies)."""
+    try:
+        from essay_agent.tools import ToolRegistry as _TR
+        
+        # Save original register method
+        _orig_register = _TR.register
+        
+        def _patched_register(self, tool, *, overwrite: bool = False):
+            _orig_register(self, tool, overwrite=overwrite)
+            name = getattr(tool, "name", None)
+            if name and name not in EXAMPLE_REGISTRY:
+                EXAMPLE_REGISTRY[name] = _make_stub(name)
+        
+        # Apply the patch
+        _TR.register = _patched_register
+        
+    except ImportError:
+        # Tools may not be available during partial initialization
+        pass
 
-# Keep registry sorted for readability ------------------------------------------------
-EXAMPLE_REGISTRY = dict(sorted(EXAMPLE_REGISTRY.items())) 
-
-# Hook into future tool registrations to auto-create examples -------------
-
-from essay_agent.tools import ToolRegistry as _TR  # type: ignore
-
-_orig_register = _TR.register
-
-
-def _patched_register(self, tool, *, overwrite: bool = False):  # type: ignore[override]
-    _orig_register(self, tool, overwrite=overwrite)
-    name = getattr(tool, "name", None)
-    if name and name not in EXAMPLE_REGISTRY:
-        EXAMPLE_REGISTRY[name] = _make_stub(name)
-
-
-_TR.register = _patched_register  # type: ignore[assignment] 
+# Call the population function when this module is imported, but with lazy imports
+_populate_missing_examples()
+_setup_tool_registration_hook() 

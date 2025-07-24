@@ -15,7 +15,7 @@ from pydantic import BaseModel, Field, field_validator
 from essay_agent.prompts.templates import render_template
 from essay_agent.response_parser import pydantic_parser, safe_parse
 from essay_agent.llm_client import get_chat_llm, call_llm
-from essay_agent.tools.base import ValidatedTool
+from essay_agent.tools.base import ValidatedTool, safe_model_to_dict
 from essay_agent.tools import register_tool
 from essay_agent.prompts.prompt_analysis import (
     CLASSIFY_PROMPT_PROMPT,
@@ -112,7 +112,7 @@ class ClassifyPromptTool(ValidatedTool):
         parser = pydantic_parser(ClassifyResult)
         parsed = safe_parse(parser, raw)
         
-        return parsed.model_dump()
+        return safe_model_to_dict(parsed)
 
 @register_tool("extract_requirements")
 class ExtractRequirementsTool(ValidatedTool):
@@ -149,7 +149,7 @@ class ExtractRequirementsTool(ValidatedTool):
         parser = pydantic_parser(ExtractRequirementsResult)
         parsed = safe_parse(parser, raw)
         
-        return parsed.model_dump()
+        return safe_model_to_dict(parsed)
 
 @register_tool("suggest_strategy")
 class SuggestStrategyTool(ValidatedTool):
@@ -191,7 +191,7 @@ class SuggestStrategyTool(ValidatedTool):
         parser = pydantic_parser(SuggestStrategyResult)
         parsed = safe_parse(parser, raw)
         
-        return parsed.model_dump()
+        return safe_model_to_dict(parsed)
 
 @register_tool("detect_overlap")
 class DetectOverlapTool(ValidatedTool):
@@ -245,7 +245,7 @@ class DetectOverlapTool(ValidatedTool):
         parser = pydantic_parser(DetectOverlapResult)
         parsed = safe_parse(parser, raw)
         
-        return parsed.model_dump()
+        return safe_model_to_dict(parsed)
 
 # ---------------------------------------------------------------------------
 # Convenience call wrappers (following existing tool patterns)
