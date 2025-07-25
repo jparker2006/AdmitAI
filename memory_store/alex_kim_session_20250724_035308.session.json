@@ -1,0 +1,148 @@
+{
+  "essay_prompt": "Tell us about a time when you faced a challenge and how you overcame it.",
+  "college": "Stanford",
+  "word_limit": 650,
+  "user_id": "alex_kim",
+  "user_profile": {
+    "user_info": {
+      "name": "Alex Kim",
+      "grade": 12,
+      "intended_major": "Business Administration",
+      "college_list": [],
+      "platforms": []
+    },
+    "academic_profile": {
+      "gpa": null,
+      "test_scores": {},
+      "courses": [],
+      "activities": [
+        {
+          "name": "Student-Run Investment Club",
+          "role": "Founder & President",
+          "duration": "N/A",
+          "description": "",
+          "impact": "Portfolio returned 12% annually, taught 50+ students about investing"
+        },
+        {
+          "name": "Local Tutoring Business",
+          "role": "Founder & CEO",
+          "duration": "N/A",
+          "description": "",
+          "impact": "Generated $15,000 revenue, employed 8 tutors, helped 40+ students improve grades"
+        },
+        {
+          "name": "Model UN Conference",
+          "role": "Secretary-General",
+          "duration": "N/A",
+          "description": "",
+          "impact": "Led 200-person conference, improved international relations understanding"
+        }
+      ]
+    },
+    "core_values": [
+      {
+        "value": "Entrepreneurial Spirit",
+        "description": "Building solutions to real problems",
+        "evidence": [],
+        "used_in_essays": [],
+        "importance_level": 8
+      },
+      {
+        "value": "Financial Education",
+        "description": "Empowering others through financial literacy",
+        "evidence": [],
+        "used_in_essays": [],
+        "importance_level": 8
+      }
+    ],
+    "defining_moments": [
+      {
+        "title": "Starting a Business During Family Financial Struggles",
+        "description": "Launched tutoring business when family faced financial difficulties",
+        "emotional_impact": "",
+        "lessons_learned": "",
+        "used_in_essays": [],
+        "themes": [
+          "entrepreneurship",
+          "family support",
+          "resilience"
+        ],
+        "story_category": "defining_moment",
+        "story_weight": 1.0,
+        "college_usage": {}
+      },
+      {
+        "title": "Teaching Investment to Skeptical Peers",
+        "description": "Convinced classmates that young people should invest despite their skepticism",
+        "emotional_impact": "",
+        "lessons_learned": "",
+        "used_in_essays": [],
+        "themes": [
+          "financial education",
+          "peer teaching",
+          "misconception challenging"
+        ],
+        "story_category": "defining_moment",
+        "story_weight": 1.0,
+        "college_usage": {}
+      }
+    ],
+    "writing_voice": null,
+    "essay_history": [],
+    "college_story_usage": {}
+  },
+  "essay_text": "",
+  "notes": "",
+  "selected_text": "",
+  "cursor_position": 0,
+  "chat_history": [
+    {
+      "role": "assistant",
+      "content": "Started new essay session for Stanford! I'm here to help with your essay: \"Tell us about a time when you faced a challenge and how you overcame it....\"",
+      "timestamp": "2025-07-24T03:53:08.396916"
+    },
+    {
+      "role": "user",
+      "content": "Hi! I need help with my Stanford essay.",
+      "timestamp": "2025-07-24T03:53:08.397335"
+    },
+    {
+      "role": "assistant",
+      "content": "I can help you brainstorm ideas, create outlines, or improve your writing. What sounds good?",
+      "timestamp": "2025-07-24T03:53:08.397345"
+    },
+    {
+      "role": "user",
+      "content": "Brainstorm me ideas for leadership stories",
+      "timestamp": "2025-07-24T03:53:08.397598"
+    },
+    {
+      "role": "assistant",
+      "content": "Generated 5 personalized story ideas",
+      "timestamp": "2025-07-24T03:53:29.172149"
+    },
+    {
+      "role": "assistant",
+      "content": "Great! I've brainstormed some compelling story ideas based on your background:\n\n**1. Navigating Uncertainty: The Investment Club Crisis**\n   When the market took an unexpected downturn, Alex faced the challenge of maintaining the club's port...\n\n**2. Building Bridges: A Model UN Dilemma**\n   During the preparation for a major Model UN conference, Alex encountered a conflict between two key ...\n\n**3. A Tutor's Lesson: Overcoming Educational Barriers**\n   Alex faced the challenge of expanding his tutoring business to include students from underprivileged...\n\nThese ideas draw from your experiences - which one resonates with you?\nYou can say something like: 'Create an outline for the tutoring business story'",
+      "timestamp": "2025-07-24T03:53:29.172177"
+    },
+    {
+      "role": "user",
+      "content": "Create an outline for the tutoring business story",
+      "timestamp": "2025-07-24T03:53:29.173061"
+    },
+    {
+      "role": "assistant",
+      "content": "Generated 5 personalized story ideas",
+      "timestamp": "2025-07-24T03:53:53.700896"
+    },
+    {
+      "role": "assistant",
+      "content": "Great! I've brainstormed some compelling story ideas based on your background:\n\n**1. The Unforeseen Market Crash**\n   While leading the Student-Run Investment Club, Alex faced an unexpected market downturn that threate...\n\n**2. The Tutoring Business Dilemma**\n   Alex's tutoring business faced a major challenge when a key tutor unexpectedly quit during the peak ...\n\n**3. Diplomacy in Action: The Model UN Challenge**\n   As Secretary-General of a Model UN Conference, Alex encountered a logistical nightmare when a major ...\n\nThese ideas draw from your experiences - which one resonates with you?\nYou can say something like: 'Create an outline for the tutoring business story'",
+      "timestamp": "2025-07-24T03:53:53.700947"
+    }
+  ],
+  "session_id": "session_20250724_035308",
+  "created_at": "2025-07-24T03:53:08.396912",
+  "updated_at": "2025-07-24T03:53:53.700949"
+}

@@ -1,0 +1,55 @@
+{
+  "essay_prompt": "Describe a time when you used technology to solve a problem.",
+  "college": "MIT",
+  "word_limit": 500,
+  "user_id": "sarah_chen",
+  "user_profile": {
+    "user_info": {
+      "name": "Sarah Chen",
+      "intended_major": "Computer Science"
+    },
+    "academic_profile": {
+      "activities": [
+        {
+          "name": "Robotics Team",
+          "role": "Captain",
+          "impact": "Led team to state championship"
+        },
+        {
+          "name": "Coding Bootcamp",
+          "role": "Volunteer Instructor",
+          "impact": "Taught Python to 30+ students"
+        }
+      ]
+    }
+  },
+  "essay_text": "",
+  "notes": "",
+  "selected_text": "",
+  "cursor_position": 0,
+  "chat_history": [
+    {
+      "role": "assistant",
+      "content": "Started new essay session for MIT! I'm here to help with your essay: \"Describe a time when you used technology to solve a problem....\"",
+      "timestamp": "2025-07-24T03:58:07.146510"
+    },
+    {
+      "role": "user",
+      "content": "Brainstorm me ideas for technology stories",
+      "timestamp": "2025-07-24T03:58:07.146682"
+    },
+    {
+      "role": "assistant",
+      "content": "Generated 5 personalized story ideas",
+      "timestamp": "2025-07-24T03:58:25.931724"
+    },
+    {
+      "role": "assistant",
+      "content": "Great! I've brainstormed some compelling story ideas for you, Sarah Chen:\nThese draw from your experience with captain role in Robotics Team and volunteer instructor role in Coding Bootcamp:\n\n**1. From Glitch to Glory: The Championship Turnaround**\n   During the state robotics championship, our robot malfunctioned just before the final round. As the captain, I had to qu...\n\n**2. Code for a Cause: Empowering Through Python**\n   While teaching a coding bootcamp, I noticed several students struggling with Python's concept of loops. I developed an i...\n\n**3. The App That Bridged Generations**\n   Inspired by my grandmother's struggle to stay connected with family, I developed a simple, user-friendly app that allowe...\n\nWhich of these resonates with you?\nYou can say something like: 'Create an outline for the first story' or ask for different ideas.",
+      "timestamp": "2025-07-24T03:58:25.931855"
+    }
+  ],
+  "session_id": "session_20250724_035807",
+  "created_at": "2025-07-24T03:58:07.146507",
+  "updated_at": "2025-07-24T03:58:25.931857"
+}
